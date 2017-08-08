@@ -24,7 +24,7 @@
  */
 
 apply plugin: 'com.android.library'
-apply plugin: 'com.getkeepsafe.dexcount'
+
 
 /*================== DECLARATIONS =====================*/
 
@@ -66,27 +66,21 @@ android {
 
   buildTypes {
     debug {
-      useProguard false; debuggable true
+      debuggable true; useProguard false
+      shrinkResources false; minifyEnabled false
       manifestPlaceholders = [exported: false]
     }
     release {
-      //debuggable false; useProguard true; shrinkResources true;
-      //minifyEnabled true
-      proguardFile 'proguard-rules.pro'
-      //noinspection GroovyAssignabilityCheck
-      signingConfig signingConfigs.releaseConfig
+      debuggable false; useProguard true
+      // for alpha workaround
+      shrinkResources false; minifyEnabled true
       manifestPlaceholders = [exported: true]
+      proguardFile 'proguard-rules.pro'
+      signingConfig signingConfigs.releaseConfig
     }
   }
 
   //testBuildType "release"
-}
-
-buildscript {
-  repositories { jcenter() }
-  dependencies {
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:' + dexCountVersion
-  }
 }
 
 apply plugin: 'maven-publish'
@@ -113,17 +107,6 @@ publishing {
     }
 }
 
-/*configurations.all {
-    resolutionStrategy {
-        force 'junit:junit:' + junitVersion
-        force 'com.android.support:support-annotations:25.2.0'
-        force 'com.android.support:support-v4:25.2.0'
-        force 'com.android.support:appcompat-v7:25.2.0'
-        force 'com.android.support:design:25.2.0'
-        force 'com.android.support:recyclerview-v7:25.2.0'
-    }
-}*/
-
 dependencies {
 
   /* Proguard rules */
@@ -139,3 +122,4 @@ dependencies {
   androidTestCompile 'com.android.support.test:runner:' + runnerVersion
   //compile 'com.android.support.test:runner:' + runnerVersion
 }
+apply plugin: 'com.getkeepsafe.dexcount'
