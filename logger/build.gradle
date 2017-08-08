@@ -85,26 +85,21 @@ android {
 
 apply plugin: 'maven-publish'
 publishing {
-    publications {
+  publications {
 
-        final String verName = project.findProperty('VERSION_NAME')
-        final boolean hasName = verName != null && !verName.isEmpty()
+    final String verName = project.findProperty('VERSION_NAME')
+    final boolean hasName = verName != null && !verName.isEmpty()
 
-        maven(MavenPublication) {
-            groupId 'ru.nikitenkogleb.android'
-            artifactId 'logger'
-            //noinspection GroovyAssignabilityCheck
-            version hasName ? verName : 'SNAPSHOT'
-            artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
-        }
+    maven(MavenPublication) {
+      groupId 'ru.nikitenkogleb.android'
+      artifactId 'logger'
+      //noinspection GroovyAssignabilityCheck
+      version hasName ? verName : 'SNAPSHOT'
+      artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
     }
+  }
 
-    repositories {
-        maven {
-            //noinspection GroovyAssignabilityCheck
-            url myMavenRepoWriteUrl
-        }
-    }
+  repositories { maven { url myMavenRepoWriteUrl } }
 }
 
 dependencies {
