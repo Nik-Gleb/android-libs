@@ -1,6 +1,6 @@
 /*
- * settings.gradle
- * android-libs
+ * FragmentsTest.java
+ * fragments
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,7 +23,43 @@
  * SOFTWARE.
  */
 
-include ':logger'
-include ':repository'
-include ':drawables'
-include ':fragments'
+package fragments;
+
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import android.support.test.runner.AndroidJUnit4;
+
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicClassMembers;
+
+/**
+ * FragmentsTest Tests.
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 15/06/2017
+ */
+@Keep
+@KeepPublicClassMembers
+@RunWith(AndroidJUnit4.class)
+public final class FragmentsTest {
+
+    /** @throws Exception by any fails */
+    @Before public final void setUp() throws Exception {}
+    /** @throws Exception by any fails */
+    @After public final void tearDown() throws Exception {}
+
+    /**
+     * Test for
+     * @throws Exception by some fails
+     */
+    @Test
+    public final void testMain() throws Exception {
+
+
+    }
+
+}

@@ -1,6 +1,6 @@
 /*
- * settings.gradle
- * android-libs
+ * CPToolsTest.java
+ * cp-tools
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,7 +23,56 @@
  * SOFTWARE.
  */
 
-include ':logger'
-include ':repository'
-include ':drawables'
-include ':fragments'
+package repository;
+
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicClassMembers;
+
+/**
+ * BaseTest Tests.
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 15/06/2017
+ */
+@Keep
+@KeepPublicClassMembers
+@SuppressWarnings("EmptyMethod")
+@RunWith(AndroidJUnit4.class)
+public final class BaseTest {
+
+  /** @throws Exception by any fails */
+  @Before
+  public final void setUp () throws Exception {}
+
+  /** @throws Exception by any fails */
+  @After
+  public final void tearDown () throws Exception {}
+
+  /**
+   * Test for
+   *
+   * @throws Exception by some fails
+   */
+  @Test
+  public final void testMain () throws Exception {
+
+    final Selection selection = Selection.create()
+        .where("a", "1", "2")
+        .where("b", "3", "4")
+        .build();
+
+    Log.d("TAG", "testMain: " + selection.getSelection());
+    Log.d("TAG", Arrays.toString(selection.getSelectionArgs()));
+  }
+
+}

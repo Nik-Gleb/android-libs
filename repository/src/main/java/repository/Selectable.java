@@ -1,6 +1,6 @@
 /*
- * settings.gradle
- * android-libs
+ * Selectable.java
+ * cp-tools
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,7 +23,35 @@
  * SOFTWARE.
  */
 
-include ':logger'
-include ':repository'
-include ':drawables'
-include ':fragments'
+package repository;
+
+import android.support.annotation.NonNull;
+
+/**
+ * Selectable Request Builder.
+ *
+ * @param <T> the type of builder
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 12/07/2017
+ */
+interface Selectable<T> {
+
+  /**
+   * Access to item.
+   *
+   * @return current builder
+   */
+  @SuppressWarnings("unused")
+  @NonNull
+  T item (long id);
+
+  /**
+   * Define selection.
+   *
+   * @return current builder
+   */
+  @SuppressWarnings("unused")
+  @NonNull
+  T select (@NonNull Selection selection);
+}

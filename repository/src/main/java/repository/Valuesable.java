@@ -1,6 +1,6 @@
 /*
- * settings.gradle
- * android-libs
+ * Valuesable.java
+ * cp-tools
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,7 +23,27 @@
  * SOFTWARE.
  */
 
-include ':logger'
-include ':repository'
-include ':drawables'
-include ':fragments'
+package repository;
+
+import android.content.ContentValues;
+import android.support.annotation.NonNull;
+
+/**
+ * Selectable Request Builder.
+ *
+ * @param <T> the type of builder
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 12/07/2017
+ */
+interface Valuesable<T> {
+
+  /**
+   * Append some values.
+   *
+   * @return current builder
+   */
+  @SuppressWarnings("unused")
+  @NonNull
+  T values (@NonNull ContentValues values);
+}
