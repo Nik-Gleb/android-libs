@@ -91,7 +91,7 @@ publishing {
     final boolean hasName = verName != null && !verName.isEmpty()
 
     maven(MavenPublication) {
-      groupId 'ru.nikitenkogleb.android'
+      groupId glebLibs
       artifactId 'repository'
       //noinspection GroovyAssignabilityCheck
       version hasName ? verName : 'SNAPSHOT'
