@@ -1,0 +1,47 @@
+
+{
+	"buildFiles" : 
+	[
+		"/home/gleb/AndroidStudioProjects/android-libs/uploader/src/main/cpp/CMakeLists.txt"
+	],
+	"cleanCommands" : 
+	[
+		"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/cmake --build /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips64 --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"lovehash-lib-Release-mips64" : 
+		{
+			"abi" : "mips64",
+			"artifactName" : "lovehash-lib",
+			"buildCommand" : "/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/cmake --build /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips64 --target lovehash-lib",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=mips64el-none-linux-android --gcc-toolchain=/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64 --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/sysroot  -Dlovehash_lib_EXPORTS -I. -I/home/gleb/AndroidStudioProjects/android-libs/uploader/src/main/cpp -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/libs/mips64/include -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include/backward  -isystem /home/gleb/android-sdk-linux/ndk-bundle/sysroot/usr/include/mips64el-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fintegrated-as -Wa,--noexecstack -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC    -c ",
+					"src" : "/home/gleb/AndroidStudioProjects/android-libs/uploader/src/main/cpp/lovehash.cpp",
+					"workingDirectory" : "/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips64"
+				},
+				
+				{
+					"flags" : "  --target=mips64el-none-linux-android --gcc-toolchain=/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64 --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/sysroot  -Dlovehash_lib_EXPORTS -I. -I/home/gleb/AndroidStudioProjects/android-libs/uploader/src/main/cpp -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/libs/mips64/include -isystem /home/gleb/android-sdk-linux/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include/backward  -isystem /home/gleb/android-sdk-linux/ndk-bundle/sysroot/usr/include/mips64el-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fintegrated-as -Wa,--noexecstack -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC    -c ",
+					"src" : "/home/gleb/AndroidStudioProjects/android-libs/uploader/src/main/cpp/lovehash-lib.cpp",
+					"workingDirectory" : "/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips64"
+				}
+			],
+			"output" : "/home/gleb/AndroidStudioProjects/android-libs/uploader/build/intermediates/cmake/release/obj/mips64/liblovehash-lib.so",
+			"toolchain" : "5509703327652704108"
+		}
+	},
+	"toolchains" : 
+	{
+		"5509703327652704108" : 
+		{
+			"cCompilerExecutable" : "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+		}
+	}
+}

@@ -1,0 +1,3 @@
+/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/edit_cache.dir
+/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/rebuild_cache.dir
+/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/lovehash-lib.dir
