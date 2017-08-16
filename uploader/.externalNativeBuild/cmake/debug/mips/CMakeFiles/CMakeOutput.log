@@ -3,17 +3,17 @@ The host system is: Linux - 3.16.7-53-desktop - x86_64
 Determining if the C compiler works passed with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_17962"
-[1/2] Building C object CMakeFiles/cmTC_17962.dir/testCCompiler.c.o
-[2/2] Linking C executable cmTC_17962
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_b3dc0"
+[1/2] Building C object CMakeFiles/cmTC_b3dc0.dir/testCCompiler.c.o
+[2/2] Linking C executable cmTC_b3dc0
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e847d"
-[1/2] Building C object CMakeFiles/cmTC_e847d.dir/CMakeCCompilerABI.c.o
-[2/2] Linking C executable cmTC_e847d
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_550fe"
+[1/2] Building C object CMakeFiles/cmTC_550fe.dir/CMakeCCompilerABI.c.o
+[2/2] Linking C executable cmTC_550fe
 Android clang version 5.0.300080  (based on LLVM 5.0.300080)
 Target: mipsel-none-linux-android
 Thread model: posix
@@ -25,16 +25,16 @@ Candidate multilib: 32/mips-r1;@march=mips32
 Candidate multilib: 32/mips-r2;@march=mips32r2
 Candidate multilib: 32/mips-r6;@march=mips32r6
 Selected multilib: 32/mips-r1;@march=mips32
- "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_e847d /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e847d.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o
+ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_550fe /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_550fe.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o
 
 
 Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(mips64el-linux-android-ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e847d"]
-  ignore line: [[1/2] Building C object CMakeFiles/cmTC_e847d.dir/CMakeCCompilerABI.c.o]
-  ignore line: [[2/2] Linking C executable cmTC_e847d]
+  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_550fe"]
+  ignore line: [[1/2] Building C object CMakeFiles/cmTC_550fe.dir/CMakeCCompilerABI.c.o]
+  ignore line: [[2/2] Linking C executable cmTC_550fe]
   ignore line: [Android clang version 5.0.300080  (based on LLVM 5.0.300080)]
   ignore line: [Target: mipsel-none-linux-android]
   ignore line: [Thread model: posix]
@@ -51,7 +51,7 @@ Parsed C implicit link information from above output:
   ignore line: [@march=mips32r6]
   ignore line: [Selected multilib: 32/mips-r1]
   ignore line: [@march=mips32]
-  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_e847d /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e847d.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o]
+  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_550fe /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_550fe.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o]
     arg [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld] ==> ignore
     arg [--sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips] ==> ignore
     arg [-pie] ==> ignore
@@ -64,7 +64,7 @@ Parsed C implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_e847d] ==> ignore
+    arg [cmTC_550fe] ==> ignore
     arg [/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o] ==> ignore
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1]
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel]
@@ -84,7 +84,7 @@ Parsed C implicit link information from above output:
     arg [-znow] ==> ignore
     arg [--gc-sections] ==> ignore
     arg [-znocopyreloc] ==> ignore
-    arg [CMakeFiles/cmTC_e847d.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_550fe.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [-ldl] ==> lib [dl]
     arg [-lc] ==> lib [c]
@@ -110,9 +110,9 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_c6ddf"
-[1/2] Building C object CMakeFiles/cmTC_c6ddf.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_c6ddf
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_8c722"
+[1/2] Building C object CMakeFiles/cmTC_8c722.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_8c722
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -124,9 +124,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_5b843"
-[1/2] Building C object CMakeFiles/cmTC_5b843.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_5b843
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_05db8"
+[1/2] Building C object CMakeFiles/cmTC_05db8.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_05db8
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -138,9 +138,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_174ab"
-[1/2] Building C object CMakeFiles/cmTC_174ab.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_174ab
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_b89f9"
+[1/2] Building C object CMakeFiles/cmTC_b89f9.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_b89f9
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -150,17 +150,17 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_3a9bb"
-[1/2] Building CXX object CMakeFiles/cmTC_3a9bb.dir/testCXXCompiler.cxx.o
-[2/2] Linking CXX executable cmTC_3a9bb
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_ae0fc"
+[1/2] Building CXX object CMakeFiles/cmTC_ae0fc.dir/testCXXCompiler.cxx.o
+[2/2] Linking CXX executable cmTC_ae0fc
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_3286c"
-[1/2] Building CXX object CMakeFiles/cmTC_3286c.dir/CMakeCXXCompilerABI.cpp.o
-[2/2] Linking CXX executable cmTC_3286c
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_f24e5"
+[1/2] Building CXX object CMakeFiles/cmTC_f24e5.dir/CMakeCXXCompilerABI.cpp.o
+[2/2] Linking CXX executable cmTC_f24e5
 Android clang version 5.0.300080  (based on LLVM 5.0.300080)
 Target: mipsel-none-linux-android
 Thread model: posix
@@ -172,16 +172,16 @@ Candidate multilib: 32/mips-r1;@march=mips32
 Candidate multilib: 32/mips-r2;@march=mips32r2
 Candidate multilib: 32/mips-r6;@march=mips32r6
 Selected multilib: 32/mips-r1;@march=mips32
- "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_3286c /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_3286c.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o
+ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_f24e5 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_f24e5.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o
 
 
 Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(mips64el-linux-android-ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_3286c"]
-  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_3286c.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [[2/2] Linking CXX executable cmTC_3286c]
+  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_f24e5"]
+  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_f24e5.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [[2/2] Linking CXX executable cmTC_f24e5]
   ignore line: [Android clang version 5.0.300080  (based on LLVM 5.0.300080)]
   ignore line: [Target: mipsel-none-linux-android]
   ignore line: [Thread model: posix]
@@ -198,7 +198,7 @@ Parsed CXX implicit link information from above output:
   ignore line: [@march=mips32r6]
   ignore line: [Selected multilib: 32/mips-r1]
   ignore line: [@march=mips32]
-  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_3286c /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_3286c.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o]
+  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips -pie -z relro --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips --enable-new-dtags --eh-frame-hdr -m elf32ltsmip -dynamic-linker /system/bin/linker -o cmTC_f24e5 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1 -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/lib -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_f24e5.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtend_android.o]
     arg [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/../../../../mips64el-linux-android/bin/ld] ==> ignore
     arg [--sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips] ==> ignore
     arg [-pie] ==> ignore
@@ -211,7 +211,7 @@ Parsed CXX implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_3286c] ==> ignore
+    arg [cmTC_f24e5] ==> ignore
     arg [/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-mips/usr/lib/../lib/crtbegin_dynamic.o] ==> ignore
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/mips64el-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/mips64el-linux-android/4.9.x/32/mips-r1]
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/mipsel]
@@ -231,7 +231,7 @@ Parsed CXX implicit link information from above output:
     arg [-znow] ==> ignore
     arg [--gc-sections] ==> ignore
     arg [-znocopyreloc] ==> ignore
-    arg [CMakeFiles/cmTC_3286c.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_f24e5.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc] ==> lib [gcc]
@@ -263,9 +263,9 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_6b2ef"
-[1/2] Building CXX object CMakeFiles/cmTC_6b2ef.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_6b2ef
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_2ff79"
+[1/2] Building CXX object CMakeFiles/cmTC_2ff79.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_2ff79
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -330,9 +330,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_b44b2"
-[1/2] Building CXX object CMakeFiles/cmTC_b44b2.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_b44b2
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_ee3c8"
+[1/2] Building CXX object CMakeFiles/cmTC_ee3c8.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_ee3c8
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -397,9 +397,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/debug/mips/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_f15be"
-[1/2] Building CXX object CMakeFiles/cmTC_f15be.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_f15be
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_1c626"
+[1/2] Building CXX object CMakeFiles/cmTC_1c626.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_1c626
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers

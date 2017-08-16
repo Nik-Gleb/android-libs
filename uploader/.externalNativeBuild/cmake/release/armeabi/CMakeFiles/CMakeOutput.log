@@ -3,17 +3,17 @@ The host system is: Linux - 3.16.7-53-desktop - x86_64
 Determining if the C compiler works passed with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e8f45"
-[1/2] Building C object CMakeFiles/cmTC_e8f45.dir/testCCompiler.c.o
-[2/2] Linking C executable cmTC_e8f45
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_f53e7"
+[1/2] Building C object CMakeFiles/cmTC_f53e7.dir/testCCompiler.c.o
+[2/2] Linking C executable cmTC_f53e7
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e47ba"
-[1/2] Building C object CMakeFiles/cmTC_e47ba.dir/CMakeCCompilerABI.c.o
-[2/2] Linking C executable cmTC_e47ba
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e6458"
+[1/2] Building C object CMakeFiles/cmTC_e6458.dir/CMakeCCompilerABI.c.o
+[2/2] Linking C executable cmTC_e6458
 Android clang version 5.0.300080  (based on LLVM 5.0.300080)
 Target: armv5te-none-linux-android
 Thread model: posix
@@ -25,16 +25,16 @@ Candidate multilib: armv7-a;@armv7
 Candidate multilib: armv7-a/thumb;@armv7@thumb
 Candidate multilib: .;
 Selected multilib: thumb;@thumb
- "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e47ba /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e47ba.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o
+ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e6458 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e6458.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o
 
 
 Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(arm-linux-androideabi-ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e47ba"]
-  ignore line: [[1/2] Building C object CMakeFiles/cmTC_e47ba.dir/CMakeCCompilerABI.c.o]
-  ignore line: [[2/2] Linking C executable cmTC_e47ba]
+  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e6458"]
+  ignore line: [[1/2] Building C object CMakeFiles/cmTC_e6458.dir/CMakeCCompilerABI.c.o]
+  ignore line: [[2/2] Linking C executable cmTC_e6458]
   ignore line: [Android clang version 5.0.300080  (based on LLVM 5.0.300080)]
   ignore line: [Target: armv5te-none-linux-android]
   ignore line: [Thread model: posix]
@@ -51,7 +51,7 @@ Parsed C implicit link information from above output:
   ignore line: []
   ignore line: [Selected multilib: thumb]
   ignore line: [@thumb]
-  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e47ba /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e47ba.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o]
+  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e6458 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e6458.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o]
     arg [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld] ==> ignore
     arg [--sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm] ==> ignore
     arg [-pie] ==> ignore
@@ -64,7 +64,7 @@ Parsed C implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_e47ba] ==> ignore
+    arg [cmTC_e6458] ==> ignore
     arg [/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o] ==> ignore
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm]
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb]
@@ -83,7 +83,7 @@ Parsed C implicit link information from above output:
     arg [-znow] ==> ignore
     arg [--gc-sections] ==> ignore
     arg [-znocopyreloc] ==> ignore
-    arg [CMakeFiles/cmTC_e47ba.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_e6458.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [-ldl] ==> lib [dl]
     arg [-lc] ==> lib [c]
@@ -108,9 +108,9 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_039cc"
-[1/2] Building C object CMakeFiles/cmTC_039cc.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_039cc
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_a81a2"
+[1/2] Building C object CMakeFiles/cmTC_a81a2.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_a81a2
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -122,9 +122,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_556b5"
-[1/2] Building C object CMakeFiles/cmTC_556b5.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_556b5
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_7a80c"
+[1/2] Building C object CMakeFiles/cmTC_7a80c.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_7a80c
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -136,9 +136,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_1e9cb"
-[1/2] Building C object CMakeFiles/cmTC_1e9cb.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_1e9cb
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_13bbe"
+[1/2] Building C object CMakeFiles/cmTC_13bbe.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_13bbe
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -148,17 +148,17 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_2d95b"
-[1/2] Building CXX object CMakeFiles/cmTC_2d95b.dir/testCXXCompiler.cxx.o
-[2/2] Linking CXX executable cmTC_2d95b
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_d4ecd"
+[1/2] Building CXX object CMakeFiles/cmTC_d4ecd.dir/testCXXCompiler.cxx.o
+[2/2] Linking CXX executable cmTC_d4ecd
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_db9d8"
-[1/2] Building CXX object CMakeFiles/cmTC_db9d8.dir/CMakeCXXCompilerABI.cpp.o
-[2/2] Linking CXX executable cmTC_db9d8
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e7d95"
+[1/2] Building CXX object CMakeFiles/cmTC_e7d95.dir/CMakeCXXCompilerABI.cpp.o
+[2/2] Linking CXX executable cmTC_e7d95
 Android clang version 5.0.300080  (based on LLVM 5.0.300080)
 Target: armv5te-none-linux-android
 Thread model: posix
@@ -170,16 +170,16 @@ Candidate multilib: armv7-a;@armv7
 Candidate multilib: armv7-a/thumb;@armv7@thumb
 Candidate multilib: .;
 Selected multilib: thumb;@thumb
- "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_db9d8 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_db9d8.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o
+ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e7d95 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e7d95.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o
 
 
 Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(arm-linux-androideabi-ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_db9d8"]
-  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_db9d8.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [[2/2] Linking CXX executable cmTC_db9d8]
+  ignore line: [Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_e7d95"]
+  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_e7d95.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [[2/2] Linking CXX executable cmTC_e7d95]
   ignore line: [Android clang version 5.0.300080  (based on LLVM 5.0.300080)]
   ignore line: [Target: armv5te-none-linux-android]
   ignore line: [Thread model: posix]
@@ -196,7 +196,7 @@ Parsed CXX implicit link information from above output:
   ignore line: []
   ignore line: [Selected multilib: thumb]
   ignore line: [@thumb]
-  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_db9d8 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_db9d8.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o]
+  link line: [ "/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld" --sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm -pie -z relro -X --enable-new-dtags --eh-frame-hdr -m armelf_linux_eabi -dynamic-linker /system/bin/linker -o cmTC_e7d95 /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/../lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib -L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/lib/thumb -L/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib --exclude-libs libgcc.a --build-id --warn-shared-textrel --fatal-warnings --no-undefined -z noexecstack -z relro -z now --gc-sections -z nocopyreloc CMakeFiles/cmTC_e7d95.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc -lgcc -ldl -lc -lgcc -lgcc -ldl /home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtend_android.o]
     arg [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin/ld] ==> ignore
     arg [--sysroot=/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm] ==> ignore
     arg [-pie] ==> ignore
@@ -209,7 +209,7 @@ Parsed CXX implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_db9d8] ==> ignore
+    arg [cmTC_e7d95] ==> ignore
     arg [/home/gleb/android-sdk-linux/ndk-bundle/platforms/android-16/arch-arm/usr/lib/../lib/crtbegin_dynamic.o] ==> ignore
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/5.0.300080/lib/linux/arm]
     arg [-L/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb] ==> dir [/home/gleb/android-sdk-linux/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/thumb]
@@ -228,7 +228,7 @@ Parsed CXX implicit link information from above output:
     arg [-znow] ==> ignore
     arg [--gc-sections] ==> ignore
     arg [-znocopyreloc] ==> ignore
-    arg [CMakeFiles/cmTC_db9d8.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_e7d95.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc] ==> lib [gcc]
@@ -259,9 +259,9 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_859c7"
-[1/2] Building CXX object CMakeFiles/cmTC_859c7.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_859c7
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_34c71"
+[1/2] Building CXX object CMakeFiles/cmTC_34c71.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_34c71
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -326,9 +326,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_a4b86"
-[1/2] Building CXX object CMakeFiles/cmTC_a4b86.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_a4b86
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_a71af"
+[1/2] Building CXX object CMakeFiles/cmTC_a71af.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_a71af
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -393,9 +393,9 @@ Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cm
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/armeabi/CMakeFiles/CMakeTmp
 
-Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_cbd54"
-[1/2] Building CXX object CMakeFiles/cmTC_cbd54.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_cbd54
+Run Build Command:"/home/gleb/android-sdk-linux/cmake/3.6.4111459/bin/ninja" "cmTC_6c030"
+[1/2] Building CXX object CMakeFiles/cmTC_6c030.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_6c030
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
