@@ -104,15 +104,15 @@ publishing {
 dependencies {
 
   /* Proguard rules */
-    compile 'com.infstory:proguard-annotations:1.0.2'
+    implementation 'com.infstory:proguard-annotations:1.0.2'
     /* Support annotations. */
-    compile 'com.android.support:support-annotations:' + supportVersion
-    compile 'com.android.support:support-core-utils:'   + supportVersion
-    compile 'com.android.support:support-fragment:'     + supportVersion
+    implementation 'com.android.support:support-annotations:' + supportVersion
+    implementation 'com.android.support:support-core-utils:'   + supportVersion
+    implementation 'com.android.support:support-fragment:'     + supportVersion
 
     /* JUnit */
-    testCompile 'junit:junit:' + junitVersion
+    testImplementation 'junit:junit:' + junitVersion
     /* Android JUnit Runner */
-    androidTestCompile 'com.android.support.test:runner:' + runnerVersion
+    androidTestImplementation 'com.android.support.test:runner:' + runnerVersion
 }
 apply plugin: 'com.getkeepsafe.dexcount'
