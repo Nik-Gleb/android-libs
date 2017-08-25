@@ -1,3 +1,0 @@
-/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips/CMakeFiles/edit_cache.dir
-/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips/CMakeFiles/rebuild_cache.dir
-/home/gleb/AndroidStudioProjects/android-libs/uploader/.externalNativeBuild/cmake/release/mips/CMakeFiles/lovehash-lib.dir
