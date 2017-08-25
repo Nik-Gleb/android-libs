@@ -52,7 +52,6 @@ public abstract class LoaderManager {
     private static final String CANT_PERFORM_CLOSE =
             "Can not perform this action after close";
 
-
     /** "Loader's" - state key. */
     private static final String STATE_LOADERS = "loaders";
     /** "Stable Loader's" - state key. */
@@ -72,7 +71,7 @@ public abstract class LoaderManager {
                 /** {@inheritDoc} */
                 @Override
                 public final void onLoadFinished(@NonNull Loader<Object> loader, @Nullable Object data) {
-                    checkState();;
+                    checkState();
                     final int loaderId = loader.getId();
 
                     if (!mStableIds.contains(loaderId)) {
@@ -86,7 +85,7 @@ public abstract class LoaderManager {
                 /** {@inheritDoc} */
                 @Override
                 public final void onLoaderReset(@NonNull Loader<Object> loader) {
-                    LoaderManager.this.onLoadFinished(loader.getId(), null);
+                    LoaderManager.this.onLoaderReset(loader.getId());
                 }
             };
 
@@ -106,42 +105,47 @@ public abstract class LoaderManager {
     /**
      * Constructs a new {@link LoaderManager} with saved state.
      *
-     * @param loaderManager the frameworks loader manager
+     * @param mgr the frameworks loader manager
      * @param state the saved state
      */
-    public LoaderManager(@NonNull android.support.v4.app.LoaderManager loaderManager,
-            @Nullable Bundle state) {
-        mLoaderManager = loaderManager;
+    public LoaderManager
+    (@NonNull android.support.v4.app.LoaderManager mgr, @Nullable Bundle state) {
+        mLoaderManager = mgr;
         if (state != null) {
-
-            final ArrayList<Integer> stableIds = state.getIntegerArrayList(STATE_STABLES);
+            final ArrayList<Integer> stableIds =
+                state.getIntegerArrayList(STATE_STABLES);
             mStableIds = stableIds != null ? stableIds : new ArrayList<>();
-
             final BundleMap loaders = state.getParcelable(STATE_LOADERS);
             if (loaders != null) {
                 mLoaders = loaders;
-                // Retain loader's callback
-                final int count = mLoaders.size();
-                for (int i = 0; i < count; i++) {
-                    final int loaderId = mLoaders.keyAt(i);
-                    if (mLoaderManager.getLoader(loaderId) != null) {
-                        if (mLoaderManager.initLoader(loaderId, null, mCallbacks) == null) {
-                            mLoaders.removeAt(i);
-                            mStableIds.remove(loaderId);
-                        }
-                    } else {
-                        if (mLoaderManager.initLoader(loaderId, mLoaders.get(loaderId), mCallbacks) == null) {
-                            mLoaders.remove(loaderId);
-                            mStableIds.remove(loaderId);
-                        }
-                    }
-                }
             } else {
                 mLoaders = new BundleMap();
             }
         } else {
             mLoaders = new BundleMap();
             mStableIds = new ArrayList<>();
+        }
+    }
+
+    /** Initialization. */
+    protected final void init() {
+        // Retain loader's callback
+        final int count = mLoaders.size();
+        for (int i = 0; i < count; i++) {
+            final int loaderId = mLoaders.keyAt(i);
+            if (mLoaderManager.getLoader(loaderId) != null) {
+                final Bundle args = null;
+                if (mLoaderManager.initLoader(loaderId, args, mCallbacks) == null) {
+                    mLoaders.removeAt(i);
+                    mStableIds.remove(loaderId);
+                }
+            } else {
+                if (mLoaderManager.initLoader
+                    (loaderId, mLoaders.get(loaderId), mCallbacks) == null) {
+                    mLoaders.remove(loaderId);
+                    mStableIds.remove(loaderId);
+                }
+            }
         }
     }
 
@@ -230,6 +234,13 @@ public abstract class LoaderManager {
      * @param data the loader data
      */
     protected void onLoadFinished(int id, @Nullable Object data) {}
+
+    /**
+     * Load finished resolver.
+     *
+     * @param id the loader id
+     */
+    protected void onLoaderReset(int id) {}
 
     /** Release resources */
     public final void close() {
