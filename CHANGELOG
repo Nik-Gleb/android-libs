@@ -20,3 +20,4 @@ Release 0.0.1(16:52:09 25.08.2017 <UTC>): Added loaders
 Release 0.0.1(16:55:33 25.08.2017 <UTC>): Updated loaders to implementation
 Release 0.0.1(18:07:30 25.08.2017 <UTC>): Split constructor
 Release 0.0.1(06:24:52 28.08.2017 <UTC>): Reset no transaction because
+Release 0.0.1(06:48:51 28.08.2017 <UTC>): Fixed no transaction because, context access

@@ -25,15 +25,19 @@
 
 package loaders;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.SupportUtils;
 import android.support.v4.content.Loader;
 
 import java.util.ArrayList;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
+
+import static android.support.v4.app.SupportUtils.getContext;
 
 /**
  * The loader manager.
@@ -64,8 +68,8 @@ public abstract class LoaderManager {
                 /** {@inheritDoc} */
                 @Override @NonNull
                 public final Loader<Object> onCreateLoader(int id, @NonNull Bundle args) {
-                    checkState();
-                    return LoaderManager.this.onCreateLoader(id, args);
+                    checkState(); final Context ctx = getContext(mLoaderManager);
+                    return LoaderManager.this.onCreateLoader(ctx, id, args);
                 }
 
                 /** {@inheritDoc} */
@@ -219,13 +223,15 @@ public abstract class LoaderManager {
     /**
      * The loaders resolver.
      *
+     * @param context the context
      * @param id the loader id
      * @param args the args
      *
      * @return the loader instance
      */
     @NonNull
-    protected abstract Loader<Object> onCreateLoader(int id, @NonNull Bundle args);
+    protected abstract Loader<Object> onCreateLoader
+    (@NonNull Context context, int id, @NonNull Bundle args);
 
     /**
      * Load finished resolver.
@@ -233,14 +239,16 @@ public abstract class LoaderManager {
      * @param id the loader id
      * @param data the loader data
      */
-    protected void onLoadFinished(int id, @Nullable Object data) {}
+    protected void onLoadFinished(int id, @Nullable Object data)
+    {SupportUtils.resetNoTransactionsBecause(mLoaderManager);}
 
     /**
      * Load finished resolver.
      *
      * @param id the loader id
      */
-    protected void onLoaderReset(int id) {}
+    protected void onLoaderReset(int id)
+    {SupportUtils.resetNoTransactionsBecause(mLoaderManager);}
 
     /** Release resources */
     public final void close() {
