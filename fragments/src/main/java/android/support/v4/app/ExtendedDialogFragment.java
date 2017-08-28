@@ -93,6 +93,13 @@ public class ExtendedDialogFragment extends DialogFragment {
         }
     }
 
+    /** @param fragmentManager the fragment manager for reset */
+    @NonNull public static String resetNoTransactionsBecause
+    (@NonNull FragmentManager fragmentManager) {
+        try { return((FragmentManagerImpl)fragmentManager).mNoTransactionsBecause;}
+        finally {((FragmentManagerImpl)fragmentManager).mNoTransactionsBecause = null;}
+    }
+
     /**
      * @param fragmentManager the fragment manager
      * @return active fragments
