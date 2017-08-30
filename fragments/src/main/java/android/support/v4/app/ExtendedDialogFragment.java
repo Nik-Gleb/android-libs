@@ -27,6 +27,7 @@ package android.support.v4.app;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -99,5 +100,17 @@ public class ExtendedDialogFragment extends DialogFragment {
      */
     public static List<Fragment> getFragments(@NonNull FragmentManager fragmentManager)
     {return ((FragmentManagerImpl)fragmentManager).getActiveFragments();}
+
+    /**
+     * @param fragmentManager the fragment manager instance
+     * @return the attached activity
+     */
+    @Nullable
+    public static FragmentActivity getActivity(@NonNull FragmentManager fragmentManager) {
+        final FragmentHostCallback fragmentHostCallback =
+            ((FragmentManagerImpl)fragmentManager).mHost;
+        return fragmentHostCallback == null ? null :
+            (FragmentActivity) fragmentHostCallback.getActivity();
+    }
 
 }
