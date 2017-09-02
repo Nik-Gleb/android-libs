@@ -109,7 +109,7 @@ abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
         }
 
         try {
-            return loadInBackground(mCancellationSignal);
+            return doInBackground(mCancellationSignal);
         } finally {
             synchronized (this) {
                 mCancellationSignal = null;
@@ -207,7 +207,7 @@ abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
 
     /** Background loading. */
     @Nullable
-    protected abstract T loadInBackground(@NonNull CancellationSignal cancellationSignal);
+    protected abstract T doInBackground(@NonNull CancellationSignal signal);
 
     /** @return the super.mExecutor field */
     @Nullable private static Field getExecutorField() {

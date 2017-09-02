@@ -77,10 +77,12 @@ public class ExtendedDialogFragment extends android.support.v4.app.ExtendedDialo
                         dialog.getWindow().addFlags(
                             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    break;
                     // fall through...
                 case STYLE_NO_FRAME:
                 case STYLE_NO_TITLE:
                     appCompatDialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+                    break;
             }
         }
     }
