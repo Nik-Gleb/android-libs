@@ -27,6 +27,7 @@ public final class LoadersUtils {
    * @param loader the loader instance
    * @return true loader doing some bg
    */
+  @SuppressWarnings("unused")
   public static boolean isRunning(@NonNull AsyncTaskLoader loader)
   {return loader.mTask != null;}
 
