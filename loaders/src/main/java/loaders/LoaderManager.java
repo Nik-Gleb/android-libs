@@ -30,7 +30,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.SupportUtils;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LoadersUtils;
 
 import java.util.ArrayList;
 
@@ -206,10 +208,12 @@ public abstract class LoaderManager {
 
     /**
      * @param id the loader id
-     * @return true if loader exist, otherwise - false
+     * @return true if loader active, otherwise - false
      */
     protected boolean hasLoader(int id) {
-        return mLoaderManager.getLoader(id) != null;
+        final Loader loader = mLoaderManager.getLoader(id);
+        return loader != null && (!(loader instanceof AsyncTaskLoader)
+            || LoadersUtils.isRunning((AsyncTaskLoader) loader));
     }
 
 
