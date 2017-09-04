@@ -208,14 +208,21 @@ public abstract class LoaderManager {
 
     /**
      * @param id the loader id
-     * @return true if loader active, otherwise - false
+     * @return true if loader exist, otherwise - false
      */
     protected boolean hasLoader(int id) {
+        return mLoaderManager.getLoader(id) != null;
+    }
+
+    /**
+     * @param id the loader id
+     * @return true if loader running, otherwise - false
+     */
+    protected boolean isRunning(int id) {
         final Loader loader = mLoaderManager.getLoader(id);
         return loader != null && (!(loader instanceof AsyncTaskLoader)
             || LoadersUtils.isRunning((AsyncTaskLoader) loader));
     }
-
 
     /** Check Common State */
     private void checkState()
