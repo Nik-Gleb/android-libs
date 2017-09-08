@@ -1,0 +1,66 @@
+import proguard.gradle.ProGuardTask
+
+/*
+ * 	build.gradle
+ * 	OmmyChat
+ *
+ * 	Copyright (C) 2017, OmmyChat ltd. All Rights Reserved.
+ *
+ * 	NOTICE:  All information contained herein is, and remains the
+ * 	property of OmmyChat limited and its SUPPLIERS, if any.
+ *
+ * 	The intellectual and technical concepts contained herein are
+ * 	proprietary to OmmyChat limited and its suppliers and
+ * 	may be covered by United States and Foreign Patents, patents
+ * 	in process, and are protected by trade secret or copyright law.
+ *
+ * 	Dissemination of this information or reproduction of this material
+ * 	is strictly forbidden unless prior written permission is obtained
+ * 	from OmmyChat limited.
+ */
+
+apply plugin: 'java-library'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+assemble.dependsOn clean
+
+task proguard(type: ProGuardTask) {
+  injars "$buildDir/libs/${archivesBaseName}.jar"
+  outjars "$buildDir/libs/${archivesBaseName}-release.jar"
+  libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+  libraryjars "../android.jar"
+  configuration 'proguard-rules.pro'
+}
+proguard.dependsOn assemble
+
+apply plugin: 'maven-publish'
+publishing() {
+  publications {
+    final String verName = project.findProperty('VERSION_NAME')
+    final boolean hasName = verName != null && !verName.isEmpty()
+    maven(MavenPublication) {
+      groupId glebLibs; artifactId 'clean'
+      version hasName ? verName : 'SNAPSHOT'
+      artifact "$buildDir/libs/${archivesBaseName}-release.jar"
+    }
+  }
+  repositories { maven { url myMavenRepoWriteUrl } }
+}
+publish.dependsOn proguard
+
+repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
+
+dependencies {
+  //implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+  /* Support annotations. */
+  implementation 'com.android.support:support-annotations:' + supportVersion
+  /* JUnit */
+  testImplementation 'junit:junit:' + junitVersion
+  /* Optional -- Mockito framework */
+  testImplementation 'org.mockito:mockito-core:2.8.47'
+
+  /** Android dependencies */
+  implementation files('../android.jar')
+}
