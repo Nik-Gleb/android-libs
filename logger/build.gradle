@@ -29,8 +29,8 @@ apply plugin: 'com.android.library'
 /*================== DECLARATIONS =====================*/
 
 final int SDK_VER = Integer.parseInt(sdkVer)
-final String MODULE = "logger"
-final String PACKAGE = glebLibs
+final MODULE = "logger"
+final PACKAGE = glebLibs
 
 /*=====================================================*/
 
@@ -90,7 +90,7 @@ publishing {
   repositories { maven { url myMavenRepoWriteUrl } }
 }
 publish.doLast {
-  final String cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
   delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
   delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
 }

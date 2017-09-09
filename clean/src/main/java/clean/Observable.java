@@ -19,9 +19,6 @@
 
 package clean;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import java.io.Closeable;
 import java.util.ArrayList;
 
@@ -29,6 +26,7 @@ import java.util.ArrayList;
  * @author Nikitenko Gleb
  * @since 1.0, 18/07/2017
  */
+@SuppressWarnings("unused")
 public abstract class Observable<T, U> implements Closeable {
 
   /**
@@ -45,7 +43,7 @@ public abstract class Observable<T, U> implements Closeable {
    * @return false, if the observer is already registered
    */
   @SuppressWarnings("UnusedReturnValue")
-  public final boolean registerObserver(@NonNull OnChangedListener observer) {
+  public final boolean registerObserver(OnChangedListener observer) {
     synchronized (mObservers) {
       if (mObservers.contains(observer)) return false;
       else mObservers.add(observer); return true;
@@ -62,7 +60,7 @@ public abstract class Observable<T, U> implements Closeable {
    * @throws IllegalStateException the observer is not yet registered
    */
   @SuppressWarnings("UnusedReturnValue")
-  public final boolean unregisterObserver(@NonNull OnChangedListener observer) {
+  public final boolean unregisterObserver(OnChangedListener observer) {
     synchronized (mObservers) {
       final int index = mObservers.indexOf(observer);
       if (index == -1) return false;
@@ -72,6 +70,7 @@ public abstract class Observable<T, U> implements Closeable {
   }
 
   /** Notify about changes. */
+  @SuppressWarnings("WeakerAccess")
   protected final void notifyChanged() {
     synchronized (mObservers) {
       for (int i = mObservers.size() - 1; i >= 0; i--) {
@@ -91,8 +90,7 @@ public abstract class Observable<T, U> implements Closeable {
    * @param args the some arguments
    * @return content instance
    */
-  @Nullable public abstract U getData
-  (@NonNull CancellationSignal signal, @Nullable T args);
+  public abstract U getData(CancellationSignal signal, T args);
 
 
   /** The data changed listener. */

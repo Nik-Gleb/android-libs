@@ -19,8 +19,6 @@
 
 package clean;
 
-import android.support.annotation.NonNull;
-
 import java.io.Closeable;
 
 /**
@@ -29,13 +27,14 @@ import java.io.Closeable;
  * @author Nikitenko Gleb
  * @since 1.0, 24/08/2017
  */
+@SuppressWarnings("unused")
 public interface Analytics extends Closeable {
 
   /** Track screen moves. */
-  void sendScreenView(@NonNull String screen);
+  void sendScreenView(String screen);
 
   /** Track exception. */
-  void sendException(boolean fatal, @NonNull String description);
+  void sendException(boolean fatal, String description);
 
   /** {@inheritDoc} */
   void close();

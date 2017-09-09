@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package loaders;
+package network;
 
 
 import android.support.test.runner.AndroidJUnit4;

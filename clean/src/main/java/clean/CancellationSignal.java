@@ -19,8 +19,6 @@
 
 package clean;
 
-import android.support.annotation.Nullable;
-
 /**
  * Provides the ability to cancel an operation in progress.
  *
@@ -135,7 +133,7 @@ public final class CancellationSignal {
     public OperationCanceledException() {this(null);}
 
     /** Constructs a new {@link OperationCanceledException} */
-    public OperationCanceledException(@Nullable String message)
+    public OperationCanceledException(String message)
     {super(message != null ? message : "The operation has been canceled.");}
   }
 }

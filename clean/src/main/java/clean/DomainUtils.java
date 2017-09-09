@@ -19,9 +19,6 @@
 
 package clean;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import java.io.IOException;
 
 /**
@@ -30,6 +27,7 @@ import java.io.IOException;
  * @author Nikitenko Gleb
  * @since 1.0, 22/08/2017
  */
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class DomainUtils {
 
   /** The ok-object. */
@@ -57,7 +55,7 @@ public final class DomainUtils {
    *
    * @param signal the cancellation signal
    */
-  public static void stub(@NonNull CancellationSignal signal) {
+  public static void stub(CancellationSignal signal) {
 
     for (int i = 0; i < STUB_COMMON_SLEEP; i++) {
       signal.throwIfCanceled();
@@ -75,5 +73,5 @@ public final class DomainUtils {
    * @param object the response
    * @return true if positive response
    */
-  public static boolean isOk(@Nullable Object object) {return OK == object;}
+  public static boolean isOk(Object object) {return OK == object;}
 }

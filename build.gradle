@@ -43,7 +43,7 @@ allprojects {
         options.compilerArgs << "-Xdiags:verbose"
     }
     project.ext {
-        final String verName = project.findProperty('VERSION_NAME')
+        final verName = project.findProperty('VERSION_NAME')
         mPubVer = verName != null && !verName.isEmpty() ? verName : 'SNAPSHOT'
         mGradleCachePath = "${System.getProperty('user.home')}/" + gradleCacheRoot
     }

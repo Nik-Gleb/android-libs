@@ -1,0 +1,51 @@
+import proguard.gradle.ProGuardTask
+
+apply plugin: 'java-library'
+
+final MODULE = "ssl-certs"
+final PACKAGE = glebLibs
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+assemble.dependsOn clean
+
+task proguard(type: ProGuardTask) {
+  injars "$buildDir/libs/${archivesBaseName}.jar"
+  outjars "$buildDir/libs/${archivesBaseName}-release.jar"
+  libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+  configuration 'proguard-rules.pro'
+}
+proguard.dependsOn assemble
+
+apply plugin: 'maven-publish'
+publishing {
+  publications {
+    maven(MavenPublication) {
+      groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
+      artifact "$buildDir/libs/${archivesBaseName}-release.jar"
+    }
+  }
+  repositories { maven { url myMavenRepoWriteUrl } }
+}
+publish.dependsOn proguard
+publish.doLast {
+  final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
+  delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
+}
+
+task copyTestResources(type: Copy) {
+  from "${projectDir}/src/test/resources"
+  into "${buildDir}/classes/java/test"
+}
+processTestResources.dependsOn copyTestResources
+
+repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
+dependencies {
+  //implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+  /* JUnit */
+  testImplementation 'junit:junit:' + junitVersion
+  /* Optional -- Mockito framework */
+  testImplementation 'org.mockito:mockito-core:2.8.47'
+}
