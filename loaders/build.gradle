@@ -29,6 +29,8 @@ apply plugin: 'com.android.library'
 /*================== DECLARATIONS =====================*/
 
 final int SDK_VER = Integer.parseInt(sdkVer)
+final String MODULE = "loaders"
+final String PACKAGE = glebLibs
 
 /*=====================================================*/
 
@@ -47,12 +49,6 @@ android {
 
   //noinspection GroovyMissingReturnStatement
   defaultConfig {
-    final String verName = project.findProperty('VERSION_NAME')
-    final boolean hasName = verName != null && !verName.isEmpty()
-
-    versionName = hasName ? verName : '0.0.1'
-    versionNameSuffix = hasName ? "" : "-SNAPSHOT"
-
     minSdkVersion minSdk; targetSdkVersion SDK_VER
     dexOptions { javaMaxHeapSize jvmHeapSize }
     compileOptions {
@@ -86,19 +82,17 @@ android {
 apply plugin: 'maven-publish'
 publishing {
   publications {
-
-    final String verName = project.findProperty('VERSION_NAME')
-    final boolean hasName = verName != null && !verName.isEmpty()
-
     maven(MavenPublication) {
-      groupId glebLibs; artifactId 'loaders'
-      //noinspection GroovyAssignabilityCheck
-      version hasName ? verName : 'SNAPSHOT'
+      groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
       artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
     }
   }
-
   repositories { maven { url myMavenRepoWriteUrl } }
+}
+publish.doLast {
+  final String cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
+  delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
 }
 
 dependencies {

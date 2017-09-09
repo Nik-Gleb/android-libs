@@ -21,6 +21,9 @@ import proguard.gradle.ProGuardTask
 
 apply plugin: 'java-library'
 
+final String MODULE = "clean"
+final String PACKAGE = glebLibs
+
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 assemble.dependsOn clean
@@ -35,19 +38,21 @@ task proguard(type: ProGuardTask) {
 proguard.dependsOn assemble
 
 apply plugin: 'maven-publish'
-publishing() {
+publishing {
   publications {
-    final String verName = project.findProperty('VERSION_NAME')
-    final boolean hasName = verName != null && !verName.isEmpty()
     maven(MavenPublication) {
-      groupId glebLibs; artifactId 'clean'
-      version hasName ? verName : 'SNAPSHOT'
+      groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
       artifact "$buildDir/libs/${archivesBaseName}-release.jar"
     }
   }
   repositories { maven { url myMavenRepoWriteUrl } }
 }
 publish.dependsOn proguard
+publish.doLast {
+  final String cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
+  delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
+}
 
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 
