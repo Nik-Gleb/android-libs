@@ -117,3 +117,6 @@
 -keep public interface * {
     public protected *;
 }
+
+-dontnote android.*
+-keep class java.lang.invoke.LambdaMetafactory
