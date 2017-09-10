@@ -28,6 +28,8 @@
 #-dontoptimize
 #-dontshrink
 
+-libraryjars '../android.jar'
+
 -verbose
 -optimizationpasses 5
 -allowaccessmodification
