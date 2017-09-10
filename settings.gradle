@@ -23,12 +23,12 @@
  * SOFTWARE.
  */
 
-/*include ':logger'
+include ':logger'
 include ':repository'
 include ':drawables'
 include ':fragments'
 include ':loaders'
-include ':clean'*/
+include ':clean'
 include ':ssl-certs'
-/*include ':ok-tools'
-include ':network'*/
+include ':ok-tools'
+include ':network'
