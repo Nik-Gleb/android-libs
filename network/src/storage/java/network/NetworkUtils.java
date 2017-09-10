@@ -175,7 +175,10 @@ public final class NetworkUtils {
    */
   @SuppressWarnings("SameParameterValue")
   private static void cancelable(Call call, CancellationSignal signal)
-  {signal.setOnCancelListener(call::cancel);}
+  {signal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
+    @Override
+    public void onCancel() {call.cancel();}
+  });}
 
   /**
    * @author Nikitenko Gleb
