@@ -122,7 +122,10 @@
 -keep public interface * {public protected *;}
 
 -dontnote android.**
+-dontnote com.android.**
 -dontnote org.apache.**
+-dontnote org.json.**
+-dontnote org.xmlpull.**
 -dontnote android.json.**
 -dontnote android.xmlpull.**
 -dontnote dalvik.**
