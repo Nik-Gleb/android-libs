@@ -121,5 +121,5 @@
 -keep public class !network.BuildConfig {public protected *;}
 -keep public interface * {public protected *;}
 
--dontnote android.*
+-dontnote android.**
 -keep class java.lang.invoke.LambdaMetafactory
