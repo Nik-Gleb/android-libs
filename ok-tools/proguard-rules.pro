@@ -124,4 +124,4 @@
 -dontnote android.xmlpull.*
 -dontnote dalvik.*
 
--keep class java.lang.invoke.LambdaMetafactory
+-dontwarn **$$Lambda$*
