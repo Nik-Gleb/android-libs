@@ -23,4 +23,8 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="network"/>
+<manifest package="network"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Only for testing -->
+  <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

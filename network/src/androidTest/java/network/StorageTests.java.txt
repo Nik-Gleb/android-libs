@@ -1,0 +1,260 @@
+/*
+ * NetworkStorageTest.java
+ * ok-adapter
+ *
+ * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package network;
+
+
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import ok.OkUtils;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
+import static network.NetworkContracts.BUNDLE_FORM_BODY;
+import static network.NetworkContracts.BUNDLE_REQUEST_BODY;
+import static network.RepositoryTests.assetManager;
+
+/**
+ * NetworkStorageTest Tests.
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 15/06/2017
+ */
+@RunWith(AndroidJUnit4.class)
+public final class StorageTests {
+
+    /** The test authority. */
+    private static final String TEST_AUTHORITY = "com.test.authority";
+    /** The name of test file. */
+    private static final String TEST_FILE = "post.json";
+
+    /** Base backend's params. */
+    private static final String TEST_SCHEME = "https", TEST_HOST = "httpbin.org", TEST_PATH = "ip";
+
+
+    /** The {@link NetworkStorage.Builder} instance. */
+    @Nullable private NetworkStorage.Builder mNetworkStorageBuilder = null;
+    /** The {@link NetworkStorage} instance. */
+    @SuppressWarnings("FieldCanBeLocal")
+    @Nullable private NetworkStorage mNetworkStorage = null;
+
+    /** The ok http client */
+    private OkHttpClient okHttpClient = null;
+
+    /** @throws Exception by any fails */
+    @Before public final void setUp() throws Exception {
+        final long timeOut = 1800;
+        final TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout (timeOut, timeUnit).build();
+        mNetworkStorageBuilder = NetworkStorage.create(okHttpClient);
+    }
+    /** @throws Exception by any fails */
+    @After public final void tearDown() throws Exception
+    {mNetworkStorageBuilder = null;}
+
+    /**
+     * Test for {@link NetworkStorage#convertUri(Uri)}.
+     * @throws Exception by some fails
+     */
+    @Test
+    public final void testConvertUri() throws Exception {
+
+        assert mNetworkStorageBuilder != null;
+        mNetworkStorage =
+                mNetworkStorageBuilder
+                        .scheme(TEST_SCHEME)
+                        .host(TEST_HOST)
+                        .path(TEST_PATH)
+                        .build();
+
+        final Uri uri = NetworkRepository.create(TEST_AUTHORITY).build()
+                .newUri().appendPath("reg")
+                .appendQueryParameter("token", "01234567")
+                .build();
+
+        final HttpUrl url = new HttpUrl.Builder()
+                .scheme(TEST_SCHEME).host(TEST_HOST)
+                .encodedPath("/" + TEST_PATH)
+                .addPathSegment("reg")
+                .addQueryParameter("token", "01234567")
+                .build();
+
+        Assert.assertEquals(url, mNetworkStorage.convertUri(uri));
+
+
+        mNetworkStorage = null;
+    }
+
+    /**
+     * Test for {@link NetworkStorage#parseRequestBody(Bundle)}.
+     * @throws Exception by some fails
+     */
+    @Test
+    public final void testParseRequestBodyString() throws Exception {
+
+        NetworkRepository okIpcManager = NetworkRepository.create(TEST_AUTHORITY).build();
+        final Bundle container = new Bundle();
+        final String mediaType = "text/plain";
+        final String message = "Hello, World!";
+        okIpcManager.newRequestBody(container, mediaType, message);
+
+
+
+        final HttpUrl httpUrl = new HttpUrl.Builder()
+                .scheme("https").host("httpbin.org")
+                .addPathSegment("post").build();
+
+        //noinspection ConstantConditions
+        final RequestBody requestBody = NetworkStorage
+                .parseRequestBody(container.getBundle(BUNDLE_REQUEST_BODY));
+        //noinspection ConstantConditions
+        final Request request =
+                new Request.Builder()
+                        .url(httpUrl)
+                        .method("POST", requestBody)
+                        .build();
+
+        okHttpClient.newCall(request).execute().close();
+
+    }
+
+    /**
+     * Test for {@link NetworkStorage#parseRequestBody(Bundle)}.
+     * @throws Exception by some fails
+     */
+    @Test
+    public final void testParseRequestBodyFile() throws Exception {
+
+        final Context context = InstrumentationRegistry.getContext();
+        if (assetManager == null) assetManager = context.getAssets();
+
+        NetworkRepository okIpcManager = NetworkRepository.create(TEST_AUTHORITY).build();
+
+        final long timeOut = 1800;
+        final TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout (timeOut, timeUnit).build();
+
+        final HttpUrl httpUrl = new HttpUrl.Builder()
+                .scheme("https").host("httpbin.org")
+                .addPathSegment("post").build();
+
+        final Bundle container = new Bundle();
+        final String mediaType = "application/json";
+        final long length = 462;
+        final InputStream inputStream = assetManager.open(TEST_FILE);
+
+        final OkUtils.IOLock ioLock = new OkUtils.IOLock();
+
+        //noinspection Convert2Lambda
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    NetworkUtils.forward(inputStream, ioLock);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+        okIpcManager.newRequestBody(container, mediaType,
+                NetworkUtils.getAssetFileDescriptor(ioLock)
+                    .getParcelFileDescriptor(),
+                length);
+
+        //noinspection ConstantConditions
+        final RequestBody requestBody = NetworkStorage
+                .parseRequestBody(container.getBundle(BUNDLE_REQUEST_BODY));
+        //noinspection ConstantConditions
+        final Request request =
+                new Request.Builder()
+                        .url(httpUrl)
+                        .method("POST", requestBody)
+                        .build();
+
+        okHttpClient.newCall(request).execute().close();
+
+        inputStream.close();
+    }
+
+    /** Testing {@link NetworkStorage#parseFormBody(Bundle)}  */
+    @Test
+    public final void testParseFormBody() throws Exception {
+
+        NetworkRepository okIpcManager = NetworkRepository.create(TEST_AUTHORITY).build();
+        final Bundle container = new Bundle();
+        okIpcManager.newFormBody(container, new HashMap<String, String>(){{
+            put("key1", "value1"); put("key2", "value2"); put("key3", "value3");
+        }});
+
+        final long timeOut = 1800;
+        final TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout (timeOut, timeUnit).build();
+
+        final HttpUrl httpUrl = new HttpUrl.Builder()
+                .scheme("https").host("httpbin.org")
+                .addPathSegment("post").build();
+
+        //noinspection ConstantConditions
+        final RequestBody requestBody = NetworkStorage
+                .parseFormBody(container.getBundle(BUNDLE_FORM_BODY));
+        //noinspection ConstantConditions
+        final Request request =
+                new Request.Builder()
+                        .url(httpUrl)
+                        .method("POST", requestBody)
+                        .build();
+
+        //noinspection ConstantConditions
+        Log.d("TAG", "testParseFormBody: " + okHttpClient.newCall(request).execute().body().string());
+    }
+
+}
