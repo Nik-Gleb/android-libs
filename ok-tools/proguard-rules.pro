@@ -118,7 +118,7 @@
     public protected *;
 }
 
--dontnote android.*
+-dontnote android.**
 -dontnote org.apache.*
 -dontnote android.json.*
 -dontnote android.xmlpull.*

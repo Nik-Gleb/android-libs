@@ -121,7 +121,7 @@
 -keep public class !network.BuildConfig {public protected *;}
 -keep public interface * {public protected *;}
 
--dontnote android.*
+-dontnote android.**
 -dontnote org.apache.*
 -dontnote android.json.*
 -dontnote android.xmlpull.*
