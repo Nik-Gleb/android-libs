@@ -119,4 +119,9 @@
 }
 
 -dontnote android.*
+-dontnote org.apache.*
+-dontnote android.json.*
+-dontnote android.xmlpull.*
+-dontnote dalvik.*
+
 -keep class java.lang.invoke.LambdaMetafactory
