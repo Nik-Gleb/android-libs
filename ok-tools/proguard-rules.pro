@@ -128,3 +128,6 @@
 -dontnote dalvik.**
 
 -dontwarn **$$Lambda$*
+
+-dontwarn ok.*
+-dontwarn okhttp3.*
