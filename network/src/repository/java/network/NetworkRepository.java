@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static network.NetworkContracts.BUNDLE_BODY_LENGTH;
@@ -99,7 +98,7 @@ public final class NetworkRepository {
    * @param body the content body
    */
   public void newRequestBody (Bundle bundle, String type,
-      ParcelFileDescriptor body, long length) throws IOException {
+      ParcelFileDescriptor body, long length) {
     final Bundle result = new Bundle();
     bundle.putBundle(BUNDLE_REQUEST_BODY, result);
     result.putString(BUNDLE_MEDIA_TYPE, type);
@@ -111,7 +110,7 @@ public final class NetworkRepository {
    * @param bundle options container
    * @param map the map of content
    */
-  public void newFormBody (Bundle bundle, Map<String, String> map) throws IOException {
+  public void newFormBody (Bundle bundle, Map<String, String> map) {
     final Bundle result = new Bundle();
     bundle.putBundle(BUNDLE_FORM_BODY, result);
     for (Map.Entry<String, String> entry : map.entrySet())
@@ -122,7 +121,7 @@ public final class NetworkRepository {
    * @param bundle options container
    * @param map the map of headers
    */
-  public void newHeaders (Bundle bundle, Map<String, String> map) throws IOException {
+  public void newHeaders (Bundle bundle, Map<String, String> map) {
     final Bundle result = new Bundle();
     bundle.putBundle(BUNDLE_HEADERS, result);
     for (Map.Entry<String, String> entry : map.entrySet())
