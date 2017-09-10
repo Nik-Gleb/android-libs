@@ -1,6 +1,6 @@
 /*
- * CPToolsTest.java
- * cp-tools
+ * BaseTest.java
+ * repository
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *

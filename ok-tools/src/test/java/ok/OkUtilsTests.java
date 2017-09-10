@@ -1,5 +1,5 @@
 /*
- * OkHttpUtilsTests.java
+ * OkUtilsTests.java
  * ok-tools
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.

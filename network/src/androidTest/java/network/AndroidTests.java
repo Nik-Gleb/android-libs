@@ -1,6 +1,6 @@
 /*
- * CPToolsTest.java
- * loaders
+ * AndroidTests.java
+ * network
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *

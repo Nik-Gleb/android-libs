@@ -1,6 +1,6 @@
 /*
  * Utils.java
- * cp-tools
+ * repository
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
