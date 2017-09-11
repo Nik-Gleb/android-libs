@@ -30,8 +30,8 @@ apply plugin: 'java-library'
 final MODULE = "ok-tools"
 final PACKAGE = glebLibs
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
+/*sourceCompatibility = "1.8"
+targetCompatibility = "1.8"*/
 assemble.dependsOn clean
 
 task proguard(type: ProGuardTask) {
