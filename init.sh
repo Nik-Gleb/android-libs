@@ -13,12 +13,11 @@ wget $pathToRepo/version.txt
 gradleVersion=$(cat "./version.txt")
 rm -f "./version.txt"
 
-wget https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip
-unzip gradle-$gradleVersion-bin.zip
-rm -f gradle-$gradleVersion-bin.zip
+gradleHomeDir=`ls -d $HOME/.gradle/wrapper/dists/gradle-$gradleVersion-bin/* | head -n 1`
+gradlePath=$gradleHomeDir/gradle-$gradleVersion/bin
 
-./gradle-$gradleVersion/bin/gradle --stop
-./gradle-$gradleVersion/bin/gradle wrapper --gradle-version $gradleVersion
+$gradlePath/gradle --stop
+$gradlePath/gradle wrapper --gradle-version $gradleVersion
 
 rm -rf ./gradle-$gradleVersion
 
