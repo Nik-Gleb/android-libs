@@ -26,6 +26,7 @@ rm -rf ./gradle-$gradleVersion
 wget $pathToRepo/build.gradle
 wget $pathToRepo/gradle.properties
 
+head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
 echo "apply plugin: 'com.android.library'" >> build.gradle
 echo "android {" >> build.gradle
 echo "  compileSdkVersion Integer.parseInt(sdkVer)" >> build.gradle
