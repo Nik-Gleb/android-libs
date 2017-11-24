@@ -1,6 +1,6 @@
 /*
- * Valuesable.java
- * repository
+ * PreferencesStorage.java
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,27 +23,11 @@
  * SOFTWARE.
  */
 
-package repository;
-
-import android.content.ContentValues;
-import android.support.annotation.NonNull;
+package storage;
 
 /**
- * Selectable Request Builder.
- *
- * @param <T> the type of builder
- *
  * @author Nikitenko Gleb
- * @since 1.0, 12/07/2017
+ * @since 1.0, 11/09/2017
  */
-interface Valuesable<T> {
-
-  /**
-   * Append some values.
-   *
-   * @return current builder
-   */
-  @SuppressWarnings("unused")
-  @NonNull
-  T values (@NonNull ContentValues values);
+public final class PreferencesStorage {
 }

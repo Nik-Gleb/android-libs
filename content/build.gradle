@@ -29,7 +29,7 @@ apply plugin: 'com.android.library'
 /*================== DECLARATIONS =====================*/
 
 final int SDK_VER = Integer.parseInt(sdkVer)
-final MODULE = "repository"
+final MODULE = "content"
 final PACKAGE = glebLibs
 
 /*=====================================================*/
@@ -50,7 +50,12 @@ android {
   //noinspection GroovyMissingReturnStatement
   defaultConfig {
     minSdkVersion minSdk; targetSdkVersion SDK_VER
-    dexOptions { javaMaxHeapSize jvmHeapSize }
+    dexOptions {
+      javaMaxHeapSize jvmHeapSize
+      maxProcessCount 8
+      preDexLibraries true
+      keepRuntimeAnnotatedClasses false
+    }
     compileOptions {
       sourceCompatibility JavaVersion.VERSION_1_8
       targetCompatibility JavaVersion.VERSION_1_8
@@ -97,8 +102,6 @@ publish.doLast {
 
 dependencies {
 
-  /* Proguard rules */
-  implementation 'com.infstory:proguard-annotations:1.0.2'
   /* Support annotations. */
   implementation 'com.android.support:support-annotations:' + supportVersion
 

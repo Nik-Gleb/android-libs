@@ -49,7 +49,12 @@ android {
 
   defaultConfig {
     minSdkVersion minSdk; targetSdkVersion SDK_VER
-    dexOptions { javaMaxHeapSize jvmHeapSize }
+    dexOptions {
+      javaMaxHeapSize jvmHeapSize
+      maxProcessCount 8
+      preDexLibraries true
+      keepRuntimeAnnotatedClasses false
+    }
     compileOptions {
       sourceCompatibility JavaVersion.VERSION_1_8
       targetCompatibility JavaVersion.VERSION_1_8

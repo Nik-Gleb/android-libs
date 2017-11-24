@@ -1,6 +1,6 @@
 /*
- * Query.java
- * repository
+ * Update.java
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -27,26 +27,20 @@ package repository;
 
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
-import android.database.Cursor;
+import android.content.ContentValues;
 import android.net.Uri;
-import android.os.CancellationSignal;
 import android.os.RemoteException;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 /**
- * Content Provider Query Builder.
+ * ContentContracts Provider Update Builder.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 12/07/2017
  */
-@SuppressWarnings({ "unused", "WeakerAccess" })
-public final class Query implements Selectable<Query> {
-
-  /** SQL Sort delimiter. */
-  private static final String SORT_DELIMITER = ",";
+@SuppressWarnings("unused")
+public final class Update implements Selectable<Update>, Valuesable<Update> {
 
   /** The resource uri. */
   @NonNull private final Uri mUri;
@@ -56,23 +50,15 @@ public final class Query implements Selectable<Query> {
 
   /** The selection. */
   @Nullable private Selection mSelection = null;
-
-  /** The columns. */
-  @Nullable private String[] mProjection = null;
-  /** The sort order. */
-  @Nullable private String mSortOrder = null;
-
-  /** The Limit */
-  private int mLimit = -1;
-  /** The Offset */
-  private int mOffset = -1;
+  /** Insert content */
+  @Nullable private ContentValues mValues = null;
 
   /**
-   * Construct a new {@link Query}
+   * Construct a new {@link Update}
    *
    * @param uri content resource
    */
-  public Query (@NonNull Uri uri) {
+  private Update (@NonNull Uri uri) {
     mUri = uri;
   }
 
@@ -82,19 +68,19 @@ public final class Query implements Selectable<Query> {
    * @return current builder
    */
   @NonNull
-  public final Query item (long id) {
+  public final Update item (long id) {
     mId = id;
     return this;
   }
 
   /**
-   * Define columns.
+   * Add bytes value.
    *
    * @return current builder
    */
   @NonNull
-  public final Query columns (@NonNull String... columns) {
-    mProjection = columns;
+  public final Update values (@NonNull ContentValues values) {
+    mValues = values;
     return this;
   }
 
@@ -104,78 +90,27 @@ public final class Query implements Selectable<Query> {
    * @return current builder
    */
   @NonNull
-  public final Query select (@NonNull Selection selection) {
+  public final Update select (@NonNull Selection selection) {
     mSelection = selection;
     return this;
   }
 
   /**
-   * Define sort
-   *
-   * @return current builder
-   */
-  @NonNull
-  public final Query sort (boolean asc, @NonNull String... columns) {
-    mSortOrder =
-        TextUtils.join(SORT_DELIMITER, columns) + " " + (asc ? "ASC" : "DESC");
-    return this;
-  }
-
-  /**
-   * Define limit
-   *
-   * @return current builder
-   */
-  @NonNull
-  public final Query limit (@IntRange(from = 1) int limit) {
-    if (limit > 0) {
-      mLimit = limit;
-    }
-    return this;
-  }
-
-  /**
-   * Define offset
-   *
-   * @return current builder
-   */
-  @NonNull
-  public final Query offset (@IntRange(from = 1) int offset) {
-    if (offset > 0) {
-      mOffset = offset;
-    }
-    return this;
-  }
-
-  /**
    * @param client content provider client
-   * @param signal cancellation signal
    *
    * @return content provider response
    **/
-  @Nullable
-  final Cursor exec (@NonNull ContentProviderClient client,
-      @Nullable CancellationSignal signal)
+  public final int execute (@NonNull ContentProviderClient client)
       throws RemoteException {
 
     final String select = mSelection != null ? mSelection.getSelection() : null;
     final String[] selArgs =
         mSelection != null ? mSelection.getSelectionArgs() : null;
-    final String sort = mSortOrder +
-        (mLimit > 0 ? " LIMIT " + mLimit : "") +
-        (mOffset > 0 ? " OFFSET " + mOffset : "");
 
     final Uri.Builder uriBuilder = (mId != -1 ? ContentUris.withAppendedId(mUri,
         mId) : mUri).buildUpon();
     final Uri uri = uriBuilder.build();
 
-    return signal == null ?
-        client.query(uri, mProjection, select, selArgs, sort) :
-        client.query(uri, mProjection, select, selArgs, sort, signal);
+    return client.update(uri, mValues, select, selArgs);
   }
-
-  /** The content uri. */
-  @NonNull
-  public final Uri getUri () {return mUri;}
-
 }

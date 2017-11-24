@@ -31,6 +31,7 @@ package network;
  * @author Nikitenko Gleb
  * @since 1.0, 09/09/2017
  */
+@SuppressWarnings("unused")
 final class NetworkContracts {
 
   /** The "headers" bundle parameter. */

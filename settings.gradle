@@ -24,7 +24,7 @@
  */
 
 include ':logger'
-include ':repository'
+include ':content'
 include ':drawables'
 include ':fragments'
 include ':loaders'

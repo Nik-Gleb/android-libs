@@ -1,6 +1,6 @@
 /*
  * Selection.java
- * repository
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -31,7 +31,7 @@ import android.support.annotation.Nullable;
 
 
 /**
- * Content Provider Selection Container.
+ * ContentContracts Provider Selection Container.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 09/11/2016

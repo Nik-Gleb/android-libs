@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package repository;
+package content;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
@@ -37,6 +37,7 @@ import java.util.Arrays;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicClassMembers;
+import repository.Selection;
 
 /**
  * BaseTest Tests.

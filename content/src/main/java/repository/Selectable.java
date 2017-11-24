@@ -1,6 +1,6 @@
 /*
- * Insert.java
- * repository
+ * Selectable.java
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -25,58 +25,33 @@
 
 package repository;
 
-import android.content.ContentProviderClient;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.net.Uri;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
- * Content Provider Insert Builder.
+ * Selectable Request Builder.
+ *
+ * @param <T> the type of builder
  *
  * @author Nikitenko Gleb
  * @since 1.0, 12/07/2017
  */
-@SuppressWarnings("unused")
-public final class Insert implements Valuesable<Insert> {
-
-  /** The resource uri. */
-  @NonNull private final Uri mUri;
-
-  /** Insert content */
-  @Nullable private ContentValues mValues = null;
+interface Selectable<T> {
 
   /**
-   * Construct a new {@link Insert}
-   *
-   * @param uri content resource
-   */
-  public Insert (@NonNull Uri uri) {
-    mUri = uri;
-  }
-
-  /**
-   * Add bytes value.
+   * Access to item.
    *
    * @return current builder
    */
+  @SuppressWarnings("unused")
   @NonNull
-  public final Insert values (@NonNull ContentValues values) {
-    mValues = values;
-    return this;
-  }
+  T item (long id);
 
   /**
-   * @param client content provider client
+   * Define selection.
    *
-   * @return content provider response
-   **/
-  public final long execute (@NonNull ContentProviderClient client)
-      throws RemoteException {
-    final Uri.Builder uriBuilder = mUri.buildUpon();
-    final Uri uri = uriBuilder.build();
-    return ContentUris.parseId(client.insert(uri, mValues));
-  }
+   * @return current builder
+   */
+  @SuppressWarnings("unused")
+  @NonNull
+  T select (@NonNull Selection selection);
 }

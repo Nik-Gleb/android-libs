@@ -1,6 +1,6 @@
 /*
- * Update.java
- * repository
+ * Delete.java
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -27,20 +27,19 @@ package repository;
 
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Content Provider Update Builder.
+ * ContentContracts Provider Delete Builder.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 12/07/2017
  */
 @SuppressWarnings("unused")
-public final class Update implements Selectable<Update>, Valuesable<Update> {
+public final class Delete implements Selectable<Delete> {
 
   /** The resource uri. */
   @NonNull private final Uri mUri;
@@ -50,15 +49,14 @@ public final class Update implements Selectable<Update>, Valuesable<Update> {
 
   /** The selection. */
   @Nullable private Selection mSelection = null;
-  /** Insert content */
-  @Nullable private ContentValues mValues = null;
 
   /**
-   * Construct a new {@link Update}
+   * Construct a new {@link Delete}
    *
    * @param uri content resource
    */
-  private Update (@NonNull Uri uri) {
+  @SuppressWarnings("unused")
+  public Delete (@NonNull Uri uri) {
     mUri = uri;
   }
 
@@ -68,19 +66,8 @@ public final class Update implements Selectable<Update>, Valuesable<Update> {
    * @return current builder
    */
   @NonNull
-  public final Update item (long id) {
+  public final Delete item (long id) {
     mId = id;
-    return this;
-  }
-
-  /**
-   * Add bytes value.
-   *
-   * @return current builder
-   */
-  @NonNull
-  public final Update values (@NonNull ContentValues values) {
-    mValues = values;
     return this;
   }
 
@@ -90,7 +77,7 @@ public final class Update implements Selectable<Update>, Valuesable<Update> {
    * @return current builder
    */
   @NonNull
-  public final Update select (@NonNull Selection selection) {
+  public final Delete select (@NonNull Selection selection) {
     mSelection = selection;
     return this;
   }
@@ -111,6 +98,6 @@ public final class Update implements Selectable<Update>, Valuesable<Update> {
         mId) : mUri).buildUpon();
     final Uri uri = uriBuilder.build();
 
-    return client.update(uri, mValues, select, selArgs);
+    return client.delete(uri, select, selArgs);
   }
 }
