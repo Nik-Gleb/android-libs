@@ -16,7 +16,10 @@ rm -f "./version.txt"
 wget https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip
 unzip gradle-$gradleVersion-bin.zip
 rm -f gradle-$gradleVersion-bin.zip
+
+./gradle-$gradleVersion/bin/gradle --stop
 ./gradle-$gradleVersion/bin/gradle wrapper --gradle-version $gradleVersion
+
 rm -rf ./gradle-$gradleVersion
 
 wget $pathToRepo/build.gradle
