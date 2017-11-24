@@ -3,3 +3,10 @@
 /build
 /local.properties
 android-libs.iml
+
+/gradle
+android.jar
+build.gradle
+gradle.properties
+gradlew
+gradlew.bat
