@@ -3,6 +3,8 @@
 git fetch
 git checkout dev
 
+mv ./settings.gradle ./settings.gradle.bk
+
 pathToRepo="https://raw.githubusercontent.com/Nik-Gleb/build-config/master"
 
 rm -f "./android.jar"
@@ -41,3 +43,5 @@ rm -rf ./AndroidManifest.xml
 cd ./build/generated
 mv `ls | head -n 1` ../../android.jar
 cd ../.. && rm -rf ./build
+
+mv ./settings.gradle.bk ./settings.gradle
