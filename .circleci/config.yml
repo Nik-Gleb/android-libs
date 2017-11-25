@@ -23,8 +23,8 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
       - run:
-          name: Download Dependencies
-          command: ./gradlew androidDependencies
+          name: Delivery
+          command: ./gradlew clean && ./gradlew assembleRelease -PVERSION_NAME=0.0.1 && ./gradlew publish -PVERSION_NAME=0.0.1
       - save_cache:
           paths:
             - ~/.m2
