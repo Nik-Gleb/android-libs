@@ -30,23 +30,23 @@ rm -rf ./gradle-$gradleVersion
 wget $pathToRepo/build.gradle
 wget $pathToRepo/gradle.properties
 
-head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
-echo "apply plugin: 'com.android.library'" >> build.gradle
-echo "android {" >> build.gradle
-echo "  compileSdkVersion Integer.parseInt(sdkVer)" >> build.gradle
-echo "  buildToolsVersion buildToolsVer" >> build.gradle
-echo "  sourceSets {main {manifest.srcFile './AndroidManifest.xml'}}" >> build.gradle
-echo "}" >> build.gradle
-echo "<manifest package=\"android\"/>" >> AndroidManifest.xml
+#head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
+#echo "apply plugin: 'com.android.library'" >> build.gradle
+#echo "android {" >> build.gradle
+#echo "  compileSdkVersion Integer.parseInt(sdkVer)" >> build.gradle
+#echo "  buildToolsVersion buildToolsVer" >> build.gradle
+#echo "  sourceSets {main {manifest.srcFile './AndroidManifest.xml'}}" >> build.gradle
+#echo "}" >> build.gradle
+#echo "<manifest package=\"android\"/>" >> AndroidManifest.xml
 
-./gradlew mockableAndroidJar
+#./gradlew mockableAndroidJar
 
-head -n -6 build.gradle > build.temp ; mv build.temp build.gradle
-echo "task clean {delete rootProject.buildDir}" >> build.gradle
-rm -rf ./AndroidManifest.xml
+#head -n -6 build.gradle > build.temp ; mv build.temp build.gradle
+#echo "task clean {delete rootProject.buildDir}" >> build.gradle
+#rm -rf ./AndroidManifest.xml
 
-cd ./build/generated
-mv `ls | head -n 1` ../../android.jar
-cd ../.. && rm -rf ./build
+#cd ./build/generated
+#mv `ls | head -n 1` ../../android.jar
+#cd ../.. && rm -rf ./build
 
 mv ./settings.gradle.bk ./settings.gradle
