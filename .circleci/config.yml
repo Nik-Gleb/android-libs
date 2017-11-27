@@ -7,20 +7,16 @@ general:
   branches:
     only:
       - master
-machine:
-  environment:
-    ANDROID_HOME: /usr/local/android-sdk-linux
 jobs:
   build:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-      
       #working_directory: ~/repo
-      
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
+      ANDROID_HOME: /usr/local/android-sdk-linux
     steps:
       - checkout
       - run:
