@@ -1,7 +1,7 @@
 #!/bin/sh
 
-git fetch
-git checkout dev
+#git fetch
+#git checkout dev
 
 mv ./settings.gradle ./settings.gradle.bk
 
