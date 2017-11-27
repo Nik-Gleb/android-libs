@@ -7,6 +7,9 @@ general:
   branches:
     only:
       - master
+machine:
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
 jobs:
   build:
     docker:
@@ -19,7 +22,6 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
-      - export ANDROID_HOME=/usr/local/android-sdk-linux
       - checkout
       - run:
           name: Update versions
