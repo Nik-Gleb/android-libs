@@ -3,6 +3,11 @@
 git fetch
 git checkout dev
 
+wget https://codeload.github.com/dweiss/proguard/zip/renamer
+unzip renamer && rm -f renamer
+sudo cp -TRv ./proguard-renamer/ $ANDROID_SDK_ROOT/tools/proguard/
+rm -rf ./proguard-renamer
+
 mv ./settings.gradle ./settings.gradle.bk
 
 pathToRepo="https://raw.githubusercontent.com/Nik-Gleb/build-config/master"
