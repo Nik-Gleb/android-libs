@@ -19,6 +19,7 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
+       - sudo ANDROID_HOME=/usr/local/android-sdk-linux
       - checkout
       - run:
           name: Update versions
