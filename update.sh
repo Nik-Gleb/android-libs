@@ -5,7 +5,6 @@ git checkout dev
 
 wget https://codeload.github.com/dweiss/proguard/zip/renamer
 unzip renamer && rm -f renamer
-mkdir -p $ANDROID_HOME/tools/proguard
 sudo cp -TRv ./proguard-renamer/ $ANDROID_HOME/tools/proguard/
 rm -rf ./proguard-renamer
 
