@@ -18,9 +18,6 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      - type: shell
-          command: |
-          which android
 #      - run:
 #          name: Update versions
 #          command: ./update.sh
@@ -34,3 +31,8 @@ jobs:
 #          paths:
 #            - ~/.m2
 #          key: v1-dependencies-{{ checksum "build.gradle" }}
+workflows:
+  jobs:
+    - type: shell
+    command: |
+      which android
