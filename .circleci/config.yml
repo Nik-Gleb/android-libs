@@ -18,7 +18,7 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      - run: echo $ANDROID_HOME
+      - run: find . -name "SDK Readme.txt"
 #      - run:
 #          name: Update versions
 #          command: ./update.sh
