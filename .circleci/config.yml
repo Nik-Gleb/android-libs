@@ -18,7 +18,7 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      - run: find . -name "SDK Readme.txt"
+      - run: find /usr -name "SDK Readme.txt"
 #      - run:
 #          name: Update versions
 #          command: ./update.sh
