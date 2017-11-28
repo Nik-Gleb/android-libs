@@ -4,9 +4,9 @@ git fetch
 git checkout dev
 
 wget https://codeload.github.com/dweiss/proguard/zip/renamer
-unzip renamer && rm -f renamer
-sudo cp -TRv ./proguard-renamer/ $ANDROID_HOME/tools/proguard/
-rm -rf ./proguard-renamer
+rm -rf ./proguard && unzip renamer -d ./proguard && rm -f renamer
+#sudo cp -TRv ./proguard-renamer/ $ANDROID_HOME/tools/proguard/
+#rm -rf ./proguard-renamer
 
 mv ./settings.gradle ./settings.gradle.bk
 
