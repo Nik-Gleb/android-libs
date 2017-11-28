@@ -18,7 +18,7 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      -run which android
+      - run: which android
 #      - run:
 #          name: Update versions
 #          command: ./update.sh
