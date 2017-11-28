@@ -1,24 +1,19 @@
 #!/bin/sh
 
-git fetch
-git checkout dev
-
-wget https://codeload.github.com/dweiss/proguard/zip/renamer
-rm -rf ./proguard && unzip renamer -d ./proguard && rm -f renamer
-#sudo cp -TRv ./proguard-renamer/ $ANDROID_HOME/tools/proguard/
-#rm -rf ./proguard-renamer
+#git fetch
+#git checkout dev
 
 mv ./settings.gradle ./settings.gradle.bk
 
 pathToRepo="https://raw.githubusercontent.com/Nik-Gleb/build-config/master"
 
-rm -f "./android.jar"
+rm -f "./.android.jar" && rm -f "./.proguard.jar"
 rm -f "./build.gradle" && rm -f "./gradle.properties" && rm -f "./version.txt"
 rm -rf ./gradle && rm -f "./gradlew" && rm -f "./gradlew.bat"
 
-wget $pathToRepo/version.txt
-gradleVersion=$(cat "./version.txt")
-rm -f "./version.txt"
+wget $pathToRepo/gradle.txt
+gradleVersion=$(cat "./gradle.txt")
+rm -f "./gradle.txt"
 
 #gradleHomeDir=`ls -d $HOME/.gradle/wrapper/dists/gradle-$gradleVersion-all/* | head -n 1`
 #gradlePath=$gradleHomeDir/gradle-$gradleVersion/bin
@@ -31,6 +26,11 @@ rm -f gradle-$gradleVersion-bin.zip
 ./gradle-$gradleVersion/bin/gradle --stop
 ./gradle-$gradleVersion/bin/gradle wrapper --gradle-version $gradleVersion
 rm -rf ./gradle-$gradleVersion
+
+wget $pathToRepo/proguard.txt
+proguardVersion=$(cat "./proguard.txt")
+rm -f "./proguard.txt"
+wget -O .proguard.jar http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguardVersion/proguard-base-$proguardVersion.jar
 
 wget $pathToRepo/build.gradle
 wget $pathToRepo/gradle.properties
@@ -51,7 +51,7 @@ echo "task clean {delete rootProject.buildDir}" >> build.gradle
 rm -rf ./AndroidManifest.xml
 
 cd ./build/generated
-mv `ls | head -n 1` ../../android.jar
+mv `ls | head -n 1` ../../.android.jar
 cd ../.. && rm -rf ./build
 
 mv ./settings.gradle.bk ./settings.gradle

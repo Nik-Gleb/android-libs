@@ -5,8 +5,9 @@
 android-libs.iml
 
 /gradle
-android.jar
-build.gradle
-gradle.properties
-gradlew
-gradlew.bat
+/.android.jar
+/.proguard.jar
+/build.gradle
+/gradle.properties
+/gradlew
+/gradlew.bat

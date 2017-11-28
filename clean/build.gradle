@@ -38,7 +38,7 @@ task proguard(type: ProGuardTask) {
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
-  libraryjars "../android.jar"
+  libraryjars "../.android.jar"
   configuration 'proguard-rules.pro'
 }
 proguard.dependsOn assemble
