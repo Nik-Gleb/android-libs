@@ -18,9 +18,11 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      - run:
-          name: Update versions
-          command: sudo which android
+      - type: shell
+          command: |
+          which android
+#      - run:
+#          name: Update versions
 #          command: ./update.sh
 #      - restore_cache:
 #          keys:
