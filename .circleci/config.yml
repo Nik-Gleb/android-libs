@@ -20,7 +20,7 @@ jobs:
       - checkout
       - run:
           name: Update versions
-          command: which android
+          command: sudo which android
 #          command: ./update.sh
 #      - restore_cache:
 #          keys:
