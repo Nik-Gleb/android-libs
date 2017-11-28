@@ -34,5 +34,5 @@ jobs:
 workflows:
   jobs:
     - type: shell
-    command: |
-      which android
+      command: |
+        which android
