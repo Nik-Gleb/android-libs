@@ -20,7 +20,8 @@ jobs:
       - checkout
       - run:
           name: Update versions
-          command: ./update.sh
+          command: which android
+#          command: ./update.sh
 #      - restore_cache:
 #          keys:
 #            - v1-dependencies-{{ checksum "build.gradle" }}
