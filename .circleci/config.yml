@@ -18,17 +18,16 @@ jobs:
       TERM: dumb
     steps:
       - checkout
-      - run: which android
-#      - run:
-#          name: Update versions
-#          command: ./update.sh
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "build.gradle" }}
-#      - run:
-#          name: Delivery
-#          command: ./gradlew clean && ./gradlew assembleRelease -PVERSION_NAME=0.0.1 && ./gradlew publish -PVERSION_NAME=0.0.1
-#      - save_cache:
-#          paths:
-#            - ~/.m2
-#          key: v1-dependencies-{{ checksum "build.gradle" }}
+      - run:
+          name: Update versions
+          command: ./update.sh
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+      - run:
+          name: Delivery
+          command: ./gradlew clean && ./gradlew assembleRelease -PVERSION_NAME=0.0.1 && ./gradlew publish -PVERSION_NAME=0.0.1
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "build.gradle" }}
