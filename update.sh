@@ -5,20 +5,16 @@
 
 mv ./settings.gradle ./settings.gradle.bk
 
-pathToRepo="https://raw.githubusercontent.com/Nik-Gleb/build-config/master"
+config_ver="63943c50754263d80704d5e428afee00874e9cc1"
+pathToRepo="https://bitbucket.org/NikGleb/android-builds/raw/$config_ver"
 
-rm -f "./.android.jar" && rm -f "./.proguard.jar"
+rm -f "./.android.jar" && rm -f "./.proguard.jar" && rm -f "./.production.jks"
 rm -f "./build.gradle" && rm -f "./gradle.properties" && rm -f "./version.txt"
 rm -rf ./gradle && rm -f "./gradlew" && rm -f "./gradlew.bat"
 
 wget $pathToRepo/gradle.txt
 gradleVersion=$(cat "./gradle.txt")
 rm -f "./gradle.txt"
-
-#gradleHomeDir=`ls -d $HOME/.gradle/wrapper/dists/gradle-$gradleVersion-all/* | head -n 1`
-#gradlePath=$gradleHomeDir/gradle-$gradleVersion/bin
-#$gradlePath/gradle --stop
-#$gradlePath/gradle wrapper --gradle-version $gradleVersion
 
 wget https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip
 unzip gradle-$gradleVersion-bin.zip
@@ -34,6 +30,7 @@ wget -O .proguard.jar http://central.maven.org/maven2/net/sf/proguard/proguard-b
 
 wget $pathToRepo/build.gradle
 wget $pathToRepo/gradle.properties
+wget -O .production.jks $pathToRepo/production.jks
 
 head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
 echo "apply plugin: 'com.android.library'" >> build.gradle

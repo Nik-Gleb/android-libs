@@ -7,6 +7,7 @@ android-libs.iml
 /gradle
 /.android.jar
 /.proguard.jar
+/.production.jks
 /build.gradle
 /gradle.properties
 /gradlew
