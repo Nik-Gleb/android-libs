@@ -40,7 +40,7 @@ android {
 
   signingConfigs {
     releaseConfig {
-      storeFile file(keyStoreFile)
+      storeFile file("../" + keyStoreFile)
       storePassword keyStorePass
       keyAlias sigKeyAlias
       keyPassword sigKeyPassword
