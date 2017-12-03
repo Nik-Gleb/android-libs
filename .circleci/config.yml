@@ -6,7 +6,7 @@ version: 2
 general:
   branches:
     only:
-      - master
+      - dev
 jobs:
   build:
     docker:
@@ -14,19 +14,20 @@ jobs:
       - image: circleci/android:api-27-alpha
       #working_directory: ~/repo
     environment:
+      GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
       - checkout
       - run:
-          name: Update versions
+          name: prepare
           command: ./update.sh
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
       - run:
-          name: Delivery
-          command: ./gradlew clean && ./gradlew assembleDebug -PVERSION_NAME=0.0.1 && ./gradlew publish -PVERSION_NAME=0.0.1
+          name: deploy
+          command: ./gradlew clean
       - save_cache:
           paths:
             - ~/.m2
