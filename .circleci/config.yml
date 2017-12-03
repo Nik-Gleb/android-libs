@@ -27,7 +27,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
       - run:
           name: deploy
-          command: ./gradlew clean && ./gradlew publish
+          command: ./gradlew clean && ./gradlew tasks --all
       - save_cache:
           paths:
             - ~/.m2
