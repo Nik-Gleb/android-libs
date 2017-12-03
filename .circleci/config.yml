@@ -11,7 +11,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/android:api-27-alpha
+      - image: jacekmarchwicki/android
       #working_directory: ~/repo
     environment:
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
