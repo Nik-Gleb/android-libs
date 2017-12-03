@@ -40,10 +40,12 @@ android {
 
     signingConfigs {
         releaseConfig {
-            storeFile file(keyStoreFile)
+            storeFile file("../" + keyStoreFile)
             storePassword keyStorePass
-            keyAlias sigKeyAlias
-            keyPassword sigKeyPassword
+            keyAlias project.ext.mHasKeyPass ?
+                "dev" : sigKeyAlias
+            keyPassword project.ext.mHasKeyPass ?
+                project.ext.mKeyPass : sigKeyPassword
         }
     }
 
@@ -101,11 +103,13 @@ apply plugin: 'maven-publish'
 publishing {
     publications {
         maven(MavenPublication) {
+            if (project.ext.myMavenRepoWriteUrl == null ||
+                project.ext.myMavenRepoWriteUrl.isEmpty()) return true
             groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
             artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
         }
     }
-    repositories { maven { url myMavenRepoWriteUrl } }
+    repositories { maven { url project.ext.myMavenRepoWriteUrl } }
 }
 publish.doLast {
     final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer

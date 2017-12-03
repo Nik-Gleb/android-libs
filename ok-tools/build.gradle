@@ -30,8 +30,8 @@ apply plugin: 'java-library'
 final MODULE = "ok-tools"
 final PACKAGE = glebLibs
 
-/*sourceCompatibility = "1.8"
-targetCompatibility = "1.8"*/
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 assemble.dependsOn clean
 
 task proguard(type: ProGuardTask) {
@@ -46,11 +46,13 @@ apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
+      if (project.ext.myMavenRepoWriteUrl == null ||
+          project.ext.myMavenRepoWriteUrl.isEmpty()) return true
       groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
       artifact "$buildDir/libs/${archivesBaseName}-release.jar"
     }
   }
-  repositories { maven { url myMavenRepoWriteUrl } }
+  repositories { maven { url project.ext.myMavenRepoWriteUrl } }
 }
 publish.dependsOn proguard
 publish.doLast {
