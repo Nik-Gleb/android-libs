@@ -12,6 +12,13 @@ mv android-builds/proguard.txt proguard.txt
 mv android-builds/build.gradle build.gradle
 mv android-builds/gradle.properties gradle.properties
 mv android-builds/production.jks .production.jks
+
+if [ -d ".git/hooks" ]; then
+  rm -rf .git/hooks/commit-msg
+  mv android-builds/commit-msg .git/hooks/commit-msg
+  chmod +x .git/hooks/commit-msg
+fi
+
 #mv android-builds/update.sh ./update.sh
 #mv android-builds/release.sh ./release.sh
 
