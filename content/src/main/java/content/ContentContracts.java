@@ -53,7 +53,7 @@ import static content.ContentContracts.ValueType.STRING;
  */
 @SuppressWarnings("unused")
 final class ContentContracts {
-//
+
   /** The account-stub. */
   static final Account ACCOUNT_STUB =
       new Account("noName", "noType");
