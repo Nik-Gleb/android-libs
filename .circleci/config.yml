@@ -17,7 +17,6 @@ jobs:
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-      ANDROID_HOME: ~/.android
     steps:
       - checkout
       - run:
@@ -28,7 +27,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
       - run:
           name: deploy
-          command: which sdkmanager && ls
+          command: ./gradlew tasks --all
       - save_cache:
           paths:
             - ~/.m2
