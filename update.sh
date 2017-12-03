@@ -1,36 +1,41 @@
 #!/bin/sh
 
-#git fetch
-#git checkout dev
-
-mv ./settings.gradle ./settings.gradle.bk
-
-config_ver="63943c50754263d80704d5e428afee00874e9cc1"
-pathToRepo="https://bitbucket.org/NikGleb/android-builds/raw/$config_ver"
+pathToRepo="git@bitbucket.org:NikGleb/android-builds.git"
 
 rm -f "./.android.jar" && rm -f "./.proguard.jar" && rm -f "./.production.jks"
 rm -f "./build.gradle" && rm -f "./gradle.properties" && rm -f "./version.txt"
-rm -rf ./gradle && rm -f "./gradlew" && rm -f "./gradlew.bat"
+rm -rf ./gradle && rm -f "./gradlew" && rm -f "./gradlew.bat" && rm -f "./settings.gradle"
 
-wget $pathToRepo/gradle.txt
+git clone $pathToRepo
+mv android-builds/gradle.txt gradle.txt
+mv android-builds/proguard.txt proguard.txt
+mv android-builds/build.gradle build.gradle
+mv android-builds/gradle.properties gradle.properties
+mv android-builds/production.jks .production.jks
+#mv android-builds/update.sh ./update.sh
+#mv android-builds/release.sh ./release.sh
+
+rm -rf android-builds
+
 gradleVersion=$(cat "./gradle.txt")
 rm -f "./gradle.txt"
 
-wget https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip
-unzip gradle-$gradleVersion-bin.zip
-rm -f gradle-$gradleVersion-bin.zip
-./gradle-$gradleVersion/bin/gradle --stop
-./gradle-$gradleVersion/bin/gradle wrapper --gradle-version $gradleVersion
-rm -rf ./gradle-$gradleVersion
+gradlePackage=bin
+gradleName=gradle-$gradleVersion
+gradleFullName=$gradleName-$gradlePackage.zip
+gradleDistr=://services.gradle.org/distributions/$gradleFullName
+gradleDistrAll=https\://services.gradle.org/distributions/$gradleName-all.zip
+wget https$gradleDistr && unzip $gradleFullName && rm -f $gradleFullName
+./$gradleName/bin/gradle --stop
+./$gradleName/bin/gradle wrapper --gradle-version $gradleVersion
+./$gradleName/bin/gradle --stop
+rm -rf ./$gradleName
 
-wget $pathToRepo/proguard.txt
 proguardVersion=$(cat "./proguard.txt")
 rm -f "./proguard.txt"
-wget -O .proguard.jar http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguardVersion/proguard-base-$proguardVersion.jar
+proguardRepo="http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguardVersion/proguard-base-$proguardVersion.jar"
+wget -O .proguard.jar $proguardRepo
 
-wget $pathToRepo/build.gradle
-wget $pathToRepo/gradle.properties
-wget -O .production.jks $pathToRepo/production.jks
 
 head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
 echo "apply plugin: 'com.android.library'" >> build.gradle
@@ -51,4 +56,14 @@ cd ./build/generated
 mv `ls | head -n 1` ../../.android.jar
 cd ../.. && rm -rf ./build
 
-mv ./settings.gradle.bk ./settings.gradle
+wrapProp=./gradle/wrapper/gradle-wrapper.properties
+head -n -1 $wrapProp > $wrapProp.temp ; mv $wrapProp.temp $wrapProp
+echo "distributionUrl=$gradleDistrAll" >> $wrapProp
+
+for i in * ; do
+  if [ -d "$i" ]; then
+    if [ -f $i/build.gradle ]; then
+      echo "include ':$i'" >> settings.gradle
+    fi
+  fi
+done
