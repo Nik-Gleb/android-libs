@@ -17,6 +17,7 @@ jobs:
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
       JVM_OPTS: -Xmx3200m
       TERM: dumb
+      REPO_OS_OVERRIDE: linux
     steps:
       - checkout
       - run:
