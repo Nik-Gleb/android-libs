@@ -28,7 +28,7 @@ do
   eval "${key}='${value}'"
 done < "./gradle.properties"
 
-[ -n "$PLATFORM_API" ]; then
+if [ -n "$PLATFORM_API" ]; then
   platformApi=$PLATFORM_API
 else
   platformApi=$sdkVer
