@@ -34,8 +34,8 @@ else
   platformApi=$sdkVer
 fi
 
-sdkmanager --update && yes | sdkmanager --licenses
-sdkmanager \
+$ANDROID_HOME/tools/bin/sdkmanager --update && yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+$ANDROID_HOME/tools/bin/sdkmanager \
   "tools" \
   "platforms;android-$platformApi" \
   "platform-tools" \
@@ -58,7 +58,7 @@ wget https$gradleDistr && unzip $gradleFullName && rm -f $gradleFullName
 ./$gradleName/bin/gradle --stop
 rm -rf ./$gradleName
 
-proguardRepo="http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguard/proguard-base-$proguard.jar"
+proguardRepo="http://central.maven.org/maven2/net/sf/proguard/proguard-gradle/$proguard/proguard-gradle-$proguard.jar"
 wget -O .proguard.jar $proguardRepo
 
 head -n -1 build.gradle > build.temp ; mv build.temp build.gradle

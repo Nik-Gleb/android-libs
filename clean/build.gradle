@@ -34,14 +34,14 @@ sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 assemble.dependsOn clean
 
-task proguard(type: ProGuardTask) {
+task obfuscate(type: ProGuardTask) {
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   libraryjars "../.android.jar"
   configuration 'proguard-rules.pro'
 }
-proguard.dependsOn assemble
+obfuscate.dependsOn assemble
 
 apply plugin: 'maven-publish'
 publishing {
