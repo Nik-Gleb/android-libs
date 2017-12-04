@@ -29,6 +29,9 @@ jobs:
       - run:
           name: deploy
           command: ./gradlew assembleDebug
+      - run:
+          name: merge
+          command: git config --global user.email nikitosgleb@gmail.com && git config --global user.name "Gleb Nikitenko" && git fetch && git checkout master && git merge dev && git push
       - save_cache:
           paths:
             - ~/.m2
