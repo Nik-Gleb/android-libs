@@ -1,8 +1,5 @@
 #!/bin/sh
 
-sdkmanager --update && yes | sdkmanager --licenses
-sdkmanager "tools" "platforms;android-27" "platform-tools" "patcher;v4" "ndk-bundle" "extras;google;google_play_services" "extras;google;m2repository" "extras;android;m2repository" "cmake;3.6.4111459" "build-tools;27.0.1"
-
 pathToRepo="git@bitbucket.org:NikGleb/android-builds.git"
 
 rm -f "./.android.jar" && rm -f "./.proguard.jar" && rm -f "./.production.jks"
@@ -26,6 +23,27 @@ fi
 #mv android-builds/release.sh ./release.sh
 
 rm -rf android-builds
+
+if [ -n "$PLATFORM_API" ]; then
+  platformApi=$PLATFORM_API
+else
+  platformApi=27
+fi
+
+sdkmanager --update && yes | sdkmanager --licenses
+sdkmanager \
+  "tools" \
+  "platforms;android-$platformApi" \
+  "platform-tools" \
+  "patcher;v4" \
+  "ndk-bundle" \
+  "extras;google;google_play_services" \
+  "extras;google;m2repository" \
+  "extras;android;m2repository" \
+  "cmake;3.6.4111459" \
+  "build-tools;27.0.1"
+  
+echo $platformApi  
 
 gradleVersion=$(cat "./gradle.txt")
 rm -f "./gradle.txt"
