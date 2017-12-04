@@ -22,17 +22,20 @@ jobs:
       - checkout
       - run:
           name: prepare
-          command: ./update.sh
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-      - run:
-          name: deploy
-          command: ./gradlew assembleDebug
-      - run:
-          name: checkin
-          command: ./mark.sh
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          command: echo $GIT_COMMIT_DESC
+#      - run:
+#          name: prepare
+#          command: ./update.sh
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "build.gradle" }}
+#      - run:
+#          name: deploy
+#          command: ./gradlew assembleDebug
+#      - run:
+#          name: checkin
+#          command: ./mark.sh
+#      - save_cache:
+#          paths:
+#            - ~/.m2
+#          key: v1-dependencies-{{ checksum "build.gradle" }}
