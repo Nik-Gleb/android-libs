@@ -1,5 +1,5 @@
 #!/bin/sh
-#
+
 pathToRepo="git@bitbucket.org:NikGleb/android-builds.git"
 
 rm -f "./.android.jar" && rm -f "./.proguard.jar" && rm -f "./.production.jks"
