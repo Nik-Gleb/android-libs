@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: prepare
-          command: git log --format=oneline -n 1 $CIRCLE_SHA1
+          command: ./mark.sh
 #      - run:
 #          name: prepare
 #          command: ./update.sh
