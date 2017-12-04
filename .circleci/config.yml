@@ -11,7 +11,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: jacekmarchwicki/android:java7-8
+      - image: circleci/android:api-27-alpha
       #working_directory: ~/repo
     environment:
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
