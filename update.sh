@@ -18,7 +18,7 @@ if [ -d ".git/hooks" ]; then
 fi
 
 #mv android-builds/update.sh ./update.sh
-#mv android-builds/release.sh ./release.sh №
+#mv android-builds/release.sh ./release.sh
 
 rm -rf android-builds
 
@@ -58,7 +58,7 @@ wget https$gradleDistr && unzip $gradleFullName && rm -f $gradleFullName
 ./$gradleName/bin/gradle --stop
 rm -rf ./$gradleName
 
-="http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguard/proguard-base-$proguard.jar"
+proguardRepo="http://central.maven.org/maven2/net/sf/proguard/proguard-base/$proguard/proguard-base-$proguard.jar"
 wget -O .proguard.jar $proguardRepo
 
 head -n -1 build.gradle > build.temp ; mv build.temp build.gradle
