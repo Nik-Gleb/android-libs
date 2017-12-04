@@ -17,8 +17,6 @@ jobs:
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-      ANDROID_HOME: ~/.android
-      ANDROID_NDK_HOME: "${ANDROID_HOME}/ndk-bundle"
     steps:
       - checkout
       - run:
