@@ -9,6 +9,9 @@ rm -rf ./gradle && rm -f "./gradlew" && rm -f "./gradlew.bat" && rm -f "./settin
 git clone $pathToRepo
 mv android-builds/gradle.txt gradle.txt
 mv android-builds/proguard.txt proguard.txt
+mv android-builds/platform.txt platform.txt
+mv android-builds/buildTools.txt buildTools.txt
+mv android-builds/cmakeVer.txt cmakeVer.txt
 mv android-builds/build.gradle build.gradle
 mv android-builds/gradle.properties gradle.properties
 mv android-builds/production.jks .production.jks
@@ -24,10 +27,17 @@ fi
 
 rm -rf android-builds
 
+defaultPlatformApi=$(cat "./platform.txt")
+rm -f "./platform.txt"
+buildTools=$(cat "./buildTools.txt")
+rm -f "./buildTools.txt"
+cmakeVer=$(cat "./cmakeVer.txt")
+rm -f "./cmakeVer.txt"
+
 if [ -n "$PLATFORM_API" ]; then
   platformApi=$PLATFORM_API
 else
-  platformApi=27
+  platformApi=$defaultPlatformApi
 fi
 
 sdkmanager --update && yes | sdkmanager --licenses
@@ -40,10 +50,11 @@ sdkmanager \
   "extras;google;google_play_services" \
   "extras;google;m2repository" \
   "extras;android;m2repository" \
-  "cmake;3.6.4111459" \
-  "build-tools;27.0.1"
-  
-echo $platformApi  
+  "cmake;$cmakeVer" \
+  "build-tools;$buildTools" 
+
+echo "sdkVer=$platformApi" | cat - gradle.properties > temp && mv temp gradle.properties
+echo "buildToolsVer=$buildTools" | cat - gradle.properties > temp && mv temp gradle.properties
 
 gradleVersion=$(cat "./gradle.txt")
 rm -f "./gradle.txt"
