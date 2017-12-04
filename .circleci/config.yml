@@ -14,7 +14,7 @@ jobs:
       - image: circleci/android:api-$PLATFORM_API-alpha
       #working_directory: ~/repo
     environment:
-      GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+#      GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       JVM_OPTS: -Xmx3200m
       TERM: dumb
       REPO_OS_OVERRIDE: linux
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: prepare
-          command: echo $GIT_COMMIT_DESC
+          command: git log --format=oneline -n 1 $CIRCLE_SHA1
 #      - run:
 #          name: prepare
 #          command: ./update.sh
