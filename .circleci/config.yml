@@ -7,6 +7,10 @@ general:
   branches:
     only:
       - dev
+machine:
+  environment:
+    REPO_OS_OVERRIDE: linux
+    GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1 | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")
 jobs:
   build:
     docker:
@@ -14,10 +18,8 @@ jobs:
       - image: circleci/android:api-$PLATFORM_API-alpha
       #working_directory: ~/repo
     environment:
-      GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1 | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-      REPO_OS_OVERRIDE: linux
     steps:
       - checkout
       - run:
