@@ -18,7 +18,7 @@ if [ -d ".git/hooks" ]; then
 fi
 
 #mv android-builds/update.sh ./update.sh
-#mv android-builds/release.sh ./release.sh
+#mv android-builds/release.sh ./release.sh#
 
 rm -rf android-builds
 
