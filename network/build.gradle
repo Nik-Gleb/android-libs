@@ -112,15 +112,11 @@ apply plugin: 'maven-publish'
 publishing {
   publications {
     repository(MavenPublication) {
-      if (project.ext.myMavenRepoWriteUrl == null ||
-          project.ext.myMavenRepoWriteUrl.isEmpty()) return true
       groupId PACKAGE; artifactId REPOSITORY; version project.ext.mPubVer
       //artifact "$buildDir/outputs/aar/${archivesBaseName}-repository-release.aar"
       artifact "$buildDir/intermediates/bundles/repositoryRelease/classes.jar"
     }
     storage(MavenPublication) {
-      if (project.ext.myMavenRepoWriteUrl == null ||
-          project.ext.myMavenRepoWriteUrl.isEmpty()) return true
       groupId PACKAGE; artifactId STORAGE; version project.ext.mPubVer
       artifact "$buildDir/outputs/aar/${archivesBaseName}-storage-release.aar"
       //artifact "$buildDir/intermediates/bundles/storageRelease/classes.jar"

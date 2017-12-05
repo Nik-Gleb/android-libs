@@ -103,8 +103,6 @@ apply plugin: 'maven-publish'
 publishing {
     publications {
         maven(MavenPublication) {
-            if (project.ext.myMavenRepoWriteUrl == null ||
-                project.ext.myMavenRepoWriteUrl.isEmpty()) return true
             groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
             artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
         }

@@ -46,15 +46,13 @@ apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
-      if (project.ext.myMavenRepoWriteUrl == null ||
-          project.ext.myMavenRepoWriteUrl.isEmpty()) return true
       groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
       artifact "$buildDir/libs/${archivesBaseName}-release.jar"
     }
   }
   repositories { maven { url project.ext.myMavenRepoWriteUrl } }
 }
-publish.dependsOn proguard
+publish.dependsOn obfuscate
 publish.doLast {
   final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
   delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
