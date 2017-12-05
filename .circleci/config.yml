@@ -38,7 +38,7 @@ jobs:
           command: |
             export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
             export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"            
-            tagVersion=v$GIT_COMMIT_DESC && echo $tagVersion
+            tagVersion="$(echo $GIT_COMMIT_DESC | tr " " v)" && echo $tagVersion
             git config --global user.email nikitosgleb@gmail.com
             git config --global user.name "Gleb Nikitenko"
             git fetch && git checkout master && git merge dev
