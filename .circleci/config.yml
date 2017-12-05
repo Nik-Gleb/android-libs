@@ -36,6 +36,7 @@ jobs:
       - run:
           name: checkin
           command: |
+            echo $GIT_COMMIT_DESC
             tagVersion=v$GIT_COMMIT_DESC && echo $tagVersion
             git config --global user.email nikitosgleb@gmail.com
             git config --global user.name "Gleb Nikitenko"
