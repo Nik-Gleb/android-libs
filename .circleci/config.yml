@@ -23,20 +23,26 @@ jobs:
       - checkout
       - run:
           name: prepare
-          command: export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)" && export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")" && echo $GIT_COMMIT_DESC
-#      - run:
-#          name: prepare
-#          command: ./update.sh
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "build.gradle" }}
-#      - run:
-#          name: deploy
-#          command: ./gradlew assembleDebug
-#      - run:
-#          name: checkin
-#          command: ./mark.sh
-#      - save_cache:
-#          paths:
-#            - ~/.m2
-#          key: v1-dependencies-{{ checksum "build.gradle" }}
+          command:
+            - >
+              raw_commit_msg="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
+              export GIT_COMMIT_DESC="$(echo $raw_commit_msg| grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"
+              ./update.sh
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+      - run:
+          name: deploy
+          command: ./gradlew assembleDebug
+      - run:
+          name: checkin
+          command:
+            - >
+              git config --global user.email nikitosgleb@gmail.com
+              git config --global user.name "Gleb Nikitenko"
+              git fetch && git checkout master && git merge dev
+              git tag v$GIT_COMMIT_DESC && git push --follow-tags
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "build.gradle" }}
