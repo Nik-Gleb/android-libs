@@ -32,8 +32,7 @@ final PACKAGE = glebLibs
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
-assemble.dependsOn clean
-//
+
 task obfuscate(type: ProGuardTask) {
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
@@ -41,7 +40,6 @@ task obfuscate(type: ProGuardTask) {
   libraryjars "../.android.jar"
   configuration 'proguard-rules.pro'
 }
-obfuscate.dependsOn assemble
 
 apply plugin: 'maven-publish'
 publishing {
@@ -56,6 +54,7 @@ publishing {
 
 task release() {}
 release.dependsOn clean
+release.dependsOn assemble
 release.dependsOn obfuscate
 
 publish.doLast {

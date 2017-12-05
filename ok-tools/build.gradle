@@ -32,7 +32,6 @@ final PACKAGE = glebLibs
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
-assemble.dependsOn clean
 
 task obfuscate(type: ProGuardTask) {
   injars "$buildDir/libs/${archivesBaseName}.jar"
@@ -40,7 +39,6 @@ task obfuscate(type: ProGuardTask) {
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   configuration 'proguard-rules.pro'
 }
-obfuscate.dependsOn assemble
 
 apply plugin: 'maven-publish'
 publishing {
@@ -52,9 +50,12 @@ publishing {
   }
   repositories { maven { url project.ext.myMavenRepoWriteUrl } }
 }
+
 task release() {}
 release.dependsOn clean
+release.dependsOn assemble
 release.dependsOn obfuscate
+
 publish.doLast {
   final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
   delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
