@@ -35,10 +35,11 @@ jobs:
       - run:
           name: checkin
           command: |
+            tagVersion=v$GIT_COMMIT_DESC && echo $tagVersion
             git config --global user.email nikitosgleb@gmail.com
             git config --global user.name "Gleb Nikitenko"
             git fetch && git checkout master && git merge dev
-            git tag v$GIT_COMMIT_DESC && git push --follow-tags
+            git push && git tag $tagVersion && git push origin $tagVersion
       - save_cache:
           paths:
             - ~/.m2
