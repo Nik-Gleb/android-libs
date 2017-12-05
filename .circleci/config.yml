@@ -25,21 +25,19 @@ jobs:
           command: |
             export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
             export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"
-            echo $GIT_COMMIT_DESC
-            #./update.sh
+            ./update.sh
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
-#      - run:
-#          name: deploy
-#          command: ./gradlew assembleDebug
+      - run:
+          name: deploy
+          command: ./gradlew assembleDebug
       - run:
           name: checkin
           command: |
             export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
             export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"            
             tagVersion=v"$(echo $GIT_COMMIT_DESC | grep -oP "[0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"
-            echo $tagVersion
             git config --global user.email nikitosgleb@gmail.com
             git config --global user.name "Gleb Nikitenko"
             git fetch && git checkout master && git merge dev
