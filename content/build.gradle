@@ -99,7 +99,7 @@ publishing() {
 }
 
 task release() {}
-release.dependsOn clean
+//release.dependsOn clean
 release.dependsOn "assembleRelease"
 
 publish.doLast {
