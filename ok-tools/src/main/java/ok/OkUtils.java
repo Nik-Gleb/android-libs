@@ -71,7 +71,7 @@ public final class OkUtils {
    * @throws IOException response exceptions
    */
   public static FileDescriptor perform (Call call, CancellationSignal signal,
-      PipeFactory pipe) throws IOException {
+      final PipeFactory pipe) throws IOException {
 
     if (call == null) throw new IllegalArgumentException("call == null");
     if (signal == null) throw new IllegalArgumentException("canceller == null");
@@ -109,10 +109,12 @@ public final class OkUtils {
    * @param signal the canceler
    */
   @SuppressWarnings("SameParameterValue")
-  public static void cancelable(Call call, CancellationSignal signal)
+  public static void cancelable(final Call call, CancellationSignal signal)
   {signal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
     @Override
-    public void onCancel() {call.cancel();}
+    public void onCancel() {
+      call.cancel();
+    }
   });}
 
   /**

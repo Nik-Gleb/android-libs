@@ -29,5 +29,6 @@ package storage;
  * @author Nikitenko Gleb
  * @since 1.0, 11/09/2017
  */
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class PreferencesStorage {
 }

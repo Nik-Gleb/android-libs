@@ -38,6 +38,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
  * @author Nikitenko Gleb
  * @since 1.0, 17/04/2017
  */
+@SuppressWarnings("unused")
 @Keep
 @KeepPublicProtectedClassMembers
 public class ExtendedDialogFragment extends DialogFragment {
@@ -66,6 +67,7 @@ public class ExtendedDialogFragment extends DialogFragment {
     }
 
     /** Set not saved state */
+    @SuppressWarnings({ "WeakerAccess", "unused" })
     void setStateNotSaved() {
         final FragmentManager fragmentManager =
                 peekChildFragmentManager();
@@ -81,10 +83,11 @@ public class ExtendedDialogFragment extends DialogFragment {
     }
 
     /** @param value true when state saved */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({ "unused", "EmptyMethod" })
     protected void onSavedStateChanged(boolean value) {}
 
     /** @param fragmentManager the fragment manager for apply saved state */
+    @SuppressWarnings({ "WeakerAccess", "unused" })
     public static void setStateNotSaved(@NonNull FragmentManager fragmentManager) {
         final List<Fragment> fragments = getFragments(fragmentManager);
         if (fragments != null) {
@@ -98,6 +101,7 @@ public class ExtendedDialogFragment extends DialogFragment {
      * @param fragmentManager the fragment manager
      * @return active fragments
      */
+    @SuppressWarnings("WeakerAccess")
     public static List<Fragment> getFragments(@NonNull FragmentManager fragmentManager)
     {return ((FragmentManagerImpl)fragmentManager).getActiveFragments();}
 
@@ -105,6 +109,7 @@ public class ExtendedDialogFragment extends DialogFragment {
      * @param fragmentManager the fragment manager instance
      * @return the attached activity
      */
+    @SuppressWarnings("unused")
     @Nullable
     public static FragmentActivity getActivity(@NonNull FragmentManager fragmentManager) {
         final FragmentHostCallback fragmentHostCallback =

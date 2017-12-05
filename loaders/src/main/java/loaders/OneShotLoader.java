@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package network;
+package loaders;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

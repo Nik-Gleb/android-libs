@@ -35,7 +35,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author Nikitenko Gleb
  * @since 1.0, 09/08/2017
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "EmptyMethod" })
 @RunWith(MockitoJUnitRunner.class)
 public class CleanTest {
 

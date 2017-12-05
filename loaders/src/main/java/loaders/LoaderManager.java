@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package network;
+package loaders;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -120,7 +120,7 @@ public abstract class LoaderManager {
         if (state != null) {
             final ArrayList<Integer> stableIds =
                 state.getIntegerArrayList(STATE_STABLES);
-            mStableIds = stableIds != null ? stableIds : new ArrayList<>();
+            mStableIds = stableIds != null ? stableIds : new ArrayList<Integer>();
             final BundleMap loaders = state.getParcelable(STATE_LOADERS);
             if (loaders != null) {
                 mLoaders = loaders;

@@ -1,6 +1,6 @@
 /*
  * BaseTest.java
- * repository
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *
@@ -35,8 +35,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
-import proguard.annotation.Keep;
-import proguard.annotation.KeepPublicClassMembers;
 import repository.Selection;
 
 /**
@@ -45,8 +43,6 @@ import repository.Selection;
  * @author Nikitenko Gleb
  * @since 1.0, 15/06/2017
  */
-@Keep
-@KeepPublicClassMembers
 @SuppressWarnings("EmptyMethod")
 @RunWith(AndroidJUnit4.class)
 public final class BaseTest {

@@ -49,7 +49,7 @@ import static sslcerts.SSLSocketSettings.openKeyStore;
  * @author Nikitenko Gleb
  * @since 1.0, 09/08/2017
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "EmptyMethod" })
 @RunWith(MockitoJUnitRunner.class)
 public class SSLCertTest {
 
@@ -74,6 +74,7 @@ public class SSLCertTest {
   /** @throws Exception by some issues */
   @Test
   public final void mainTest() throws Exception {
+
     try {testMain();/*fail("Exception not was thrown!");*/}
     catch (SSLHandshakeException ignored) {}
 

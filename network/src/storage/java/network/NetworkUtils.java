@@ -199,7 +199,7 @@ public final class NetworkUtils {
    * @param signal the canceler
    */
   @SuppressWarnings("SameParameterValue")
-  private static void cancelable(Call call, CancellationSignal signal)
+  private static void cancelable(final Call call, CancellationSignal signal)
   {signal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
     @Override
     public void onCancel() {call.cancel();}

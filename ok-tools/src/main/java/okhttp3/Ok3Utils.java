@@ -29,7 +29,7 @@ package okhttp3;
  * @author Nikitenko Gleb
  * @since 1.0, 10/09/2017
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "WeakerAccess" })
 public final class Ok3Utils {
 
   /**

@@ -104,7 +104,7 @@ public class BitmapDrawable extends Drawable implements Closeable {
     /** The smallest size */
     private final Point mSmallestSize = new Point();
     /** The intrinsic size. */
-    private Point mIntrinsicSize = new Point(-1,-1);
+    private final Point mIntrinsicSize = new Point(-1,-1);
     /** The paint */
     private final Paint mPaint = new Paint(DEFAULT_PAINT_FLAGS);
 
@@ -621,7 +621,7 @@ public class BitmapDrawable extends Drawable implements Closeable {
         private static final String TAG = "AlphaMatrixFilter";
 
         /** Color matrix. */
-        private float[] mMatrix;
+        @SuppressWarnings("CanBeFinal") private float[] mMatrix;
 
         /** Create a color filter that transforms colors through a 4x5 color matrix. */
         public AlphaMatrixFilter() {

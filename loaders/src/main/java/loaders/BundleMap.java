@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package network;
+package loaders;
 
 import android.os.Bundle;
 import android.os.Parcel;

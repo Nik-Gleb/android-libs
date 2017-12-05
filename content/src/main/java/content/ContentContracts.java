@@ -1,6 +1,6 @@
 /*
- * Utils.java
- * repository
+ * ContentContracts.java
+ * content
  *
  * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
  *

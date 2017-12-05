@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package network;
+package loaders;
 
 
 import android.support.test.runner.AndroidJUnit4;
@@ -42,6 +42,7 @@ import proguard.annotation.KeepPublicClassMembers;
  * @author Nikitenko Gleb
  * @since 1.0, 15/06/2017
  */
+@SuppressWarnings("EmptyMethod")
 @Keep
 @KeepPublicClassMembers
 @RunWith(AndroidJUnit4.class)
