@@ -33,7 +33,7 @@ final PACKAGE = glebLibs
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 assemble.dependsOn clean
-
+//
 task obfuscate(type: ProGuardTask) {
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
