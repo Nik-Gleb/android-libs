@@ -41,7 +41,7 @@ task obfuscate(type: ProGuardTask) {
   configuration 'proguard-rules.pro'
 }
 obfuscate.dependsOn assemble
-//
+
 apply plugin: 'maven-publish'
 publishing {
   publications {
