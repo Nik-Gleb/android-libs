@@ -48,6 +48,8 @@ import proguard.annotation.KeepPublicClassMembers;
 @RunWith(AndroidJUnit4.class)
 public final class FragmentsTest {
 
+    public FragmentsTest() {super();}
+
     /** @throws Exception by any fails */
     @Before public final void setUp() throws Exception {}
     /** @throws Exception by any fails */
@@ -59,7 +61,7 @@ public final class FragmentsTest {
      */
     @Test
     public final void testMain() throws Exception {
-
+        System.out.println(System.currentTimeMillis());
 
     }
 

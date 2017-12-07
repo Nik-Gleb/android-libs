@@ -31,7 +31,7 @@ apply plugin: 'com.android.library'
 final int SDK_VER = Integer.parseInt(sdkVer)
 final MODULE = "loaders"
 final PACKAGE = glebLibs
-
+final KEYSTORE = System.getProperty("user.dir") + "/" + keyStoreFile
 /*=====================================================*/
 
 android {
@@ -40,7 +40,7 @@ android {
 
   signingConfigs {
     releaseConfig {
-      storeFile file("../" + keyStoreFile)
+      storeFile file(KEYSTORE)
       storePassword keyStorePass
       keyAlias project.ext.mHasKeyPass ?
           "dev" : sigKeyAlias
@@ -59,8 +59,8 @@ android {
       keepRuntimeAnnotatedClasses false
     }
     compileOptions {
-      sourceCompatibility JavaVersion.VERSION_1_7
-      targetCompatibility JavaVersion.VERSION_1_7
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
       incremental true
     }
     consumerProguardFiles 'proguard-rules.pro'
@@ -96,8 +96,11 @@ publishing {
   }
   repositories { maven { url project.ext.myMavenRepoWriteUrl } }
 }
+model {
+  tasks.generatePomFileForMavenPublication {setEnabled(project.ext.mHasMaven)}
+  tasks.publishMavenPublicationToMavenRepository {setEnabled(project.ext.mHasMaven)}
+}; tasks.publish.setEnabled(project.ext.mHasMaven)
 task release() {}
-//release.dependsOn clean
 release.dependsOn "assembleRelease"
 publish.doLast {
   final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer

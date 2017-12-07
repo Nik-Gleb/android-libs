@@ -110,12 +110,7 @@ public final class OkUtils {
    */
   @SuppressWarnings("SameParameterValue")
   public static void cancelable(final Call call, CancellationSignal signal)
-  {signal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
-    @Override
-    public void onCancel() {
-      call.cancel();
-    }
-  });}
+  {signal.setOnCancelListener(call::cancel);}
 
   /**
    * @param file the source file

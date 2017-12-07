@@ -1,15 +1,17 @@
-.idea
-.gradle
+# For any modules
 /build
-/local.properties
-android-libs.iml
+/*.iml
 
-/gradle
+# Only for root-project
+/.idea
+/.gradle
 /.android.jar
 /.proguard.jar
 /.production.jks
+/gradle
+/gradlew
+/local.properties
 /settings.gradle
 /build.gradle
 /gradle.properties
-/gradlew
 /gradlew.bat
