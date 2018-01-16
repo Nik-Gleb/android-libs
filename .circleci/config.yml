@@ -19,6 +19,11 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
+      - add_ssh_keys:
+          fingerprints:
+              - "15:2c:dd:d9:fd:56:fa:d8:04:bd:45:5d:49:eb:ec:77" # user key
+              - "d9:7a:16:d2:66:66:ee:f5:79:43:22:36:7c:72:7c:03" # deploy key
+              - "27:83:76:8c:99:57:5c:3c:01:59:be:1c:65:93:62:c4" # ssh permissions
       - checkout
       - run:
           name: prepare
