@@ -28,24 +28,31 @@ apply plugin: 'com.android.library'
 
 /*================== DECLARATIONS =====================*/
 
-final int SDK_VER = Integer.parseInt(sdkVer)
-final MODULE = "fragments"
 final PACKAGE = glebLibs
+final PACKAGE_NAME = "fragments"
+final boolean HAS_MAVEN =
+    project.ext.mMavenWrite != null &&
+        !project.ext.mMavenWrite.isEmpty()
+
+final int SDK_VER = Integer.parseInt(sdkVer)
 final KEYSTORE = System.getProperty("user.dir") + "/" + keyStoreFile
+final boolean HAS_KEY_PASS =
+    project.ext.mKeyPass != null &&
+        !project.ext.mKeyPass.isEmpty()
+
 /*=====================================================*/
 
 android {
   compileSdkVersion SDK_VER
   buildToolsVersion buildToolsVer
 
+
   signingConfigs {
     releaseConfig {
       storeFile file(KEYSTORE)
       storePassword keyStorePass
-      keyAlias project.ext.mHasKeyPass ?
-          "dev" : sigKeyAlias
-      keyPassword project.ext.mHasKeyPass ?
-          project.ext.mKeyPass : sigKeyPassword
+      keyAlias HAS_KEY_PASS ? PACKAGE_NAME : sigKeyAlias
+      keyPassword HAS_KEY_PASS ? project.ext.mKeyPass : sigKeyPassword
     }
   }
 
@@ -89,20 +96,20 @@ apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
-      groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
+      groupId PACKAGE; artifactId PACKAGE_NAME; version project.ext.mPubVer
       artifact "$buildDir/outputs/aar/${archivesBaseName}-release.aar"
     }
   }
-  repositories { maven { url project.ext.myMavenRepoWriteUrl } }
+  repositories { maven { url mMavenWrite } }
 }
 model {
-  tasks.generatePomFileForMavenPublication {setEnabled(project.ext.mHasMaven)}
-  tasks.publishMavenPublicationToMavenRepository {setEnabled(project.ext.mHasMaven)}
-}; tasks.publish.setEnabled(project.ext.mHasMaven)
+  tasks.generatePomFileForMavenPublication {setEnabled(HAS_MAVEN)}
+  tasks.publishMavenPublicationToMavenRepository {setEnabled(HAS_MAVEN)}
+}; tasks.publish.setEnabled(HAS_MAVEN)
 task release() {}
 release.dependsOn "assembleRelease"
 publish.doLast {
-  final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  final cachePath = PACKAGE + "/" + PACKAGE_NAME + "/" +  project.ext.mPubVer
   delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
   delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
 }

@@ -125,7 +125,7 @@ public final class Program2d {
     result[6] = GLES20.glGetUniformLocation(result[0], V_ST_MATRIX);
     result[7] = GLES20.glGetUniformLocation(result[0], F_TEXTURE);
     restoreProgram(result);
-
+    // 
     return result;
   }
 

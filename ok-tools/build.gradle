@@ -27,8 +27,11 @@ import proguard.gradle.ProGuardTask
 
 apply plugin: 'java-library'
 
-final MODULE = "ok-tools"
 final PACKAGE = glebLibs
+final PACKAGE_NAME = "ok-tools"
+final boolean HAS_MAVEN =
+    project.ext.mMavenWrite != null &&
+        !project.ext.mMavenWrite.isEmpty()
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -45,21 +48,21 @@ apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
-      groupId PACKAGE; artifactId MODULE; version project.ext.mPubVer
+      groupId PACKAGE; artifactId PACKAGE_NAME; version project.ext.mPubVer
       artifact "$buildDir/libs/${archivesBaseName}-release.jar"
     }
   }
-  repositories { maven { url project.ext.myMavenRepoWriteUrl } }
+  repositories { maven { url mMavenWrite } }
 }
 model {
-  tasks.generatePomFileForMavenPublication {setEnabled(project.ext.mHasMaven)}
-  tasks.publishMavenPublicationToMavenRepository {setEnabled(project.ext.mHasMaven)}
-}; tasks.publish.setEnabled(project.ext.mHasMaven)
+  tasks.generatePomFileForMavenPublication {setEnabled(HAS_MAVEN)}
+  tasks.publishMavenPublicationToMavenRepository {setEnabled(HAS_MAVEN)}
+}; tasks.publish.setEnabled(HAS_MAVEN)
 task release() {}
 release.dependsOn obfuscate
 
 publish.doLast {
-  final cachePath = PACKAGE + "/" + MODULE + "/" +  project.ext.mPubVer
+  final cachePath = PACKAGE + "/" + PACKAGE_NAME + "/" +  project.ext.mPubVer
   delete project.ext.mGradleCachePath + gradleCacheDescr + cachePath
   delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
 }

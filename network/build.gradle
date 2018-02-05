@@ -28,13 +28,20 @@ apply plugin: 'com.android.library'
 
 /*================== DECLARATIONS =====================*/
 
-final int SDK_VER = Integer.parseInt(sdkVer)
-final MODULE = "network"
 final PACKAGE = glebLibs
-final KEYSTORE = System.getProperty("user.dir") + "/" + keyStoreFile
+final PACKAGE_NAME = "network"
+final REPOSITORY = PACKAGE_NAME + "-repository"
+final STORAGE = PACKAGE_NAME + "-storage"
+final boolean HAS_MAVEN =
+    project.ext.mMavenWrite != null &&
+        !project.ext.mMavenWrite.isEmpty()
 
-final REPOSITORY = MODULE + "-repository"
-final STORAGE = MODULE + "-storage"
+final int SDK_VER = Integer.parseInt(sdkVer)
+final KEYSTORE = System.getProperty("user.dir") + "/" + keyStoreFile
+final boolean HAS_KEY_PASS =
+    project.ext.mKeyPass != null &&
+        !project.ext.mKeyPass.isEmpty()
+
 
 /*=====================================================*/
 
@@ -42,14 +49,13 @@ android {
   compileSdkVersion SDK_VER
   buildToolsVersion buildToolsVer
 
+
   signingConfigs {
     releaseConfig {
       storeFile file(KEYSTORE)
       storePassword keyStorePass
-      keyAlias project.ext.mHasKeyPass ?
-          "dev" : sigKeyAlias
-      keyPassword project.ext.mHasKeyPass ?
-          project.ext.mKeyPass : sigKeyPassword
+      keyAlias HAS_KEY_PASS ? PACKAGE_NAME : sigKeyAlias
+      keyPassword HAS_KEY_PASS ? project.ext.mKeyPass : sigKeyPassword
     }
   }
 
@@ -123,15 +129,15 @@ publishing {
       //artifact "$buildDir/intermediates/bundles/storageRelease/classes.jar"
     }
   }
-  repositories { maven { url project.ext.myMavenRepoWriteUrl } }
+  repositories { maven { url mMavenWrite } }
 }
 model {
-  tasks.generatePomFileForRepositoryPublication {setEnabled(project.ext.mHasMaven)}
-  tasks.publishRepositoryPublicationToMavenRepository {setEnabled(project.ext.mHasMaven)}
-  tasks.generatePomFileForStoragePublication {setEnabled(project.ext.mHasMaven)}
-  tasks.publishStoragePublicationToMavenRepository {setEnabled(project.ext.mHasMaven)}
+  tasks.generatePomFileForRepositoryPublication {setEnabled(HAS_MAVEN)}
+  tasks.publishRepositoryPublicationToMavenRepository {setEnabled(HAS_MAVEN)}
+  tasks.generatePomFileForStoragePublication {setEnabled(HAS_MAVEN)}
+  tasks.publishStoragePublicationToMavenRepository {setEnabled(HAS_MAVEN)}
 
-}; tasks.publish.setEnabled(project.ext.mHasMaven)
+}; tasks.publish.setEnabled(HAS_MAVEN)
 task release() {}
 release.dependsOn "assembleRelease"
 publish.doLast {
