@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import clean.CancellationSignal;
+import clean.cancellation.CancellationSignal;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;

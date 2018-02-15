@@ -28,18 +28,52 @@ package clean;
 import java.io.Closeable;
 import java.util.ArrayList;
 
+import clean.cancellation.CancellationSignal;
+
 /**
  * @author Nikitenko Gleb
  * @since 1.0, 18/07/2017
  */
-@SuppressWarnings("unused")
-public abstract class Observable<T, U> implements Closeable {
+@SuppressWarnings({ "unused", "WeakerAccess" })
+public abstract class Observable<T> implements Closeable {
 
   /**
    * The list of observers.
    * An observer can be in the list at most once and will never be null.
    */
   private final ArrayList<OnChangedListener> mObservers = new ArrayList<>();
+
+  /** The object was released. */
+  private volatile boolean mReleased;
+
+  /** {@inheritDoc} */
+  @Override
+  protected final void finalize() throws Throwable {
+    try {
+      if (!mReleased) {
+        close();
+        throw new RuntimeException(
+            "\nA resource was acquired at attached stack trace but never released." +
+                "\nSee java.io.Closeable for info on avoiding resource leaks."
+        );
+      }
+    } finally {
+      super.finalize();
+    }
+  }
+
+  /** Check state. */
+  private void checkState()
+  {if (mReleased) throw new IllegalStateException("Already closed");}
+
+  /* Remove all registered observers. */
+  public void close() {
+    checkState();
+    synchronized (mObservers) {
+      mObservers.clear();
+    }
+    mReleased = true;
+  }
 
   /**
    * Adds an observer to the list.
@@ -48,7 +82,6 @@ public abstract class Observable<T, U> implements Closeable {
    * @param observer the observer to set
    * @return false, if the observer is already registered
    */
-  @SuppressWarnings("UnusedReturnValue")
   public final boolean registerObserver(OnChangedListener observer) {
     synchronized (mObservers) {
       if (mObservers.contains(observer)) return false;
@@ -65,7 +98,6 @@ public abstract class Observable<T, U> implements Closeable {
    *
    * @throws IllegalStateException the observer is not yet registered
    */
-  @SuppressWarnings("UnusedReturnValue")
   public final boolean unregisterObserver(OnChangedListener observer) {
     synchronized (mObservers) {
       final int index = mObservers.indexOf(observer);
@@ -76,7 +108,6 @@ public abstract class Observable<T, U> implements Closeable {
   }
 
   /** Notify about changes. */
-  @SuppressWarnings("WeakerAccess")
   protected final void notifyChanged() {
     synchronized (mObservers) {
       for (int i = mObservers.size() - 1; i >= 0; i--) {
@@ -85,18 +116,8 @@ public abstract class Observable<T, U> implements Closeable {
     }
   }
 
-  /* Remove all registered observers. */
-  public void close() {
-    synchronized (mObservers) {
-      mObservers.clear();
-    }
-  }
-
-  /**
-   * @param args the some arguments
-   * @return content instance
-   */
-  public abstract U getData(CancellationSignal signal, T args);
+  /** @return content instance */
+  public abstract T getData(CancellationSignal signal);
 
 
   /** The data changed listener. */

@@ -27,8 +27,10 @@ package clean;
 
 import java.io.IOException;
 
+import clean.cancellation.CancellationSignal;
+
 /**
- * The Main DomainUtils Class.
+ * The Domain Utils.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 22/08/2017
@@ -41,12 +43,6 @@ public final class DomainUtils {
   /** The fail-object. */
   public static final Object FAIL = null;
 
-  /** The atomic sleep. */
-  private static final long STUB_ATOMIC_SLEEP = 10L;
-  /** The common sleep. */
-  private static final long STUB_COMMON_SLEEP = 150L * 2;
-
-
   /** The log cat tag. */
   private static final String TAG = "DomainUtils";
 
@@ -57,18 +53,15 @@ public final class DomainUtils {
   private DomainUtils() {throw new AssertionError();}
 
   /**
-   * The stub sleep.
+   * Stub sleep.
    *
-   * @param signal the cancellation signal
+   * @param delay delay of timeout
+   * @param signal cancellation signal
    */
-  public static void stub(CancellationSignal signal) {
-
-    for (int i = 0; i < STUB_COMMON_SLEEP; i++) {
+  public static void stub(long delay, CancellationSignal signal) {
+    final long time = System.currentTimeMillis();
+    while (System.currentTimeMillis() - time < delay)
       signal.throwIfCanceled();
-      try {Thread.sleep(STUB_ATOMIC_SLEEP);}
-      catch (InterruptedException exception)
-      {exception.printStackTrace();}
-    }
   }
 
   /**@throws IOException the test error */

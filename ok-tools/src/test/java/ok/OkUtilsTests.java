@@ -37,7 +37,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
-import clean.CancellationSignal;
+import clean.cancellation.CancellationSignal;
+import clean.cancellation.DefaultCancellationSignal;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -88,7 +89,7 @@ public final class OkUtilsTests {
 
     final Call call = okHttpClient.newCall(request);
 
-    final CancellationSignal signal = new CancellationSignal();
+    final CancellationSignal signal = new DefaultCancellationSignal();
     /*new Thread(() -> {
       try {
         Thread.sleep(4000);
