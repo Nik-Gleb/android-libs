@@ -29,6 +29,8 @@ jobs:
             export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
             export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"
             git clone git@bitbucket.org:NikGleb/android-builds.git
+            sed s/android.enableAapt2=true/android.enableAapt2=false/ ./android-builds/gradle.properties > ./android-builds/gradle.properties.temp
+            mv ./android-builds/gradle.properties.temp ./android-builds/gradle.properties
             sed s/6.0/5.3.3/ ./android-builds/gradle.properties > ./android-builds/gradle.properties.temp
             mv ./android-builds/gradle.properties.temp ./android-builds/gradle.properties
             ./android-builds/prepare.sh $PLATFORM_API
