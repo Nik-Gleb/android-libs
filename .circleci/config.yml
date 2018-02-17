@@ -28,7 +28,10 @@ jobs:
           command: |
             export RAW_COMMIT_MSG="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
             export GIT_COMMIT_DESC="$(echo $RAW_COMMIT_MSG | grep -oP " [0-9].[0-9].[0-9].([0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])")"
-            git clone git@bitbucket.org:NikGleb/android-builds.git && ./android-builds/prepare.sh $PLATFORM_API
+            git clone git@bitbucket.org:NikGleb/android-builds.git
+            sed s/6.0/5.3.3/ ./android-builds/gradle.properties > ./android-builds/gradle.properties.temp
+            mv ./android-builds/gradle.properties.temp ./android-builds/gradle.properties
+            ./android-builds/prepare.sh $PLATFORM_API
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
