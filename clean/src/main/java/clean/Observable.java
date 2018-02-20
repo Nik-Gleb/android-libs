@@ -28,14 +28,12 @@ package clean;
 import java.io.Closeable;
 import java.util.ArrayList;
 
-import clean.cancellation.CancellationSignal;
-
 /**
  * @author Nikitenko Gleb
  * @since 1.0, 18/07/2017
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
-public abstract class Observable<T> implements Closeable {
+public abstract class Observable<T> implements Data<T>, Closeable {
 
   /**
    * The list of observers.
@@ -67,6 +65,7 @@ public abstract class Observable<T> implements Closeable {
   {if (mReleased) throw new IllegalStateException("Already closed");}
 
   /* Remove all registered observers. */
+  @Override
   public void close() {
     checkState();
     synchronized (mObservers) {
@@ -115,10 +114,6 @@ public abstract class Observable<T> implements Closeable {
       }
     }
   }
-
-  /** @return content instance */
-  public abstract T getData(CancellationSignal signal);
-
 
   /** The data changed listener. */
   public interface OnChangedListener {

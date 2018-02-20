@@ -28,6 +28,7 @@ package clean;
 import java.io.IOException;
 
 import clean.cancellation.CancellationSignal;
+import clean.cancellation.CancellationSignal.OperationCanceledException;
 
 /**
  * The Domain Utils.
@@ -46,6 +47,9 @@ public final class DomainUtils {
   /** The log cat tag. */
   private static final String TAG = "DomainUtils";
 
+  /** The default delay. */
+  private static final long DEFAULT_DELAY = 3000;
+
   /**
    * The caller should be prevented from constructing objects of this class.
    * Also, this prevents even the native class from calling this constructor.
@@ -58,11 +62,20 @@ public final class DomainUtils {
    * @param delay delay of timeout
    * @param signal cancellation signal
    */
-  public static void stub(long delay, CancellationSignal signal) {
+  public static void stub(long delay, CancellationSignal signal)
+      throws OperationCanceledException {
     final long time = System.currentTimeMillis();
     while (System.currentTimeMillis() - time < delay)
       signal.throwIfCanceled();
   }
+
+  /**
+   * Stub sleep.
+   *
+   * @param signal cancellation signal
+   */
+  public static void stub(CancellationSignal signal)
+      throws OperationCanceledException {stub(DEFAULT_DELAY, signal);}
 
   /**@throws IOException the test error */
   public static void fail() throws IOException
@@ -73,4 +86,20 @@ public final class DomainUtils {
    * @return true if positive response
    */
   public static boolean isOk(Object object) {return OK == object;}
+
+  /*
+   * Manager' s action.
+   * @param <T> the type of arguments
+   */
+  @FunctionalInterface
+  interface Action<T> {
+
+    /**
+     * Apply the action.
+     *
+     * @param args action's arguments
+     * @param signal cancellation signal
+     */
+    void apply(T args, CancellationSignal signal);
+  }
 }

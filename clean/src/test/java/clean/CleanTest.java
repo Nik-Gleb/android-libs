@@ -31,6 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import clean.cancellation.CancellationSignal.OperationCanceledException;
+
 /**
  * @author Nikitenko Gleb
  * @since 1.0, 09/08/2017
@@ -39,19 +41,42 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CleanTest {
 
+  /** The Mock Unit. */
+  private MockUnit mMockUnit = null;
+
   /** @throws Exception by some issues */
-  @Before
-  public void setUp() throws Exception {
+  @Before public void setUp() throws Exception {
+    mMockUnit = new MockUnit();
   }
 
   /** @throws Exception by some issues */
-  @After
-  public void tearDown() throws Exception {
+  @After public void tearDown() throws Exception {
+    mMockUnit.close();
+    mMockUnit = null;
   }
 
   /** @throws Exception by some issues */
-  @Test
-  public final void getData() throws Exception {
+  @Test public final void getTest() throws Exception {
+    mMockUnit.get(Unit.SIGNAL);
+  }
+
+  /** @throws Exception by some issues */
+  @Test public final void applyTest() throws Exception {
+    final int id = 1; final String args = "";
+    mMockUnit.apply(Manager.Action.create(id, args), Unit.SIGNAL);
+  }
+
+
+  /** The mock unit. */
+  private static final class MockUnit extends Unit<String> {
+
+    /** The test value. */
+    private static final String TEST_VALUE = "Hello, World";
+
+    /** {@inheritDoc} */
+    private MockUnit() throws OperationCanceledException
+    {super(); mStubValue = TEST_VALUE;}
+
   }
 
 }
