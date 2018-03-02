@@ -2,7 +2,7 @@
  * BitmapDrawable.java
  * drawables
  *
- * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
+ * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 
 package drawables;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -77,6 +78,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
  */
 @Keep@KeepPublicProtectedClassMembers
 @SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressLint("ObsoleteSdkInt")
 public class BitmapDrawable extends Drawable implements Closeable {
 
     /* Static initialization. */

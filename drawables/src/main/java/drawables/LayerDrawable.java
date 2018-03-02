@@ -2,7 +2,7 @@
  * LayerDrawable.java
  * drawables
  *
- * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
+ * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 
 package drawables;
 
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
@@ -61,7 +62,8 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
  * @since 1.0, 17/05/2017
  */
 @Keep@KeepPublicProtectedClassMembers
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({ "WeakerAccess", "unused", "deprecation" })
+@SuppressLint("ObsoleteSdkInt")
 public class LayerDrawable extends Drawable implements Drawable.Callback {
 
     /**

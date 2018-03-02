@@ -2,7 +2,7 @@
  * build.gradle
  * ssl-certs
  *
- * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
+ * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -80,5 +80,5 @@ dependencies {
   /* JUnit */
   testImplementation 'junit:junit:' + junitVersion
   /* Optional -- Mockito framework */
-  testImplementation 'org.mockito:mockito-core:2.8.47'
+  testImplementation 'org.mockito:mockito-core:2.15.0'
 }
