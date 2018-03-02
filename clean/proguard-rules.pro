@@ -115,8 +115,8 @@
     public protected *;
 }
 
--keep class clean.** {*;}
--keep interface clean.** {*;}
+-keep public class clean.** {*;}
+-keep public interface clean.** {*;}
 
 -dontwarn android.support.annotation.*
 

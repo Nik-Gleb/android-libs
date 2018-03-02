@@ -115,6 +115,8 @@
     public protected *;
 }
 
+-dontwarn clean.**
+
 -dontwarn android.support.annotation.*
 
 -dontnote android.**
