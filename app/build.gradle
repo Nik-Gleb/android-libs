@@ -28,7 +28,7 @@ import proguard.gradle.ProGuardTask
 apply plugin: 'java-library'
 
 final PACKAGE = glebLibs
-final PACKAGE_NAME = "async"
+final PACKAGE_NAME = "app"
 final boolean HAS_MAVEN =
     project.ext.mMavenWrite != null &&
         !project.ext.mMavenWrite.isEmpty()
