@@ -1,4 +1,4 @@
-package clean.cancellation;
+package clean;
 
 /**
  * Default Cancellation Signal.

@@ -27,8 +27,8 @@ package clean;
 
 import java.io.IOException;
 
-import clean.cancellation.CancellationSignal;
-import clean.cancellation.CancellationSignal.OperationCanceledException;
+import clean.CancellationSignal;
+import clean.CancellationSignal.OperationCanceledException;
 
 /**
  * The Domain Utils.

@@ -37,8 +37,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
-import clean.cancellation.CancellationSignal;
-import clean.cancellation.DefaultCancellationSignal;
+import clean.CancellationSignal;
+import clean.DefaultCancellationSignal;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;

@@ -320,7 +320,7 @@ public final class ExtendedFragmentTransaction extends FragmentTransaction {
      * operations that cancel. For example, if two transactions are executed
      * together, one that adds a fragment A and the next replaces it with fragment B,
      * the operations will cancel and only fragment B will be added. That means that
-     * fragment A may not go through the creation/destruction lifecycle.
+     * fragment A may not go through the creation/destruction clean.lifecycle.
      * <p>
      * The side effect of removing redundant operations is that fragments may have state changes
      * out of the expected order. For example, one transaction adds fragment A,
@@ -352,7 +352,7 @@ public final class ExtendedFragmentTransaction extends FragmentTransaction {
      * operations that cancel. For example, if two transactions are executed
      * together, one that adds a fragment A and the next replaces it with fragment B,
      * the operations will cancel and only fragment B will be added. That means that
-     * fragment A may not go through the creation/destruction lifecycle.
+     * fragment A may not go through the creation/destruction clean.lifecycle.
      * <p>
      * The side effect of optimization is that fragments may have state changes
      * out of the expected order. For example, one transaction adds fragment A,
@@ -430,10 +430,10 @@ public final class ExtendedFragmentTransaction extends FragmentTransaction {
     /**
      * Commits this transaction synchronously.
      *
-     * Any added fragments will be initialized and brought completely to the lifecycle state of
+     * Any added fragments will be initialized and brought completely to the clean.lifecycle state of
      * their host and any removed fragments will be torn down accordingly before this call returns.
      * Committing a transaction in this way allows fragments to be added as dedicated, encapsulated
-     * components that monitor the lifecycle state of their host while providing firmer ordering
+     * components that monitor the clean.lifecycle state of their host while providing firmer ordering
      * guarantees around when those fragments are fully initialized and ready.
      *
      * Fragments that manage views will have those views created and attached.

@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * @since 1.0, 18/07/2017
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
-public abstract class Observable<T> implements Data<T>, Closeable {
+public abstract class Observable<T> implements Closeable {
 
   /**
    * The list of observers.
@@ -65,7 +65,6 @@ public abstract class Observable<T> implements Data<T>, Closeable {
   {if (mReleased) throw new IllegalStateException("Already closed");}
 
   /* Remove all registered observers. */
-  @Override
   public void close() {
     checkState();
     synchronized (mObservers) {
@@ -115,6 +114,13 @@ public abstract class Observable<T> implements Data<T>, Closeable {
     }
   }
 
+  /** @return content instance */
+  public abstract T get() throws Throwable;
+
+  /** @throws InterruptedException when current thread was interrupted */
+  protected static void checkInterrupted() throws InterruptedException
+  {if (Thread.interrupted()) throw new InterruptedException();}
+
   /** The data changed listener. */
   public interface OnChangedListener {
     /** The data changed callback.  */
@@ -134,6 +140,4 @@ public abstract class Observable<T> implements Data<T>, Closeable {
       notifyChanged();
     }
   }
-
-
 }

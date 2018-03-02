@@ -1,4 +1,4 @@
-package clean.cancellation;
+package clean;
 
 import java.io.Closeable;
 
