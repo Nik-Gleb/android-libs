@@ -28,7 +28,7 @@
 #-dontoptimize
 #-dontshrink
 
--verbose
+#-verbose
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify

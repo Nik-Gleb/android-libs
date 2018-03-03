@@ -28,7 +28,7 @@
 #-dontoptimize
 #-dontshrink
 
--verbose
+#-verbose
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
@@ -115,7 +115,8 @@
     public protected *;
 }
 
--dontwarn clean.**
+-dontwarn app.Model
+-dontwarn app.ThreadFactory
 
 -dontwarn android.support.annotation.*
 

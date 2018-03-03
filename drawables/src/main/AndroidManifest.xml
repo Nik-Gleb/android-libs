@@ -23,4 +23,4 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="drawables"/>
+<manifest package="android.libs.drawables"/>

@@ -28,7 +28,7 @@
 #-dontoptimize
 #-dontshrink
 
--verbose
+#-verbose
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
@@ -114,9 +114,6 @@
 -keep public class * {
     public protected *;
 }
-
--keep public class clean.** {*;}
--keep public interface clean.** {*;}
 
 -dontwarn android.support.annotation.*
 

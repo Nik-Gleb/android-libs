@@ -24,7 +24,7 @@
   ~ SOFTWARE.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="opengl">
+          package="android.libs.opengl">
 
   <uses-feature
     android:glEsVersion="0x00020000"

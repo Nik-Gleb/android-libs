@@ -23,4 +23,4 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="fragments"/>
+<manifest package="android.libs.fragments"/>

@@ -24,7 +24,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="opengl">
+          package="android.libs.opengl">
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 </manifest>

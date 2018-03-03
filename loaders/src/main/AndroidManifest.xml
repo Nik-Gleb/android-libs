@@ -23,4 +23,4 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="loaders"/>
+<manifest package="android.libs.loaders"/>

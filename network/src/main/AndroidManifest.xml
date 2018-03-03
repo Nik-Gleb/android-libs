@@ -23,7 +23,7 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="network">
+<manifest package="android.libs.network">
   <!-- Only for testing -->
   <!--<uses-permission android:name="android.permission.INTERNET" />-->
 </manifest>

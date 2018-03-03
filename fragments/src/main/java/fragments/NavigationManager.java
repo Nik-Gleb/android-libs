@@ -120,7 +120,6 @@ public abstract class NavigationManager implements Closeable {
     mClosed = true;
   }
 
-
   /** @param intent incoming intent for remember */
   public final void onNewIntent(@NonNull Intent intent) {setIntent(intent);}
 
