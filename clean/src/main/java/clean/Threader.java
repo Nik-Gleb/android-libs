@@ -448,7 +448,7 @@ public final class Threader implements Closeable {
         result = null;
       if (result instanceof Throwable && error != null)
         error.error((Throwable) result);
-      this.result.result((T) result);
+      else this.result.result((T) result);
     }
 
   }
