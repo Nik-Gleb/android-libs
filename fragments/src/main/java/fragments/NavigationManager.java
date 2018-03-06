@@ -144,7 +144,7 @@ public class NavigationManager implements Closeable {
   /** Show "MAIN" Screen. */
 
   @SuppressWarnings("Convert2Lambda")
-  protected final void main(@Nullable Bundle args) {
+  protected final void main(@Nullable Bundle args) {//
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && rootIsMain) return;
     final boolean immediate = false; closeStack(immediate);
