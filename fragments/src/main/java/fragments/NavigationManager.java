@@ -123,6 +123,7 @@ public class NavigationManager implements Closeable {
   {if (affinity) mActivity.finishAffinity(); else mActivity.finish();}
 
   /** Show "INTRO" Screen. */
+  @SuppressWarnings("Convert2Lambda")
   protected final void intro(@Nullable Bundle args) {
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && !rootIsMain) return;
@@ -131,12 +132,18 @@ public class NavigationManager implements Closeable {
     new ExtendedFragmentTransaction(fragments)
         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         .replace(fragment.container, fragment, fragment.getName())
-        .runOnCommit(() -> renderStackState
-            (fragment.title, fragment.title))
+        .runOnCommit(new Runnable() {
+          @Override
+          public void run() {
+            NavigationManager.this.renderStackState
+                (fragment.title, fragment.title);
+          }
+        })
         .commit();
   }
 
   /** Show "MAIN" Screen. */
+  @SuppressWarnings("Convert2Lambda")
   protected final void main(@Nullable Bundle args) {
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && rootIsMain) return;
@@ -145,9 +152,15 @@ public class NavigationManager implements Closeable {
     new ExtendedFragmentTransaction(fragments)
         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         .replace(fragment.container, fragment, fragment.getName())
-        .runOnCommit(() -> {
-          renderStackState(fragment.title, fragment.subtitle);
-          final Intent intent; if ((intent = getIntent()) != null) go(intent);
+        .runOnCommit(new Runnable() {
+          @Override
+          public void run() {
+            NavigationManager.this.renderStackState(fragment.title,
+                fragment.subtitle);
+            final Intent intent;
+            if ((intent = NavigationManager.this.getIntent()) != null)
+              NavigationManager.this.go(intent);
+          }
         }).commit();
   }
 
