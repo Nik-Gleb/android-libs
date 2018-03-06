@@ -82,7 +82,7 @@ android {
     release {
       debuggable false; useProguard true
       // for alpha workaround
-      shrinkResources false; minifyEnabled false
+      shrinkResources false; minifyEnabled true
       manifestPlaceholders = [exported: true]
       proguardFile 'proguard-rules.pro'
       signingConfig signingConfigs.releaseConfig
