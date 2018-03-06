@@ -444,7 +444,8 @@ public final class Threader implements Closeable {
     @SuppressWarnings("unchecked")
     @Override final void delivery(Object result) {
       if (result == Void.TYPE)
-        throw new RuntimeException("Get can't return a null");
+        //throw new RuntimeException("Get can't return a null");
+        result = null;
       if (result instanceof Throwable && error != null)
         error.error((Throwable) result);
       this.result.result((T) result);
