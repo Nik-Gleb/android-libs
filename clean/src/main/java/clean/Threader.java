@@ -446,11 +446,9 @@ public final class Threader implements Closeable {
       if (result == Void.TYPE)
         //throw new RuntimeException("Get can't return a null");
         result = null;
-      if (result instanceof Throwable && error != null)
-        error.error((Throwable) result);
-      else this.result.result((T) result);
+      if (!(result instanceof Throwable)) this.result.result((T) result);
+      else if (error != null) error.error((Throwable) result);
     }
-
   }
 
   /** "SET" function meta. */
