@@ -120,3 +120,5 @@
 
 -keep public class !network.BuildConfig {public protected *;}
 -keep public interface * {public protected *;}
+
+-dontwarn **$$Lambda$*

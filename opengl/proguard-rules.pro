@@ -119,3 +119,5 @@
 -dontnote android.os.ParcelFileDescriptor
 
 -keep public class !repository.BuildConfig {public <fields>; public <methods>;}
+
+-dontwarn **$$Lambda$*

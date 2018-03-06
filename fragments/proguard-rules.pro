@@ -117,3 +117,5 @@
 -keep class android.os.ParcelFileDescriptor {*;}
 -dontnote java.io.FileDescriptor
 -dontnote android.os.ParcelFileDescriptor
+
+-dontwarn **$$Lambda$*

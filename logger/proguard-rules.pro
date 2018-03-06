@@ -124,3 +124,5 @@
     public static void e(java.lang.String, java.lang.String, java.lang.Throwable);
     public static void a(java.lang.String, java.lang.String, java.lang.Throwable);
 }
+
+-dontwarn **$$Lambda$*

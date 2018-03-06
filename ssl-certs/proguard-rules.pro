@@ -116,3 +116,5 @@
 }
 
 -dontwarn android.support.annotation.*
+
+-dontwarn **$$Lambda$*

@@ -116,3 +116,5 @@
 -dontnote drawables.LayerDrawable
 -dontnote drawables.LayerDrawable$1
 -dontnote drawables.LayerDrawable$a
+
+-dontwarn **$$Lambda$*
