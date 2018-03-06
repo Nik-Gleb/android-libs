@@ -82,9 +82,9 @@ final class AsyncTask implements Runnable, Closeable {
       try {
         this.output = (output = f.apply(input)) == null ? Void.TYPE : output;}
       catch (Throwable throwable) {
-        if (throwable instanceof InterruptedException &&
-            (exit = same(input))) t.interrupt();
-        if (exit) this.output = throwable;
+        final boolean interrupted = throwable instanceof InterruptedException;
+        if (interrupted && (exit = same(input))) t.interrupt();
+        if (exit && !interrupted) this.output = throwable;
       }
     } while (!exit);
   }
