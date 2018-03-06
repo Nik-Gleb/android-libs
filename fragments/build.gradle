@@ -1,9 +1,9 @@
 /*
  * build.gradle
  * fragments
- *
+ * 	
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
- *
+ * 	
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -82,7 +82,7 @@ android {
     release {
       debuggable false; useProguard true
       // for alpha workaround
-      shrinkResources false; minifyEnabled true
+      shrinkResources false; minifyEnabled false
       manifestPlaceholders = [exported: true]
       proguardFile 'proguard-rules.pro'
       signingConfig signingConfigs.releaseConfig

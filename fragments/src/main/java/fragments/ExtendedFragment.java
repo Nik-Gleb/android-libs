@@ -27,11 +27,17 @@ package fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.app.ExtendedDialogFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -47,6 +53,16 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 @SuppressWarnings("unused")
 public class ExtendedFragment extends ExtendedDialogFragment {
 
+    /** The attach to root inflate mode. */
+    private static final boolean ATTACH_TO_ROOT = false;
+
+    /** The title resources. */
+    @StringRes protected int title, subtitle = 0;
+    /** Inflate container. */
+    @IdRes protected int container = android.R.id.content;
+    /** The content layout. */
+    @LayoutRes protected int content = 0;
+
     /** {@inheritDoc} */
     @NonNull
     @Override
@@ -54,6 +70,16 @@ public class ExtendedFragment extends ExtendedDialogFragment {
         final AlertDialog.Builder builder = createAlertBuilder(savedInstanceState);
         return builder == null ? super.onCreateDialog(savedInstanceState): builder.create();
     }
+
+    /** {@inheritDoc} */
+    @Nullable
+    @Override
+    public final View onCreateView(@NonNull LayoutInflater inflater,
+        @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return content != 0 ? inflater.inflate(content, container, ATTACH_TO_ROOT) :
+            super.onCreateView(inflater, container, savedInstanceState);
+    }
+
 
     /**
      * @param savedInstanceState the saved state
@@ -98,4 +124,19 @@ public class ExtendedFragment extends ExtendedDialogFragment {
             }
         }
     }
+
+    /**
+     * @param clazz class of fragment
+     * @return tag-name
+     */
+    protected static String getTag(@NonNull Class<? extends ExtendedFragment> clazz) {
+        final String target = "Fragment"; final String replacement = "";
+        final String regex = "\\."; final String parts[] = clazz.getName().split(regex);
+        if (parts.length < 1) throw new IllegalArgumentException("Invalid class");
+        return parts[parts.length - 1].replace(target, replacement).toUpperCase();
+    }
+
+    /** @return the name of this fragment */
+    @NonNull final String getName() {return getTag(getClass());}
+
 }

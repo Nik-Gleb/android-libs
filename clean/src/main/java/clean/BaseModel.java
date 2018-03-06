@@ -27,7 +27,7 @@ package clean;
 
 import java.io.Closeable;
 import java.util.HashMap;
-import java.util.Objects;
+
 
 /**
  * Base java-model.
@@ -64,17 +64,15 @@ public abstract class BaseModel<V> implements Closeable {
   public final void setView(V view) {
     if (this.view == view) return;
     if (view != null && mThreader == null)
-    {this.view = view; mThreader = mBuilder.build();}
+    {this.view = view; mThreader = mBuilder.build();onActivated();}
     else if (view == null && mThreader != null)
-    {mThreader.close(); mThreader = null; this.view = null;}
+    {onDeActivated(); mThreader.close(); mThreader = null; this.view = null;}
     else this.view = view;
   }
 
   /** @return all active actions */
-  public final HashMap<Integer, Object> state() {
-    Objects.requireNonNull(mThreader).backup();
-    return mBuilder.savedState;
-  }
+  public final HashMap<Integer, Object> state()
+  {mThreader.backup(); return mBuilder.savedState;}
 
   /**
    * Apply the action.
@@ -109,5 +107,8 @@ public abstract class BaseModel<V> implements Closeable {
   protected void onClose()
   {if (mThreader != null) {mThreader.close(); mThreader = null;}}
 
-
+  /** Activated callback */
+  protected void onActivated() {}
+  /** De activated callback */
+  protected void onDeActivated() {}
 }
