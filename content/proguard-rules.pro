@@ -122,3 +122,4 @@
 -keep public interface * {public protected *;}
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory

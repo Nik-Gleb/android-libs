@@ -118,3 +118,4 @@
 -dontwarn android.support.annotation.*
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory

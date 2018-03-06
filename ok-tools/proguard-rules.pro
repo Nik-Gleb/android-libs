@@ -128,6 +128,7 @@
 -dontnote dalvik.**
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory
 
 -dontwarn ok.*
 -dontwarn okhttp3.*

@@ -127,3 +127,4 @@
 -dontnote dalvik.**
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory

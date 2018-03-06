@@ -119,3 +119,4 @@
 -dontnote android.os.ParcelFileDescriptor
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory

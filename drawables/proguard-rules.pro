@@ -118,3 +118,4 @@
 -dontnote drawables.LayerDrawable$a
 
 -dontwarn **$$Lambda$*
+-dontwarn java.lang.invoke.LambdaMetafactory
