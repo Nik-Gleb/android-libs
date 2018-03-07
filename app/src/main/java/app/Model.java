@@ -34,7 +34,6 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import clean.BaseModel;
@@ -129,10 +128,9 @@ public class Model {
     final HashMap<Integer, Object> raw = model.state();
     final SparseArray<Parcelable> packed = new SparseArray<>(raw.size());
 
-    for(final Iterator<Map.Entry<Integer, Object>> iterator =
-        raw.entrySet().iterator(); iterator.hasNext();) {
-      final Map.Entry<Integer, Object> entry = iterator.next();
-      iterator.remove(); final int key = entry.getKey();
+    for (final Map.Entry<Integer, Object> entry : raw.entrySet()) {
+      /*iterator.remove();*/
+      final int key = entry.getKey();
       final Parcelable value = packer.pack(key, entry.getValue());
       if (value != Bundle.EMPTY) packed.put(key, value);
     }
