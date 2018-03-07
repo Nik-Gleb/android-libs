@@ -38,7 +38,7 @@ import clean.Threader;
 public final class ThreadFactory implements Threader.Factory {
 
   /** Global instance. */
-  @SuppressWarnings("WeakerAccess")
+  @SuppressWarnings({ "WeakerAccess", "unused" })
   public static final ThreadFactory INSTANCE = new ThreadFactory();
 
   /** Priorities of process. */

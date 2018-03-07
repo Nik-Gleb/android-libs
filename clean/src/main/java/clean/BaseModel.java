@@ -103,12 +103,11 @@ public abstract class BaseModel<V> implements Closeable {
   {if (mClosed) return; onClose(); mClosed = true;}
 
   /** Causes by close */
-  @SuppressWarnings("WeakerAccess")
   protected void onClose()
-  {if (mThreader != null) {mThreader.close(); mThreader = null;}}
+  {/*if (mThreader != null) {mThreader.close(); mThreader = null;}*/}
 
   /** Activated callback */
   protected void onActivated() {}
-  /** De activated callback */
+  /** DeActivated callback */
   protected void onDeActivated() {}
 }

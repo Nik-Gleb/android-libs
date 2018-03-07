@@ -42,35 +42,18 @@ public abstract class Observable<T> implements Closeable {
   private final ArrayList<OnChangedListener> mObservers = new ArrayList<>();
 
   /** The object was released. */
-  private volatile boolean mReleased;
+  private volatile boolean mClosed;
 
   /** {@inheritDoc} */
-  @Override
-  protected final void finalize() throws Throwable {
-    try {
-      if (!mReleased) {
-        close();
-        throw new RuntimeException(
-            "\nA resource was acquired at attached stack trace but never released." +
-                "\nSee java.io.Closeable for info on avoiding resource leaks."
-        );
-      }
-    } finally {
-      super.finalize();
-    }
-  }
+  @Override protected final void finalize() throws Throwable
+  {try {close();} finally {super.finalize();}}
 
-  /** Check state. */
-  private void checkState()
-  {if (mReleased) throw new IllegalStateException("Already closed");}
-
-  /* Remove all registered observers. */
-  public void close() {
-    checkState();
-    synchronized (mObservers) {
-      mObservers.clear();
-    }
-    mReleased = true;
+  /** {@inheritDoc} */
+  @Override public final void close() {
+    if (mClosed) return;
+    synchronized (mObservers)
+    {mObservers.clear();}
+    mClosed = true;
   }
 
   /**
