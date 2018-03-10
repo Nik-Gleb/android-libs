@@ -114,7 +114,10 @@
 -keep public class * {
     public protected *;
 }
--keep android.arch.lifecycle.** {*;}
+
+-keep class android.arch.lifecycle.** {*;}
+-keep interface android.arch.lifecycle.** {*;}
+-dontwarn app.*
 
 -dontwarn app.Model
 -dontwarn app.ThreadFactory

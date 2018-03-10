@@ -25,7 +25,6 @@
 
 package android.support.v4.app;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import proguard.annotation.Keep;
@@ -57,20 +56,20 @@ public final class SupportUtils {
     finally {((FragmentManagerImpl)fragmentManager).mNoTransactionsBecause = null;}
   }
 
-  /** @param loaderManager the loader manager for reset */
-  @SuppressWarnings("UnusedReturnValue")
+  /* @param loaderManager the loader manager for reset */
+  /*@SuppressWarnings("UnusedReturnValue")
   @NonNull public static String resetNoTransactionsBecause
   (@NonNull LoaderManager loaderManager) {
     final LoaderManagerImpl loaderManagerImpl = ((LoaderManagerImpl)loaderManager);
     return resetNoTransactionsBecause(loaderManagerImpl.mHost.mFragmentManager);
   }
 
-  /**
+  /*
    * @param loaderManager the loader manager instance
    * @return the android application context
    */
-  @SuppressWarnings("unused")
+  /*@SuppressWarnings("unused")
   @NonNull public static Context getContext(@NonNull LoaderManager loaderManager)
-  {return ((LoaderManagerImpl)loaderManager).mHost.mContext;}
+  {return ((LoaderManagerImpl)loaderManager).mHost.mContext;}*/
 
 }

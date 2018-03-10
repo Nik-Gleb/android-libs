@@ -29,7 +29,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.SupportUtils;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LoadersUtils;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
-import static android.support.v4.app.SupportUtils.getContext;
+//import static android.support.v4.app.SupportUtils.getContext;
 
 /**
  * The loader manager.
@@ -68,11 +67,9 @@ public abstract class LoaderManager {
             new android.support.v4.app.LoaderManager.LoaderCallbacks<Object>() {
 
                 /** {@inheritDoc} */
-                @Override @NonNull
-                public final Loader<Object> onCreateLoader(int id, @NonNull Bundle args) {
-                    checkState(); final Context ctx = getContext(mLoaderManager);
-                    return LoaderManager.this.onCreateLoader(ctx, id, args);
-                }
+                @SuppressWarnings("NullableProblems")
+                @Override @NonNull public final Loader<Object> onCreateLoader(int id, @NonNull Bundle args)
+                {checkState(); return LoaderManager.this.onCreateLoader(mContext, id, args);}
 
                 /** {@inheritDoc} */
                 @Override
@@ -103,6 +100,9 @@ public abstract class LoaderManager {
     /** Stable loader ids. */
     private final ArrayList<Integer> mStableIds;
 
+    /** The application context. */
+    private final Context mContext;
+
     /** Is loader-map is saved. */
     private boolean mSaved = false;
     /** Is loader-manager was closed. */
@@ -115,7 +115,8 @@ public abstract class LoaderManager {
      * @param state the saved state
      */
     public LoaderManager
-    (@NonNull android.support.v4.app.LoaderManager mgr, @Nullable Bundle state) {
+    (@NonNull Context context, @NonNull android.support.v4.app.LoaderManager mgr,
+        @Nullable Bundle state) { mContext = context;
         mLoaderManager = mgr;
         if (state != null) {
             final ArrayList<Integer> stableIds =
@@ -134,6 +135,7 @@ public abstract class LoaderManager {
     }
 
     /** Initialization. */
+    @SuppressWarnings("ConstantConditions")
     protected final void init() {
         // Retain loader's callback
         final int count = mLoaders.size();
@@ -175,6 +177,7 @@ public abstract class LoaderManager {
      * @param id the loader id
      * @param args the loader args
      */
+    @SuppressWarnings("ConstantConditions")
     public final void startLoad(int id, @NonNull Bundle args, boolean stable) {
         checkState();
         if (mLoaderManager.getLoader(id) == null) {
@@ -251,7 +254,7 @@ public abstract class LoaderManager {
      * @param data the loader data
      */
     protected void onLoadFinished(int id, @Nullable Object data)
-    {SupportUtils.resetNoTransactionsBecause(mLoaderManager);}
+    {/*SupportUtils.resetNoTransactionsBecause(mLoaderManager);*/}
 
     /**
      * Load finished resolver.
@@ -259,7 +262,7 @@ public abstract class LoaderManager {
      * @param id the loader id
      */
     protected void onLoaderReset(int id)
-    {SupportUtils.resetNoTransactionsBecause(mLoaderManager);}
+    {/*SupportUtils.resetNoTransactionsBecause(mLoaderManager);*/}
 
     /** Release resources */
     public final void close() {
