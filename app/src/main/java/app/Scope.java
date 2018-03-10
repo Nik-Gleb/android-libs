@@ -125,7 +125,7 @@ public interface Scope<T extends View, U extends Presenter<T>> extends Closeable
     /** {@inheritDoc} */
     @Override public final void onActivityStarted(@NonNull Activity activity)
     {Objects.requireNonNull(mScope.getView()).start();
-    mScope.getPresenter().setView(mScope.getView());}
+    mScope.getPresenter().view(mScope.getView());}
 
     /** {@inheritDoc} */
     @Override public final void onActivityResumed(@NonNull Activity activity) {}
@@ -135,7 +135,7 @@ public interface Scope<T extends View, U extends Presenter<T>> extends Closeable
 
     /** {@inheritDoc} */
     @Override public final void onActivityStopped(@NonNull Activity activity)
-    {mScope.getPresenter().setView(null);
+    {mScope.getPresenter().view(null);
     Objects.requireNonNull(mScope.getView()).stop();}
 
     /** {@inheritDoc} */

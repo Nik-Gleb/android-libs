@@ -41,7 +41,7 @@ import java.io.Closeable;
 public interface Presenter<T> extends Closeable {
 
   /** @param view view for attach, null - detach */
-  default void setView(@Nullable T view) {}
+  default void view(@Nullable T view) {}
 
   /**
    * @param outState saved state container
