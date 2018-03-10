@@ -52,9 +52,7 @@ public class Model {
   private static final boolean SERIAL = true;
 
   /** STATE KEYS.. */
-  private static final String
-      STATE_MODEL = "model",
-      STATE_ACTIONS = "actions";
+  private static final String STATE_ACTIONS = ":actions";
 
   /** "DETACH" Command. */
   private static final int WHAT_DETACH = 0;
@@ -81,11 +79,12 @@ public class Model {
    */
   @SuppressLint("UseSparseArrays")
   public static Threader.Builder create
-  (Bundle inState, Handler handler,
-      Threader.Factory factory, UnPacker unPacker) {
+  (Bundle inState, Handler handler, Threader.Factory factory,
+      UnPacker unPacker, String name) {
 
+    name += STATE_ACTIONS;
     final SparseArray<? extends Parcelable> actions = inState != null ?
-            inState.getSparseParcelableArray(STATE_ACTIONS) : null;
+            inState.getSparseParcelableArray(name) : null;
 
     HashMap<Integer, Object> state = null;
     if (actions != null) {
@@ -105,16 +104,6 @@ public class Model {
   }
 
   /**
-   * @param inState saved state instance
-   *
-   * @param <T> type of model
-   *
-   * @return model instance or null
-   */
-  public static <T extends BaseModel<?>> T get(Bundle inState)
-  {return inState != null ? Retain.get(inState, STATE_MODEL) : null;}
-
-  /**
    * Saving current state
    *
    * @param model model instance
@@ -124,7 +113,7 @@ public class Model {
    * @param <T> type of model
    */
   public static <T extends BaseModel<?>> void save
-  (T model, Bundle outState, Packer packer) {
+  (T model, Bundle outState, Packer packer, String name) {
     final HashMap<Integer, Object> raw = model.state();
     final SparseArray<Parcelable> packed = new SparseArray<>(raw.size());
 
@@ -134,10 +123,17 @@ public class Model {
       final Parcelable value = packer.pack(key, entry.getValue());
       if (value != Bundle.EMPTY) packed.put(key, value);
     }
+    name += STATE_ACTIONS;
+    outState.putSparseParcelableArray(name, packed);
+  }
 
-    outState.putSparseParcelableArray(STATE_ACTIONS, packed);
-    Retain.put(outState, STATE_MODEL, model);
-
+  /**
+   * Release the model.
+   *
+   * @param handler the main thread handler
+   */
+  public static void release(Handler handler) {
+    handler.removeMessages(WHAT_DETACH);
   }
 
   /**
@@ -145,15 +141,13 @@ public class Model {
    *
    * @param model model instance
    * @param handler the main thread handler
-   * @param finishing finishing flag
    *
    * @param <T> type of model
    */
   public static <T extends BaseModel<?>> void release
-      (T model, Handler handler, boolean finishing) {
-    handler.removeMessages(WHAT_DETACH); if (!finishing) return;
+  (T model, Handler handler) {
     final Message msg = detachMessage(model, handler);
-    handler.dispatchMessage(msg); msg.recycle(); //model.close();
+    handler.dispatchMessage(msg); msg.recycle();
   }
 
   /**

@@ -26,12 +26,15 @@
 package fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.app.ExtendedDialogFragment;
@@ -138,5 +141,21 @@ public class ExtendedFragment extends ExtendedDialogFragment {
 
     /** @return the name of this fragment */
     @NonNull final String getName() {return getTag(getClass());}
+
+    /**
+     * @param view source view for extract context
+     * @param <S> type of view
+     *
+     * @return related application context
+     */
+    public static <S> Context toContext(S view) {
+        if (view instanceof FragmentActivity)
+            return ((FragmentActivity)view).getApplicationContext();
+        else if (view instanceof Fragment)
+            return toContext(((Fragment)view).getActivity());
+        else if (view instanceof android.view.View)
+            return ((android.view.View)view).getContext().getApplicationContext();
+        else throw new IllegalArgumentException("Unknown type");
+    }
 
 }
