@@ -43,11 +43,8 @@ public interface Presenter<T> extends Closeable {
   /** @param view view for attach, null - detach */
   default void view(@Nullable T view) {}
 
-  /**
-   * @param outState saved state container
-   * @param name the name of scope
-   */
-  default void save(@NonNull Bundle outState, @NonNull String name) {}
+  /** @param outState saved state container */
+  default void save(@NonNull Bundle outState) {}
 
   /** Attempt to stop. */
   default void stop() {}

@@ -61,7 +61,7 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
   /** @param outState save state container */
   default void save(@NonNull Bundle outState, @NonNull String name) {
     final T view = Objects.requireNonNull(getView());
-    view.save(outState, name); getPresenter().save(outState, name);
+    view.save(outState); getPresenter().save(outState);
     final Scope<T, U> scope = this; Retain.put(outState, name, scope);
   }
 
@@ -74,15 +74,16 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
    * @return the main controller instance
    */
   @NonNull
-  static <T extends View, U extends Presenter<T>, S extends Scope<T, U>, V>
-  S create (@NonNull Context context, @NonNull Factory<S> scope,
-      @NonNull String name, @NonNull View.Factory<T, U, S, V> view,
-      @NonNull V comp, @Nullable Bundle state) {
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public static <T extends View, U extends Presenter<?>, S extends Scope<T, U>, V>
+  S create (@NonNull Context context, @NonNull String name,
+      @NonNull Factory<S> scope, @NonNull View.Factory<T, U, S, V> view,
+      @NonNull V component, @Nullable Bundle state) {
     S result; if (state == null ||
         (result = Retain.get(state, name)) == null)
       result = scope.create(context, state, name);
-    result.setView(view.create(result, comp, state, name));
-    result.attach(name, comp);
+    result.setView(view.create(result, component, state, name));
+    result.attach(name, component);
     return result;
   }
 
@@ -100,7 +101,7 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
   }
 
   /** An Activity Lifecycle Callbacks. */
-  final class ActivityCallbacks<T extends View, U extends Presenter<T>>
+  final class ActivityCallbacks<T extends View, U extends Presenter<?>>
       implements Application.ActivityLifecycleCallbacks {
 
     /** The name of scope. */
@@ -123,9 +124,10 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
     (@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override public final void onActivityStarted(@NonNull Activity activity)
     {Objects.requireNonNull(mScope.getView()).start();
-    mScope.getPresenter().view(mScope.getView());}
+      ((Presenter<T>)mScope.getPresenter()).view(mScope.getView());}
 
     /** {@inheritDoc} */
     @Override public final void onActivityResumed(@NonNull Activity activity) {}
@@ -154,7 +156,7 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
   }
 
   /** Fragment lifecycle callbacks. */
-  final class FragmentCallbacks<T extends View, U extends Presenter<T>>
+  final class FragmentCallbacks<T extends View, U extends Presenter<?>>
       implements DefaultLifecycleObserver {
 
     /** Scope instance. */

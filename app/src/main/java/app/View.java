@@ -45,11 +45,8 @@ public interface View extends Closeable {
   /** Stop view. */
   default void stop() {}
 
-  /**
-   * @param outState saved state container
-   * @param name the name of scope
-   */
-  void save(@NonNull Bundle outState, @NonNull String name);
+  /** @param outState saved state container */
+  void save(@NonNull Bundle outState);
 
   /** true if state was saved */
   boolean isSaved();
@@ -63,7 +60,7 @@ public interface View extends Closeable {
    * @param <T> the type of view
    */
   @FunctionalInterface
-  interface Factory<T extends View, U extends Presenter<T>, S extends Scope<T, U>, V> {
+  interface Factory<T extends View, U extends Presenter<?>, S extends Scope<T, U>, V> {
     /**
      * @param component source view
      * @param inState saved state
