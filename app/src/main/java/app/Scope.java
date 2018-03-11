@@ -44,7 +44,7 @@ import java.util.Objects;
  * @since 1.0, 10/03/2018
  */
 @SuppressWarnings("unused")
-public interface Scope<T extends View, U extends Presenter<T>> extends Closeable {
+public interface Scope<T extends View, U extends Presenter<?>> extends Closeable {
 
   /** @param view view for attach, null - detach */
   @SuppressWarnings("SameParameterValue")
