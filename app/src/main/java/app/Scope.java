@@ -58,45 +58,59 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
   @NonNull
   U getPresenter();
 
-  /** @param outState save state container */
-  default void save(@NonNull Bundle outState, @NonNull String name) {
+  /**
+   * @param outState saved state container
+   * @param tag state key tag
+   */
+  default void save(@NonNull Bundle outState, @NonNull String tag) {
     final T view = Objects.requireNonNull(getView());
     view.save(outState); getPresenter().save(outState);
-    final Scope<T, U> scope = this; Retain.put(outState, name, scope);
+    final Scope<T, U> scope = this; Retain.put(outState, tag, scope);
   }
 
   /** {@inheritDoc} */
   @Override default void close() {}
 
   /**
-   * @param view host activity
-   * @param state saved state instance
-   * @return the main controller instance
+   *
+   * @param context   application context
+   * @param tag       scope's state-key tag
+   * @param scope     scope factory
+   * @param view      view factory
+   * @param component host component
+   * @param state     saved state container
+   *
+   * @param <T>       the type of VIEW
+   * @param <U>       the type of PRESENTER
+   * @param <S>       the type of SCOPE
+   * @param <V>       the type of COMPONENT
+   *
+   * @return the new created scope instance
    */
   @NonNull
   @SuppressWarnings("UnnecessaryInterfaceModifier")
   public static <T extends View, U extends Presenter<?>, S extends Scope<T, U>, V>
-  S create (@NonNull Context context, @NonNull String name,
+  S create (@NonNull Context context, @NonNull String tag,
       @NonNull Factory<S> scope, @NonNull View.Factory<T, U, S, V> view,
       @NonNull V component, @Nullable Bundle state) {
     S result; if (state == null ||
-        (result = Retain.get(state, name)) == null)
-      result = scope.create(context, state, name);
-    result.setView(view.create(result, component, state, name));
-    result.attach(name, component);
+        (result = Retain.get(state, tag)) == null)
+      result = scope.create(context, state);
+    result.setView(view.create(result, component, state));
+    result.attach(tag, component);
     return result;
   }
 
   @SuppressWarnings("unchecked")
-  default <S> void attach(@NonNull String name, @NonNull S comp) {
+  default <S> void attach(@NonNull String tag, @NonNull S component) {
     final Scope scope = this;
-    if (comp instanceof Activity)
-      ((Activity) comp).getApplication()
+    if (component instanceof Activity)
+      ((Activity) component).getApplication()
           .registerActivityLifecycleCallbacks
-          (new ActivityCallbacks(name, scope));
+          (new ActivityCallbacks(tag, scope));
     else
-      if (comp instanceof LifecycleOwner)
-        ((LifecycleOwner)comp).getLifecycle()
+      if (component instanceof LifecycleOwner)
+        ((LifecycleOwner)component).getLifecycle()
             .addObserver(new FragmentCallbacks(scope));
   }
 
@@ -105,19 +119,19 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
       implements Application.ActivityLifecycleCallbacks {
 
     /** The name of scope. */
-    private final String mName;
+    private final String mTag;
     /** Scope instance. */
     private final Scope<T, U> mScope;
 
     /**
      * Constructs a new {@link ActivityCallbacks}.
      *
-     * @param name the name of scope
+     * @param tag the tag of scope
      * @param scope scope instance
      */
     ActivityCallbacks
-    (@NonNull String name, @NonNull Scope<T, U> scope)
-    {mName = name; mScope = scope;}
+    (@NonNull String tag, @NonNull Scope<T, U> scope)
+    {mTag = tag; mScope = scope;}
 
     /** {@inheritDoc} */
     @Override public final void onActivityCreated
@@ -151,7 +165,7 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
     /** {@inheritDoc} */
     @Override public final void onActivitySaveInstanceState
     (@NonNull Activity activity, @NonNull Bundle outState)
-    {mScope.save(outState, mName);}
+    {mScope.save(outState, mTag);}
 
   }
 
@@ -198,16 +212,14 @@ public interface Scope<T extends View, U extends Presenter<?>> extends Closeable
 
   /** The Scope Factory */
   @FunctionalInterface
-  interface Factory<T> {
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public interface Factory<T> {
     /**
      * @param context application context
      * @param inState saved state
-     * @param name the name of scope
      *
      * @return component scope
      */
-    @NonNull
-    T create(@NonNull Context context, @Nullable Bundle inState,
-        @NonNull String name);
+    public @NonNull T create(@NonNull Context context, @Nullable Bundle inState);
   }
 }

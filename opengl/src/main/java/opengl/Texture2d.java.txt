@@ -16,7 +16,7 @@ import proguard.annotation.KeepPublicClassMembers;
 @KeepPublicClassMembers
 public final class Texture2d implements Closeable {
 
-  /** The name of texture. */
+  /** The tag of texture. */
   private final int mName;
 
   /** The target of the active texture unit to which the texture is bound. */
@@ -47,7 +47,7 @@ public final class Texture2d implements Closeable {
     mClosed = true;
   }
 
-  /** The name of texture. */
+  /** The tag of texture. */
   public final int getName() {return mName;}
 
   /** {@inheritDoc} */
@@ -60,7 +60,7 @@ public final class Texture2d implements Closeable {
   /** Unbind this texture. */
   public final void unbind() {GLES20.glBindTexture(mTarget, DEFAULT_NAME);}
 
-  static final void saveTexture(int name) {
+  static final void saveTexture(int tag) {
     GLES20.glGetIntegerv(GLES20.GL_TEXTURE_BINDING_2D);
   }
 

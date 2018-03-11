@@ -60,14 +60,14 @@ public interface View extends Closeable {
    * @param <T> the type of view
    */
   @FunctionalInterface
-  interface Factory<T extends View, U extends Presenter<?>, S extends Scope<T, U>, V> {
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public interface Factory<T extends View, U extends Presenter<?>, S extends Scope<T, U>, V> {
     /**
      * @param component source view
      * @param inState saved state
      * @return view - instance
      */
-    @NonNull
-    T create(@NonNull S scope, @NonNull V component,
-        @Nullable Bundle inState, @NonNull String name);
+    @SuppressWarnings("UnnecessaryInterfaceModifier")
+    @NonNull public T create(@NonNull S scope, @NonNull V component, @Nullable Bundle inState);
   }
 }

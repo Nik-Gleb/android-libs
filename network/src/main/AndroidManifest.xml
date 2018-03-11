@@ -25,5 +25,5 @@
 
 <manifest package="android.libs.network">
   <!-- Only for testing -->
-  <!--<uses-permission android:name="android.permission.INTERNET" />-->
+  <!--<uses-permission android:tag="android.permission.INTERNET" />-->
 </manifest>
