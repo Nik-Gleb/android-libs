@@ -118,7 +118,7 @@
 -dontnote java.io.FileDescriptor
 -dontnote android.os.ParcelFileDescriptor
 
--keep public class !repository.BuildConfig {public <fields>; public <methods>;}
+-keep public class !android.libs.loaders.BuildConfig {public protected *;}
 
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory

@@ -111,12 +111,8 @@
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
 
--keep public class * {
-    public protected *;
-}
--keep public interface * {
-    public protected *;
-}
+-keep public class !android.libs.ok-tools.BuildConfig {public protected *;}
+-keep public interface * {public protected *;}
 
 -dontnote android.**
 -dontnote com.android.**

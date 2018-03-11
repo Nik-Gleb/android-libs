@@ -111,9 +111,8 @@
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
 
--keep public class * {
-    public protected *;
-}
+-keep public class !android.libs.ssl-certs.BuildConfig {public protected *;}
+-keep public interface * {public protected *;}
 
 -dontwarn android.support.annotation.*
 

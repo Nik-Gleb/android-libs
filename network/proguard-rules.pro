@@ -118,7 +118,7 @@
 -dontnote java.io.FileDescriptor
 -dontnote android.os.ParcelFileDescriptor
 
--keep public class !network.BuildConfig {public protected *;}
+-keep public class !android.libs.network.BuildConfig {public protected *;}
 -keep public interface * {public protected *;}
 
 -dontnote android.**

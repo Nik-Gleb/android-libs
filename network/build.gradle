@@ -121,7 +121,7 @@ publishing {
     repository(MavenPublication) {
       groupId PACKAGE; artifactId REPOSITORY; version project.ext.mPubVer
       //artifact "$buildDir/outputs/aar/${archivesBaseName}-repository-release.aar"
-      artifact "$buildDir/intermediates/bundles/repositoryRelease/classes.jar"
+      artifact "$buildDir/intermediates/packaged-classes/repository/release/classes.jar"
     }
     storage(MavenPublication) {
       groupId PACKAGE; artifactId STORAGE; version project.ext.mPubVer
