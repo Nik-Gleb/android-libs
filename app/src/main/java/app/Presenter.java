@@ -45,10 +45,14 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public interface Presenter<T extends View, U extends LifecycleOwner> extends Closeable {
 
+  /**
+   * @param component view-component
+   * @param inState saved state container
+   */
   void setup(@NonNull U component, @Nullable Bundle inState);
 
-  // and stop, true if not saved
-  boolean reset();
+  /** @return true if state wasn't saved */
+  boolean reset(); // and stop
 
   /** @param view view for attach, null - detach */
   void setView(@Nullable T view);
@@ -58,7 +62,7 @@ public interface Presenter<T extends View, U extends LifecycleOwner> extends Clo
   T getView();
 
   /** @param outState saved state container */
-  default void save(@NonNull Bundle outState) {}
+  void save(@NonNull Bundle outState);
 
   /** {@inheritDoc} */
   @Override default void close() {}

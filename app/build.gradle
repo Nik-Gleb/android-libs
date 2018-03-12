@@ -78,7 +78,7 @@ dependencies {
   /* Optional -- Mockito framework */
   testImplementation 'org.mockito:mockito-core:2.15.0'
 
-  implementation project(':clean')
+  api project(':clean')
   implementation 'android.arch.lifecycle:runtime:1.1.0'
   implementation 'android.arch.lifecycle:common-java8:1.1.0'
 
