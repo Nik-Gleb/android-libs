@@ -43,7 +43,7 @@
 
 -keepparameternames
 #-renamesourcefileattribute SourceFile
--keepattributes Signature
+-keepattributes *Annotation*, Signature
 -keepattributes EnclosingMethod
 #-keepattributes LineNumberTable, SourceFile
 -keepattributes InnerClasses, Exceptions
