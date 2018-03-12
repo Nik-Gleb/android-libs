@@ -52,7 +52,7 @@ public interface Presenter<T extends View, U extends LifecycleOwner> extends Clo
   void setup(@NonNull U component, @Nullable Bundle inState);
 
   /** @return true if state wasn't saved */
-  boolean reset(); // and stop
+  boolean reset();
 
   /** @param view view for attach, null - detach */
   void setView(@Nullable T view);
