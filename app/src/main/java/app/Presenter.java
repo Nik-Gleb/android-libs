@@ -36,8 +36,6 @@ import android.support.annotation.Nullable;
 import java.io.Closeable;
 import java.util.Objects;
 
-import clean.BaseModel;
-
 /**
  * Base scope.
  *
@@ -51,6 +49,9 @@ public interface Presenter<T extends View, U extends LifecycleOwner> extends Clo
 
   // and stop, true if not saved
   boolean reset();
+
+  /** @param view view for attach, null - detach */
+  void setView(@Nullable T view);
 
   /** @return view instance */
   @Nullable
@@ -107,15 +108,13 @@ public interface Presenter<T extends View, U extends LifecycleOwner> extends Clo
   static <T extends View, U extends LifecycleOwner>
   void start(@NonNull Presenter<T, U> presenter) {
     final T view = Objects.requireNonNull(presenter.getView());
-    view.start(); if (presenter instanceof BaseModel)
-      BaseModel.setView((BaseModel) presenter, view);
+    view.start(); presenter.setView(view);
   }
 
   @SuppressWarnings("unchecked")
   static <T extends View, U extends LifecycleOwner>
   void stop(@NonNull Presenter<T, U> presenter) {
-    final T view = null; if (presenter instanceof BaseModel)
-      BaseModel.setView((BaseModel) presenter, view);
+    final T view = null;  presenter.setView(view);
     Objects.requireNonNull(presenter.getView()).stop();
   }
 

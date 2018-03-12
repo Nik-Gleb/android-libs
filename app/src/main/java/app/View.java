@@ -51,6 +51,7 @@ public interface View extends Closeable {
   default void pause() {}
 
   /** @param outState saved state container */
+  @SuppressWarnings("unused")
   default void save(@NonNull Bundle outState) {}
 
   /** {@inheritDoc} */

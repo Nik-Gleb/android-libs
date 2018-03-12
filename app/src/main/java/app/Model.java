@@ -114,7 +114,7 @@ public class Model {
    */
   public static <T extends BaseModel<?>> void save
   (T model, Bundle outState, Packer packer, String name) {
-    final HashMap<Integer, Object> raw = model.state();
+    final HashMap<Integer, Object> raw = BaseModel.state((BaseModel<?>) model);
     final SparseArray<Parcelable> packed = new SparseArray<>(raw.size());
 
     for (final Map.Entry<Integer, Object> entry : raw.entrySet()) {
@@ -160,7 +160,7 @@ public class Model {
    * @param <T> type of model
    */
   public static <V, T extends BaseModel<V>> void start
-  (T model, V view) {model.setView(view);}
+  (T model, V view) {BaseModel.setView(model, view);}
 
   /**
    * Stop the model.
@@ -182,7 +182,7 @@ public class Model {
     if (msg.what != WHAT_DETACH || msg.obj == null) return false;
     if (!(msg.obj instanceof BaseModel<?>)) return false;
     final BaseModel<?> model = (BaseModel<?>) msg.obj;
-    model.setView(null); return true;
+    BaseModel.setView(model,null); return true;
   }
 
   /**

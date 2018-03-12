@@ -35,7 +35,8 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author Nikitenko Gleb
  * @since 1.0, 09/08/2017
  */
-@SuppressWarnings({ "WeakerAccess", "EmptyMethod" })
+@SuppressWarnings({ "WeakerAccess", "EmptyMethod", "RedundantThrows",
+    "unused" })
 @RunWith(MockitoJUnitRunner.class)
 public class AsyncTest {
 
@@ -126,6 +127,7 @@ public class AsyncTest {
   }
 
 
+  @SuppressWarnings({ "SameReturnValue", "unused" })
   private static final class Interactor {
 
     String calc(int value)
