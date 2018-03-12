@@ -1,5 +1,5 @@
 /*
- * Presenter.java
+ * Scope.java
  * app
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
@@ -25,30 +25,204 @@
 
 package app;
 
+import android.app.Activity;
+import android.app.Application;
+import android.arch.lifecycle.DefaultLifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
+import java.util.Objects;
+
+import clean.BaseModel;
 
 /**
- * Base presenter.
+ * Base scope.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 10/03/2018
  */
 @SuppressWarnings("unused")
-public interface Presenter<T> extends Closeable {
+public interface Presenter<T extends View, U extends LifecycleOwner> extends Closeable {
 
-  /** @param view view for attach, null - detach */
-  default void view(@Nullable T view) {}
+  void setup(@NonNull U component, @Nullable Bundle inState);
+
+  // and stop, true if not saved
+  boolean reset();
+
+  /** @return view instance */
+  @Nullable
+  T getView();
 
   /** @param outState saved state container */
   default void save(@NonNull Bundle outState) {}
 
-  /** Attempt to stop. */
-  default void stop() {}
-
   /** {@inheritDoc} */
   @Override default void close() {}
+
+  /**
+   *
+   * @param component application context
+   * @param tag       scope's state-key tag
+   * @param scope     scope factory
+   * @param state     saved state container
+   *
+   * @param <T>       the type of VIEW
+   * @param <U>       the type of PRESENTER
+   *
+   * @return the new created scope instance
+   */
+  @NonNull
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public static <T extends View, U extends LifecycleOwner, S extends Presenter<T,U>>
+  S create (@NonNull String tag, @Nullable Bundle state,
+      @NonNull U component, @NonNull Factory<T, U, S> scope) {
+    S result; if (state == null ||
+        (result = Retain.get(state, tag)) == null)
+      result = scope.create(component, state);
+    result.setup(component, state);
+
+    if (component instanceof Activity)
+      ((Activity) component).getApplication()
+          .registerActivityLifecycleCallbacks
+              (new ActivityCallbacks<>(tag, result));
+    else
+      component.getLifecycle()
+          .addObserver(new OwnerCallbacks<>(result));
+
+    return result;
+  }
+
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public static <T extends View, U extends LifecycleOwner> void save
+      (@NonNull Presenter<T, U> presenter, @NonNull Bundle outState, @NonNull String tag) {
+    final T view = Objects.requireNonNull(presenter.getView());
+    view.save(outState); presenter.save(outState);
+    Retain.put(outState, tag, presenter);
+  }
+
+  @SuppressWarnings("unchecked")
+  static <T extends View, U extends LifecycleOwner>
+  void start(@NonNull Presenter<T, U> presenter) {
+    final T view = Objects.requireNonNull(presenter.getView());
+    view.start(); if (presenter instanceof BaseModel)
+      BaseModel.setView((BaseModel) presenter, view);
+  }
+
+  @SuppressWarnings("unchecked")
+  static <T extends View, U extends LifecycleOwner>
+  void stop(@NonNull Presenter<T, U> presenter) {
+    final T view = null; if (presenter instanceof BaseModel)
+      BaseModel.setView((BaseModel) presenter, view);
+    Objects.requireNonNull(presenter.getView()).stop();
+  }
+
+  static <T extends View, U extends LifecycleOwner> void destroy(@NonNull Presenter<T, U> presenter)
+  {Objects.requireNonNull(presenter.getView()).close(); if (presenter.reset()) presenter.close();}
+
+  static <T extends View, U extends LifecycleOwner> void resume(@NonNull Presenter<T, U> presenter)
+  {Objects.requireNonNull(presenter.getView()).resume();}
+
+  static <T extends View, U extends LifecycleOwner> void pause(@NonNull Presenter<T, U> presenter)
+  {Objects.requireNonNull(presenter.getView()).pause();}
+
+  /** An Activity Lifecycle Callbacks. */
+  final class ActivityCallbacks
+      <T extends View, U extends LifecycleOwner>
+      implements Application.ActivityLifecycleCallbacks {
+
+    /** The name of scope. */
+    private final String mTag;
+    /** Presenter instance. */
+    private final Presenter<T, U> mPresenter;
+
+    /**
+     * Constructs a new {@link ActivityCallbacks}.
+     *
+     * @param tag the tag of presenter
+     * @param presenter presenter instance
+     */
+    ActivityCallbacks
+    (@NonNull String tag, @NonNull Presenter<T,U> presenter)
+    {mTag = tag; mPresenter = presenter;}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityCreated
+    (@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override public final void onActivityStarted(@NonNull Activity activity) {start(mPresenter);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityResumed(@NonNull Activity activity) {}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityPaused(@NonNull Activity activity) {}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityStopped(@NonNull Activity activity) {stop(mPresenter);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityDestroyed(@NonNull Activity activity)
+    {activity.getApplication().unregisterActivityLifecycleCallbacks(this); destroy(mPresenter);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivitySaveInstanceState
+    (@NonNull Activity activity, @NonNull Bundle outState)
+    {save(mPresenter, outState, mTag);}
+
+  }
+
+  /** Lifecycle owner callbacks. */
+  final class OwnerCallbacks
+      <T extends View, U extends LifecycleOwner>
+      implements DefaultLifecycleObserver {
+
+    /** Presenter instance. */
+    private final Presenter<T, U> mPresenter;
+
+    /**
+     * Constructs a new {@link ActivityCallbacks}.
+     *
+     * @param presenter presenter instance
+     */
+    OwnerCallbacks(@NonNull Presenter<T,U> presenter)
+    {mPresenter = presenter;}
+
+    /** {@inheritDoc} */
+    @Override public final void onCreate(@NonNull LifecycleOwner owner) {}
+
+    /** {@inheritDoc} */
+    @Override public final void onStart(@NonNull LifecycleOwner owner) {start(mPresenter);}
+
+    /** {@inheritDoc} */
+    @Override public final void onResume(@NonNull LifecycleOwner owner) {}
+
+    /** {@inheritDoc} */
+    @Override public final void onPause(@NonNull LifecycleOwner owner) {}
+
+    /** {@inheritDoc} */
+    @Override public final void onStop(@NonNull LifecycleOwner owner) {stop(mPresenter);}
+
+    /** {@inheritDoc} */
+    @Override public final void onDestroy(@NonNull LifecycleOwner owner)
+    {owner.getLifecycle().removeObserver(this); destroy(mPresenter);}
+  }
+
+  /** The Presenter Factory */
+  @FunctionalInterface
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public interface Factory
+      <T extends View, U extends LifecycleOwner, S extends Presenter<T,U>> {
+    /**
+     * @param component scope context
+     * @param inState saved state
+     *
+     * @return component scope
+     */
+    public @NonNull S create(@NonNull U component, @Nullable Bundle inState);
+  }
 }

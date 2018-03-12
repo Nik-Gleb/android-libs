@@ -27,7 +27,6 @@ package app;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 
@@ -45,29 +44,16 @@ public interface View extends Closeable {
   /** Stop view. */
   default void stop() {}
 
-  /** @param outState saved state container */
-  void save(@NonNull Bundle outState);
+  /** Resume view. */
+  default void resume() {}
 
-  /** true if state was saved */
-  boolean isSaved();
+  /** Pause view. */
+  default void pause() {}
+
+  /** @param outState saved state container */
+  default void save(@NonNull Bundle outState) {}
 
   /** {@inheritDoc} */
   @Override default void close() {}
 
-  /**
-   * The view factory.
-   *
-   * @param <T> the type of view
-   */
-  @FunctionalInterface
-  @SuppressWarnings("UnnecessaryInterfaceModifier")
-  public interface Factory<T extends View, U extends Presenter<?>, S extends Scope<T, U>, V> {
-    /**
-     * @param component source view
-     * @param inState saved state
-     * @return view - instance
-     */
-    @SuppressWarnings("UnnecessaryInterfaceModifier")
-    @NonNull public T create(@NonNull S scope, @NonNull V component, @Nullable Bundle inState);
-  }
 }

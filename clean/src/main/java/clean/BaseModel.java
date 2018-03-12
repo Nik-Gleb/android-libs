@@ -25,6 +25,9 @@
 
 package clean;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+
 import java.io.Closeable;
 import java.util.HashMap;
 
@@ -60,8 +63,17 @@ public abstract class BaseModel<V> implements Closeable {
   protected BaseModel(Threader.Builder builder)
   {mBuilder = builder;}
 
+  /**
+   * @param model the model-instance
+   * @param view the view-instance
+   * @param <T> the type of view
+   */
+  public static <T> void setView
+  (@NotNull BaseModel<T> model, @Nullable T view)
+  {model.setView(view);}
+
   /** @param view the view instance for attach/detach */
-  public final void setView(V view) {
+  private void setView(V view) {
     if (this.view == view) return;
     if (view != null && mThreader == null)
     {this.view = view; mThreader = mBuilder.build();onActivated();}
@@ -70,8 +82,16 @@ public abstract class BaseModel<V> implements Closeable {
     else this.view = view;
   }
 
+  /**
+   * @param model the model-instance
+   * @param <T> the type of view
+   * @return all active actions
+   */
+  public static <T> HashMap<Integer, Object> state
+      (@NotNull BaseModel<T> model) {return model.state();}
+
   /** @return all active actions */
-  public final HashMap<Integer, Object> state()
+  private HashMap<Integer, Object> state()
   {mThreader.backup(); return mBuilder.savedState;}
 
   /**
