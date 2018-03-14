@@ -53,8 +53,11 @@ public abstract class Observable<T> implements Closeable {
     if (mClosed) return;
     synchronized (mObservers)
     {mObservers.clear();}
-    mClosed = true;
+    onClose(); mClosed = true;
   }
+
+  /** Closed callback */
+  protected void onClose() {}
 
   /**
    * Adds an observer to the list.

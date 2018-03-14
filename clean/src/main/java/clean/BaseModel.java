@@ -27,7 +27,9 @@ package clean;
 
 import java.io.Closeable;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
 
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 /**
  * Base java-model.
@@ -40,6 +42,9 @@ import java.util.HashMap;
 @SuppressWarnings({ "WeakerAccess", "unused" })
 public abstract class BaseModel<V> implements Closeable {
 
+  /** Global objects cleaner. */
+  private static final ExecutorService CLEANER = newSingleThreadExecutor();
+
   /** Threader builder. */
   private final Threader.Builder mBuilder;
 
@@ -47,7 +52,7 @@ public abstract class BaseModel<V> implements Closeable {
   protected V view = null;
 
   /** The threader. */
-  private Threader mThreader = null;
+  private volatile Threader mThreader = null;
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
@@ -71,10 +76,12 @@ public abstract class BaseModel<V> implements Closeable {
   /** @param view the view instance for attach/detach */
   private void setView(V view) {
     if (this.view == view) return;
-    if (view != null && mThreader == null)
-    {this.view = view; mThreader = mBuilder.build();onActivated();}
-    else if (view == null && mThreader != null)
-    {onDeActivated(); mThreader.close(); mThreader = null; this.view = null;}
+    final Threader threader = mThreader;
+    if (view != null && threader == null)
+    {this.view = view; mThreader = mBuilder.build(); onActivated();}
+    else if (view == null && threader != null)
+    {onDeActivated(); mThreader = null; this.view = null;
+    CLEANER.execute(() -> {threader.close(); onReleased();});}
     else this.view = view;
   }
 
@@ -95,8 +102,11 @@ public abstract class BaseModel<V> implements Closeable {
    *
    * @param id action id
    */
-  protected final void apply(int id)
-  {mThreader.apply(id, Void.TYPE);}
+  protected final void apply(int id) {
+    final Threader threader = mThreader;
+    if (threader == null) return;
+    threader.apply(id, Void.TYPE);
+  }
 
   /**
    * Apply the action.
@@ -107,8 +117,11 @@ public abstract class BaseModel<V> implements Closeable {
    * @param <U> the type of args
    */
   @SuppressWarnings("WeakerAccess")
-  protected final <U> void apply(int id, U args)
-  {mThreader.apply(new AsyncTask(id, args));}
+  protected final <U> void apply(int id, U args) {
+    final Threader threader = mThreader;
+    if (threader == null) return;
+    threader.apply(new AsyncTask(id, args));
+  }
 
   /** {@inheritDoc} */
   @Override protected final void finalize() throws Throwable
@@ -117,6 +130,9 @@ public abstract class BaseModel<V> implements Closeable {
   /** {@inheritDoc} */
   @Override public final void close()
   {if (mClosed) return; onClose(); mClosed = true;}
+
+  /** Released callback */
+  protected void onReleased() {}
 
   /** Causes by close */
   protected void onClose()
