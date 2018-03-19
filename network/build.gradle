@@ -158,9 +158,9 @@ dependencies {
     implementation 'com.android.support:support-fragment:' + supportVersion*/
 
   /** OkHttp library */
-  implementation 'com.squareup.okhttp3:okhttp:3.8.0'
+  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   implementation project(':ok-tools')
-  implementation project(':clean')
+  //implementation project(':clean')
 
   /* JUnit */
   testImplementation 'junit:junit:' + junitVersion

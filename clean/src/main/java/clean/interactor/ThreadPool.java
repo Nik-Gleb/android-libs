@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.interactor;
 
 import java.lang.reflect.Field;
 import java.util.List;

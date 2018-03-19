@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.interactor;
 
 import java.io.Closeable;
 import java.util.HashMap;

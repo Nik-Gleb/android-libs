@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.cancellation;
 
 import java.io.Closeable;
 
@@ -89,6 +89,5 @@ public interface CancellationSignal extends Closeable {
     public OperationCanceledException(String message)
     {super(message != null ? message : "The operation has been canceled.");}
   }
-
 
 }

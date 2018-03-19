@@ -23,17 +23,20 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.interactor;
 
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Main Async Threader.
@@ -50,7 +53,7 @@ public final class Threader implements Closeable {
   /** The main thread. */
   private final Thread mThread = Thread.currentThread();
   /** Array of functions. */
-  private final Function[] mFunctions;
+  private final BaseRecord[] mFunctions;
   /** The main thread executor. */
   private final Executor mMain, mWorker;
   /** Thread pool handler. */
@@ -94,7 +97,7 @@ public final class Threader implements Closeable {
   public final void backup() {
     assertMain();
     for(final AsyncTask task:mTasks.values())
-      mSavedState.put(task.hashCode(), task.input);
+      mSavedState.put(task.hashCode(), task.input.get());
   }
 
   /**
@@ -225,7 +228,7 @@ public final class Threader implements Closeable {
     /** The thread factory. */
     private final Factory mFactory;
     /** Functions. */
-    private final Function[] mFunctions;
+    private final BaseRecord[] mFunctions;
 
     /** "CLOSE" flag-state. */
     private volatile boolean mClosed;
@@ -237,7 +240,7 @@ public final class Threader implements Closeable {
      * @param factory thread factory
      * @param functions functions
      */
-    Handler(Threader callback, Factory factory, Function[] functions)
+    Handler(Threader callback, Factory factory, BaseRecord[] functions)
     {mCallback = callback; mFactory = factory; mFunctions = functions;}
 
     /** {@inheritDoc} */
@@ -346,7 +349,7 @@ public final class Threader implements Closeable {
     Factory factory = null;
 
     /** Array of functions. */
-    Function[] functions = new Function[0];
+    BaseRecord[] functions = new BaseRecord[0];
 
     /** Saved state. */
     HashMap<Integer, Object> savedState;
@@ -364,25 +367,25 @@ public final class Threader implements Closeable {
     {this.factory = factory; return this;}
 
     /** @return this builder, to allow for chaining. */
-    public final <T> Builder action(FunctionGet<T> function, FunctionResult<T> result)
-    {final FunctionError error = null; return action(function, result, error);}
+    public final <T> Builder action(Supplier<T> function, Consumer<Optional<T>> result)
+    {final Consumer<Exception> error = null; return action(function, result, error);}
     /** @return this builder, to allow for chaining. */
     public final <T> Builder action
-    (FunctionGet<T> function, FunctionResult<T> result, FunctionError error)
+    (Supplier<T> function, Consumer<Optional<T>> result, Consumer<Exception> error)
     {add(new RecordGet<>(function, result, error)); return this;}
 
     /** @return this builder, to allow for chaining. */
-    public final <T> Builder action(FunctionSet<T> function)
-    {final FunctionError error = null; return action(function, error);}
+    public final <T> Builder action(Consumer<T> function)
+    {final Consumer<Exception> error = null; return action(function, error);}
     /** @return this builder, to allow for chaining. */
-    public final <T> Builder action(FunctionSet<T> function, FunctionError error)
+    public final <T> Builder action(Consumer<T> function, Consumer<Exception> error)
     {add(new RecordSet<>(function, error)); return this;}
 
     /** @return this builder, to allow for chaining. */
-    public final Builder action(FunctionVoid function)
-    {final FunctionError error = null; return action(function, error);}
+    public final Builder action(Runnable function)
+    {final Consumer<Exception> error = null; return action(function, error);}
     /** @return this builder, to allow for chaining. */
-    public final Builder action(FunctionVoid function, FunctionError error)
+    public final Builder action(Runnable function, Consumer<Exception> error)
     {add(new RecordVoid(function, error)); return this;}
 
     /** @return this builder, to allow for chaining. */
@@ -395,9 +398,9 @@ public final class Threader implements Closeable {
     {mInitState.put(id, args); return this;}
 
     /** @param value new function */
-    void add(Function value) {
+    void add(BaseRecord value) {
       final int pos = 0, length = this.functions.length;
-      final Function[] functions = new Function[length + 1];
+      final BaseRecord[] functions = new BaseRecord[length + 1];
       System.arraycopy(this.functions, pos, functions, pos, length);
       functions[length] = value; this.functions = functions;
     }
@@ -418,13 +421,13 @@ public final class Threader implements Closeable {
   }
 
   /** "GET" function meta. */
-  private static final class RecordGet<T> extends Function {
+  private static final class RecordGet<T> extends BaseRecord {
 
     /** Request function. */
-    final FunctionGet<T> request;
+    final Supplier<T> request;
 
     /** Result-handler function. */
-    final FunctionResult<T> result;
+    final Consumer<Optional<T>> result;
 
     /**
      * Constructs a new {@link RecordGet}.
@@ -433,29 +436,28 @@ public final class Threader implements Closeable {
      * @param result result-handler function
      * @param error errors handler
      */
-    RecordGet(FunctionGet<T> request, FunctionResult<T> result, FunctionError error)
+    RecordGet(Supplier<T> request, Consumer<Optional<T>> result, Consumer<Exception> error)
     {super(error); this.request = request; this.result = result; }
 
     /** {@inheritDoc} */
-    @Override final Object apply(Object args) throws Throwable
+    @Override final Object apply(Object args)
     {return request.get();}
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override final void delivery(Object result) {
-      if (result == Void.TYPE)
-        //throw new RuntimeException("Get can't return a null");
-        result = null;
-      if (!(result instanceof Throwable)) this.result.result((T) result);
-      else if (error != null) error.error((Throwable) result);
+      if (result == Void.TYPE) result = null;
+      if (!(result instanceof RuntimeException))
+        this.result.accept(Optional.ofNullable((T) result));
+      else if (error != null) error.accept((RuntimeException) result);
     }
   }
 
   /** "SET" function meta. */
-  private static final class RecordSet<T> extends Function {
+  private static final class RecordSet<T> extends BaseRecord {
 
     /** Request function. */
-    final FunctionSet<T> request;
+    final Consumer<T> request;
 
     /**
      * Constructs a new {@link RecordSet}.
@@ -463,27 +465,27 @@ public final class Threader implements Closeable {
      * @param request request function
      * @param error errors handler
      */
-    RecordSet(FunctionSet<T> request, FunctionError error)
+    RecordSet(Consumer<T> request, Consumer<Exception> error)
     {super(error); this.request = request; }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    @Override final Object apply(Object args) throws Throwable
-    {request.set((T) args); return null;}
+    @Override final Object apply(Object args)
+    {request.accept((T) args); return null;}
 
     /** {@inheritDoc} */
     @Override final void delivery(Object result) {
-      if (result instanceof Throwable && error != null)
-        error.error((Throwable) result);
+      if (result instanceof RuntimeException && error != null)
+        error.accept((RuntimeException) result);
     }
 
   }
 
   /** "VOID" function meta. */
-  private static final class RecordVoid extends Function {
+  private static final class RecordVoid extends BaseRecord {
 
     /** Request function. */
-    final FunctionVoid request;
+    final Runnable request;
 
     /**
      * Constructs a new {@link RecordVoid}.
@@ -491,17 +493,17 @@ public final class Threader implements Closeable {
      * @param request request function
      * @param error errors handler
      */
-    RecordVoid(FunctionVoid request, FunctionError error)
+    RecordVoid(Runnable request, Consumer<Exception> error)
     {super(error); this.request = request; }
 
     /** {@inheritDoc} */
-    @Override final Object apply(Object args) throws Throwable
-    {request.apply(); return null;}
+    @Override final Object apply(Object args)
+    {request.run(); return null;}
 
     /** {@inheritDoc} */
     @Override final void delivery(Object result) {
-      if (result instanceof Throwable && error != null)
-        error.error((Throwable) result);
+      if (result instanceof RuntimeException && error != null)
+        error.accept((RuntimeException) result);
     }
   }
 

@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.cancellation;
 
 /**
  * Default Cancellation Signal.

@@ -23,10 +23,14 @@
  * SOFTWARE.
  */
 
-package clean;
+package clean.interactor;
 
 import java.io.Closeable;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
+import clean.cancellation.CancelException;
+
+import static java.util.Objects.deepEquals;
 
 /**
  * Asynchronous Task.
@@ -39,15 +43,17 @@ final class AsyncTask implements Runnable, Closeable {
   /** AsyncTask ID. */
   private final int mId;
 
-  /** I/O fields.. */
-  @SuppressWarnings("WeakerAccess")
-  volatile Object input, output;
+  /** An input. */
+  final AtomicReference<Object> input;
+
+  /** Output container. */
+  Object output = null;
 
   /** Worker thread. */
   volatile Thread thread = null;
 
   /** Worker function. */
-  volatile Function function = null;
+  volatile BaseRecord function = null;
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
@@ -58,43 +64,36 @@ final class AsyncTask implements Runnable, Closeable {
    * @param id    TASK ID
    * @param data  TASK ARGS
    */
-  AsyncTask(int id, Object data) {mId = id; input = data;}
+  AsyncTask(int id, Object data)
+  {mId = id; input = new AtomicReference<>(data);}
 
   /** {@inheritDoc} */
   @SuppressWarnings("WeakerAccess")
   public final boolean apply(AsyncTask task) {
-    final Object input = task.input;
-    if (same(input)) return false;
-    this.input = input; final Thread t;
-    if ((t = this.thread) != null)
-      t.interrupt();
+    Object input; Object aNew; final Thread t;
+    do {input = this.input.get(); aNew = task.input.get();
+      if (deepEquals(input, aNew)) return false;
+    } while(!this.input.compareAndSet(input, aNew));
+    if ((t = this.thread) != null) t.interrupt();
     return true;
   }
 
   /** {@inheritDoc} */
   @Override public final void run() {
     final Thread t = thread;
-    final Function f = function;
+    final BaseRecord f = function;
     if (t == null || f == null) return;
     Object input, output; boolean exit;
     do {
-      input = this.input; exit = true;
-      try {
-        this.output = (output = f.apply(input)) == null ? Void.TYPE : output;}
-      catch (Throwable throwable) {//
-        final boolean interrupted = throwable instanceof InterruptedException;
-        if (interrupted && (exit = same(input))) t.interrupt();
-        if (exit /*&& !interrupted*/) this.output = throwable;
-      }
+      input = this.input.get(); exit = true;
+      try {this.output = (output = f.apply(input)) == null ? Void.TYPE : output;
+      } catch (CancelException exception) {
+        if (exit = deepEquals(this.input.get(), input))
+        {t.interrupt(); this.output = exception;}
+      } catch (RuntimeException exception)
+      {this.output = exception;}
     } while (!exit);
   }
-
-  /**
-   * @param input new input
-   * @return true if this new input equals already existing
-   */
-  private boolean same(Object input)
-  {return Objects.equals(this.input, input);}
 
   /** {@inheritDoc} */
   @Override protected final void finalize() throws Throwable
@@ -102,7 +101,7 @@ final class AsyncTask implements Runnable, Closeable {
 
   /** {@inheritDoc} */
   @Override public final void close()
-  {if (mClosed) return; output = input = null; mClosed = true;}
+  {if (mClosed) return; output = null; input.lazySet(null); mClosed = true;}
 
   /** {@inheritDoc} */
   @Override public final boolean equals(Object object) {
@@ -120,7 +119,7 @@ final class AsyncTask implements Runnable, Closeable {
         new StringBuilder(getClass().getSimpleName())
             .append("{")
               .append("mId=")       .append(mId)
-              .append(", input=")  .append(input)
+              .append(", input=")  .append(input.get())
               .append(", output=") .append(output)
             .append('}');
     try {return builder.toString();}

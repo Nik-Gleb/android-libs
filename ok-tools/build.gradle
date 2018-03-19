@@ -78,9 +78,9 @@ dependencies {
   //implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   /** OkHttp library */
-  implementation 'com.squareup.okhttp3:okhttp:3.8.0'
+  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   /** Clean lib for cancellation  */
-  implementation project(':clean')
+  //implementation project(':clean')
 
   /* JUnit */
   testImplementation 'junit:junit:' + junitVersion

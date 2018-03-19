@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import clean.CancellationSignal.OperationCanceledException;
+import clean.cancellation.CancellationSignal.OperationCanceledException;
 
 /**
  * @author Nikitenko Gleb

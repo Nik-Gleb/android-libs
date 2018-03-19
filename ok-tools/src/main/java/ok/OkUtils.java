@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import clean.CancellationSignal;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -70,14 +69,11 @@ public final class OkUtils {
    *
    * @throws IOException response exceptions
    */
-  public static FileDescriptor perform (Call call, CancellationSignal signal,
-      final PipeFactory pipe) throws IOException {
+  public static FileDescriptor perform (Call call, final PipeFactory pipe) throws IOException {
 
     if (call == null) throw new IllegalArgumentException("call == null");
-    if (signal == null) throw new IllegalArgumentException("canceller == null");
     if (pipe == null) throw new IllegalArgumentException("pipe == null");
 
-    cancelable(call, signal);
     final IOLock lock = new IOLock();
 
     call.enqueue(new Callback() {
@@ -101,16 +97,6 @@ public final class OkUtils {
     if (exception != null) throw exception;
     else return lock.getFileDescriptor();
   }
-
-  /**
-   * Wrap Ok-Http's call to cancelable.
-   *
-   * @param call the call
-   * @param signal the canceler
-   */
-  @SuppressWarnings("SameParameterValue")
-  public static void cancelable(final Call call, CancellationSignal signal)
-  {signal.setOnCancelListener(call::cancel);}
 
   /**
    * @param file the source file

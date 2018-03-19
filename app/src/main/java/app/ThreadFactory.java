@@ -27,7 +27,7 @@ package app;
 
 import android.os.Process;
 
-import clean.Threader;
+import clean.interactor.Threader;
 
 /**
  * Main Thread Factory.

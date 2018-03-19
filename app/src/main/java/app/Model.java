@@ -36,8 +36,8 @@ import android.util.SparseArray;
 import java.util.HashMap;
 import java.util.Map;
 
-import clean.BaseModel;
-import clean.Threader;
+import clean.interactor.BaseModel;
+import clean.interactor.Threader;
 
 /**
  * Android Model.
