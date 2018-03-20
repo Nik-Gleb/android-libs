@@ -28,6 +28,9 @@ public final class Selector<T>
   /** An empty array. */
   private final T[] mEmpty = getEmpty();
 
+  /** Array provider. */
+  private final Observable<T[]> mProvider;
+
   /** Current index. */
   private PropertyInteger mIndex =
       newProperty(NOT_SELECTED);
@@ -38,11 +41,25 @@ public final class Selector<T>
    * @param provider values provider
    */
   public Selector(Observable<T[]> provider)
-  {super(provider);}
+  {super(provider); mProvider = provider;}
 
   /** @param index new index for select */
   public final void select(int index)
   {mIndex.setAndUpdate(index);}
+
+  /** Internal toggle camera */
+  private void toggle() {
+    final int
+        count = mProvider.get()
+        .orElse(mEmpty).length,
+        index = mIndex.get();
+
+    if (count == 0) return;
+    select (
+        count == 1 && index != 0 ?
+        0 : (index + 1) % count
+    );
+  }
 
   /** {@inheritDoc} */
   @SuppressWarnings("unchecked")
