@@ -48,7 +48,7 @@ public final class Selector<T>
   {mIndex.setAndUpdate(index);}
 
   /** Internal toggle camera */
-  private void toggle() {
+  public final void toggle() {
     final int
         count = mProvider.get()
         .orElse(mEmpty).length,
