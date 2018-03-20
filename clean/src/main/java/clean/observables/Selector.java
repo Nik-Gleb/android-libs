@@ -1,13 +1,9 @@
 package clean.observables;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntUnaryOperator;
-
-import static java.lang.reflect.Array.newInstance;
 
 /**
  * Universal Selector.
@@ -22,11 +18,9 @@ public final class Selector<T>
   /** Not selected index. */
   private static final int NOT_SELECTED = -1;
 
-  /** The type of values. */
-  private final Class<T> mClazz = getValueType();
-
   /** An empty array. */
-  private final T[] mEmpty = getEmpty();
+  @SuppressWarnings("unchecked")
+  private final T[] mEmpty = (T[]) new Object[0];
 
   /** Array provider. */
   private final Observable<T[]> mProvider;
@@ -86,24 +80,6 @@ public final class Selector<T>
         mIndex.updateAndGet(updater);
 
     return new Selection<>(index, values);
-  }
-
-  /** @return type of values */
-  @SuppressWarnings("unchecked")
-  private Class<T> getValueType() {
-    final Class<? extends Selector> clazz = getClass();
-    final Type type = clazz.getGenericSuperclass();
-    final ParameterizedType parametrized = (ParameterizedType) type;
-    final Type[] types = parametrized.getActualTypeArguments();
-    if (types == null || types.length == 0) throw new RuntimeException();
-    return (Class<T>) types[0];
-  }
-
-  /** @return empty array  */
-  @SuppressWarnings("unchecked")
-  private T[] getEmpty() {
-    final int size = 0;
-    return (T[]) newInstance(mClazz, size);
   }
   
   /** Selection updater */
