@@ -202,9 +202,9 @@ public final class OkUtils {
   /** The pipe's factory */
   public interface PipeFactory {
     /** Create new descriptors-pair */
-    FileDescriptor[] create();
+    FileDescriptor[] create() throws IOException;
     /** Open file descriptor */
-    FileOutputStream openFd(FileDescriptor fd);
+    FileOutputStream openFd(FileDescriptor fd) throws IOException;
   }
 
   /** The stream-body */

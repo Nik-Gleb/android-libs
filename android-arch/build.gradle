@@ -44,6 +44,12 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
 
+jar.doLast {
+  exec {
+    commandLine "zip", "-d","$buildDir/libs/${archivesBaseName}.jar", "META-INF/*"
+  }
+}
+
 apply plugin: 'maven-publish'
 publishing {
   publications {

@@ -72,12 +72,14 @@ public final class NetworkUtils {
    * @param write the write-side file descriptor
    * @return true if a native fd's was attached, otherwise - false
    */
+  @SuppressWarnings("JniMissingFunction")
   native private static boolean createPipe(FileDescriptor read, FileDescriptor write);
 
   /**
    * @param fd source file descriptor
    * @return target parcel file descriptor
    */
+  @SuppressWarnings("JniMissingFunction")
   native private static ParcelFileDescriptor createPfd(FileDescriptor fd);
 
   /**

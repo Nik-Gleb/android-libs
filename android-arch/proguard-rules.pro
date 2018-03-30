@@ -111,15 +111,16 @@
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
 
--keep public class * {public protected *;}
--keep public interface * {public protected *;}
+-keep public class arch.** {public protected *;}
+-keep public interface arch.** {public protected *;}
 
 -keep class android.arch.lifecycle.** {*;}
 -keep interface android.arch.lifecycle.** {*;}
--dontwarn app.*
+-dontwarn arch.*
 
--dontwarn app.Model
--dontwarn app.ThreadFactory
+#-keep public class * {public protected *;}
+#-keep public interface * {public protected *;}
+
 
 -dontwarn android.support.annotation.*
 
@@ -134,3 +135,30 @@
 
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory
+
+#-dontwarn com.google.common.base.**
+#-keep class com.google.common.base.** {*;}
+
+-dontwarn com.google.errorprone.annotations.**
+#-keep class com.google.errorprone.annotations.** {*;}
+
+-dontwarn com.google.j2objc.annotations.**
+#-keep class com.google.j2objc.annotations.** { *; }
+
+#-dontwarn java.lang.ClassValue
+#-keep class java.lang.ClassValue { *; }
+
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+#-keep class org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement { *; }
+
+#-dontwarn sun.misc.Unsafe
+#-dontwarn com.google.common.collect.MinMaxPriorityQueue
+
+
+-dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
+-dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
+
+
+#-keepclasseswithmembers public class * {
+#    public static void main(java.lang.String[]);
+#}
