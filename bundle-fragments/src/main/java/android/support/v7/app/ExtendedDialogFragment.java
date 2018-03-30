@@ -1,6 +1,6 @@
 /*
  * ExtendedDialogFragment.java
- * fragments
+ * bundle-fragments
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -89,6 +89,7 @@ public class ExtendedDialogFragment extends android.support.v4.app.ExtendedDialo
 
 
     /** The theme resource field. */
+    @SuppressWarnings("JavaReflectionMemberAccess")
     @Nullable private static Field getThemeResourceField() {
         try {final Field result = ContextThemeWrapper.class
                     .getDeclaredField(THEME_RESOURCE_FIELD_NAME);

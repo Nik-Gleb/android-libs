@@ -1,6 +1,6 @@
 /*
  * Ok3Utils.java
- * ok-tools
+ * java-ok-tools
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

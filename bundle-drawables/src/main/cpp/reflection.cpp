@@ -33,7 +33,7 @@ extern "C" {
 	}
 
 	JNIEXPORT jboolean JNICALL
-    Java_drawables_BitmapDrawable_update
+	Java_drawables_BitmapDrawable_update
 	(JNIEnv* env, jclass javaThis, jobject object) {
 		if (updateMethodId == NULL) return JNI_FALSE;
 		env->CallVoidMethod(object, updateMethodId);
@@ -53,5 +53,3 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#pragma clang diagnostic pop

@@ -1,6 +1,6 @@
 /*
  * LayerDrawable.java
- * drawables
+ * bundle-drawables
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -1656,7 +1656,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
         int[] mThemeAttrs;
 
         /** Int constants */
-        @SuppressWarnings("WeakerAccess")
+        @SuppressWarnings({ "WeakerAccess", "UnusedAssignment" })
         int
                 mDensity = DisplayMetrics.DENSITY_DEFAULT,
                 mInsetL, mInsetT, mInsetR, mInsetB,

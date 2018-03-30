@@ -1,6 +1,6 @@
 /*
  * BaseLoader.java
- * loaders
+ * bundle-loaders
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -63,6 +63,7 @@ abstract class BaseLoader<T> extends AsyncTaskLoader<T> {
     @Nullable private T mData = null;
 
     /** Skip nulls, flag */
+    @SuppressWarnings("UnusedAssignment")
     private boolean mSkipNulls = false;
 
     /**

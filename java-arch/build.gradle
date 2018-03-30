@@ -1,6 +1,6 @@
 /*
  * build.gradle
- * clean
+ * java-arch
  * 	
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  * 	
@@ -36,6 +36,7 @@ final boolean HAS_MAVEN =
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
+//noinspection SpellCheckingInspection
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"

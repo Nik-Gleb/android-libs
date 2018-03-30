@@ -1,6 +1,6 @@
 /*
  * Query.java
- * content
+ * bundle-content
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

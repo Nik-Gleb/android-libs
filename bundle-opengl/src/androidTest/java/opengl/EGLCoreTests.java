@@ -1,6 +1,6 @@
 /*
  * EGLCoreTests.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -99,6 +99,7 @@ public final class EGLCoreTests {
   {return ColorFormat.TRANSPARENT;}}
 
   /** The egl-core test. */
+  @SuppressWarnings("unused")
   @Keep
   @KeepPublicProtectedClassMembers
   static abstract class EGLCoreTest implements ColorFormatTest {
@@ -115,12 +116,12 @@ public final class EGLCoreTests {
     /** The test callback. */
     private final TestCallback mTestCallback = new TestCallback();
 
-    /** @throws Exception by any fails */
+    @SuppressWarnings("EmptyMethod")
     @BeforeClass
-    public static void setUpClass() throws Exception {}
-    /** @throws Exception by any fails */
+    public static void setUpClass() {}
+    @SuppressWarnings("EmptyMethod")
     @AfterClass
-    public static void tearDownClass() throws Exception {}
+    public static void tearDownClass() {}
 
 
     /** The log-cat tag. */
@@ -136,17 +137,15 @@ public final class EGLCoreTests {
     /** Main thread handler. */
     @Nullable private Handler mHandler = null;
 
-    /** @throws Exception by any fails */
     @Before
-    public final void setUpTest() throws Exception {
+    public final void setUpTest() {
       mContext = InstrumentationRegistry.getContext();
       mColorFormat = getTestColorFormat();
       mHandler = new Handler(Looper.getMainLooper(), mTestCallback);
     }
 
-    /** @throws Exception by any fails */
     @After
-    public final void tearDownTest() throws Exception {
+    public final void tearDownTest() {
       final Object token = null;
       Objects.requireNonNull(mHandler)
           .removeCallbacksAndMessages(token);
@@ -158,10 +157,9 @@ public final class EGLCoreTests {
     /**
      * Test for {@link EGLCore.Builder#d24()}
      *
-     * @throws Exception by some fails
      */
     //@Test
-    public final void testEGLCore() throws Exception {
+    public final void testEGLCore() {
       final int width = 0, height = 0; final boolean release = false;
       final EGLCore core = OpenGL.depth(Objects.requireNonNull(mColorFormat));
       EGLView.offScreen(core, width, height, release).close(); core.close();
@@ -169,19 +167,17 @@ public final class EGLCoreTests {
 
     /**
      * Test for {@link OpenGL#info(ColorFormat)}
-     * @throws Exception by some fails
      */
     //@Test
-    public final void testInfo() throws Exception {
+    public final void testInfo() {
       Log.d(TAG, OpenGL.info(Objects.requireNonNull(mColorFormat)));
     }
 
     /**
      * Test for {@link OpenGL#info(ColorFormat)}
-     * @throws Exception by some fails
      */
     @Test
-    public final void testTexture() throws Exception {
+    public final void testTexture() {
       final Context context = Objects.requireNonNull(mContext);
       final ColorFormat format = Objects.requireNonNull(mColorFormat);
       final Bitmap bmp = TestsUtils.createTestBitmap(mColorFormat.bmpConfig);
@@ -308,10 +304,9 @@ public final class EGLCoreTests {
 
     /**
      * Test {@link Program2d} functionality.
-     * @throws Exception by any errors
      */
     @Test
-    public final void testProgram() throws Exception {
+    public final void testProgram() {
 
       final Context context = Objects.requireNonNull(mContext);
       final ColorFormat format = Objects.requireNonNull(mColorFormat);

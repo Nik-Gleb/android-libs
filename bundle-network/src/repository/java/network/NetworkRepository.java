@@ -1,6 +1,6 @@
 /*
  * NetworkRepository.java
- * network
+ * bundle-network
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

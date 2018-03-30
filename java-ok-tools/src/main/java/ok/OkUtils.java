@@ -1,6 +1,6 @@
 /*
  * OkUtils.java
- * ok-tools
+ * java-ok-tools
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -63,7 +63,6 @@ public final class OkUtils {
    * Perform Http Operation.
    *
    * @param call the http-ok call
-   * @param signal the canceller
    * @param pipe the pipe factory
    * @return response's file descriptor
    *
@@ -203,9 +202,9 @@ public final class OkUtils {
   /** The pipe's factory */
   public interface PipeFactory {
     /** Create new descriptors-pair */
-    FileDescriptor[] create() throws IOException;
+    FileDescriptor[] create();
     /** Open file descriptor */
-    FileOutputStream openFd(FileDescriptor fd) throws IOException;
+    FileOutputStream openFd(FileDescriptor fd);
   }
 
   /** The stream-body */

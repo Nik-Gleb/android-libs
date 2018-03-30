@@ -1,6 +1,6 @@
 /*
  * ColorFormat.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -46,6 +46,7 @@ import static android.os.Build.VERSION_CODES.M;
  * @author Nikitenko Gleb
  * @since 1.0, 17/12/2017
  */
+@SuppressWarnings("unused")
 @Keep
 @KeepPublicClassMembers
 public enum ColorFormat {

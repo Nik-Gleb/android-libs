@@ -1,6 +1,6 @@
 /*
  * EGLView.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -140,6 +140,7 @@ public final class EGLView implements Closeable {
   }
 
   /** @return true if this view is current. */
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   final boolean isCurrent() {return mEglCore.isCurrent(mEGLSurface);}
 
   /** Makes our EGL context and surface current. */

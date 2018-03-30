@@ -1,6 +1,6 @@
 /*
  * LoaderManager.java
- * loaders
+ * bundle-loaders
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

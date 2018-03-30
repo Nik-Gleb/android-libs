@@ -1,6 +1,6 @@
 /*
  * CPToolsTest.java
- * loaders
+ * bundle-loaders
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -48,17 +48,14 @@ import proguard.annotation.KeepPublicClassMembers;
 @RunWith(AndroidJUnit4.class)
 public final class CPToolsTest {
 
-    /** @throws Exception by any fails */
-    @Before public final void setUp() throws Exception {}
-    /** @throws Exception by any fails */
-    @After public final void tearDown() throws Exception {}
 
-    /**
-     * Test for
-     * @throws Exception by some fails
-     */
+    @Before public final void setUp() {}
+
+    @After public final void tearDown() {}
+
+
     @Test
-    public final void testMain() throws Exception {
+    public final void testMain() {
 
     }
 

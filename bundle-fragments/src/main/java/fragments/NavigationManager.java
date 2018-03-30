@@ -1,6 +1,6 @@
 /*
  * NavigationManager.java
- * fragments
+ * bundle-fragments
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -106,6 +106,7 @@ public class NavigationManager implements Closeable {
   }
 
   /** The launch intent by default */
+  @SuppressWarnings("SameReturnValue")
   @Nullable protected Intent getDefaultIntent() {return null;}
 
   /** Close the stack. */
@@ -240,6 +241,7 @@ public class NavigationManager implements Closeable {
   }
 
   /** @param intent task to moving */
+  @SuppressWarnings("EmptyMethod")
   protected void go(@NonNull Intent intent) {}
 
   /**

@@ -1,6 +1,6 @@
 /*
  * LogTest.java
- * logger
+ * bundle-logger
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -42,10 +42,9 @@ public final class LogTest {
   /**
    * Test for {@link Log#checkTheTag(boolean)}.
    *
-   * @throws Exception by some fails
    */
   @Test
-  public final void testCommon() throws Exception {
+  public final void testCommon() {
     Log.checkTheTag(true);
     Log.checkTheTag(false);
   }

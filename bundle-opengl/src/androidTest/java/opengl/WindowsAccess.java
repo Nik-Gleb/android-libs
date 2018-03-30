@@ -1,6 +1,6 @@
 /*
  * WindowsAccess.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -45,6 +45,7 @@ import java.util.Objects;
  * @author Nikitenko Gleb
  * @since 1.0, 16/12/2017
  */
+@SuppressWarnings("unused")
 final class WindowsAccess implements Closeable {
 
   /** Grant overlay permission for window-system access. */

@@ -1,6 +1,6 @@
 /*
  * OpenGL.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -42,7 +42,6 @@ import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicClassMembers;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.KITKAT;
 import static android.os.Build.VERSION_CODES.O;
 import static opengl.Logger.LS;
 import static opengl.OpenGL.GLVersion.GL2;
@@ -66,7 +65,8 @@ public final class OpenGL {
   private OpenGL() {throw new AssertionError();}
 
   /** @return true if current sdk-ver is KitKat */
-  static boolean isKitKat() {return SDK_INT == KITKAT;}
+  @SuppressWarnings("SameReturnValue")
+  static boolean isKitKat() {return false;}
 
   /** @return true if current sdk-ver is Oreo */
   static boolean isOreo() {return SDK_INT >= O;}

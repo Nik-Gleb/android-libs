@@ -1,6 +1,6 @@
 /*
  * SupportUtils.java
- * loaders
+ * bundle-loaders
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -38,6 +38,7 @@ import proguard.annotation.KeepPublicClassMembers;
  */
 @Keep
 @KeepPublicClassMembers
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class SupportUtils {
 
   /**

@@ -1,6 +1,6 @@
 /*
  * FragmentsTest.java
- * fragments
+ * bundle-fragments
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -50,17 +50,11 @@ public final class FragmentsTest {
 
     public FragmentsTest() {super();}
 
-    /** @throws Exception by any fails */
-    @Before public final void setUp() throws Exception {}
-    /** @throws Exception by any fails */
-    @After public final void tearDown() throws Exception {}
+    @Before public final void setUp() {}
+    @After public final void tearDown() {}
 
-    /**
-     * Test for
-     * @throws Exception by some fails
-     */
     @Test
-    public final void testMain() throws Exception {
+    public final void testMain() {
         System.out.println(System.currentTimeMillis());
 
     }

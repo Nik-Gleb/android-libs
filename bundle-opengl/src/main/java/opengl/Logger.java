@@ -1,6 +1,6 @@
 /*
  * Logger.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -126,7 +126,7 @@ final class Logger {
                         -1;
   }
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings({ "unused", "SpellCheckingInspection" })
   static void config(@NonNull EGLDisplay display, @NonNull EGLConfig config) {
     final int[] attrs = {
         EGL14.EGL_BUFFER_SIZE,

@@ -1,6 +1,6 @@
 /*
  * BitmapDrawable.java
- * drawables
+ * bundle-drawables
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -605,10 +605,12 @@ public class BitmapDrawable extends Drawable implements Closeable {
     }
 
     /** Update ColorMatrixColorFilter. */
+    @SuppressWarnings("JniMissingFunction")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private static native boolean update(@NonNull ColorMatrixColorFilter filter);
 
     /** @return color-matrix. */
+    @SuppressWarnings("JniMissingFunction")
     @NonNull private static native ColorMatrix getMatrix(@NonNull ColorMatrixColorFilter filter);
 
     /**

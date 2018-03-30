@@ -1,6 +1,6 @@
 /*
  * TestsUtils.java
- * opengl
+ * bundle-opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -46,7 +46,7 @@ import java.util.Arrays;
  * @author Nikitenko Gleb
  * @since 1.0, 17/12/2017
  */
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({ "SameParameterValue", "unused" })
 final class TestsUtils {
 
   /** The log-cat tag. */

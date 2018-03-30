@@ -1,6 +1,6 @@
 /*
  * SSLCertTest.java
- * ssl-certs
+ * java-ssl-certs
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -63,15 +63,12 @@ public class SSLCertTest {
   private static final String FILE_NAME =
       SSLCertTest.class.getResource("keystore.jks").getFile();
 
-  /** @throws Exception by some issues */
   @Before
-  public final void setUp() throws Exception {}
+  public final void setUp() {}
 
-  /** @throws Exception by some issues */
   @After
-  public final void tearDown() throws Exception {}
+  public final void tearDown() {}
 
-  /** @throws Exception by some issues */
   @Test
   public final void mainTest() throws Exception {
 
