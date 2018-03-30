@@ -78,7 +78,7 @@ android {
                 cppFlags += "-std=c++1z -frtti -fexceptions" //-std=cuda*/
                 //cFlags += "-mssse3"
                 abiFilters= ["armeabi-v7a", "arm64-v8a", "x86", "x86_64"]
-                version "3.10.2"
+                //version "3.10.2"
             }
         }
         consumerProguardFiles 'proguard-rules.pro'
