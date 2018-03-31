@@ -111,8 +111,8 @@
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
 
--keep public class arch.** {public protected *;}
--keep public interface arch.** {public protected *;}
+-keep public class camera.** {public protected *;}
+-keep public interface camera.** {public protected *;}
 
 -keep class android.arch.lifecycle.** {*;}
 -keep interface android.arch.lifecycle.** {*;}
