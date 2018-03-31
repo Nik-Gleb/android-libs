@@ -336,7 +336,7 @@ public final class Threader implements Closeable {
    * Call {@link #build} to flat the {@link Threader} once all the
    * parameters have been supplied.
    */
-  @SuppressWarnings({ "unused", "WeakerAccess" })
+  @SuppressWarnings({ "unused", "WeakerAccess", "UnusedReturnValue" })
   public static final class Builder {
 
     /** Parallel/Serial Mode. */
@@ -362,7 +362,6 @@ public final class Threader implements Closeable {
     {this.serial = serial; this.executor = executor; savedState = state;}
 
     /** @return this builder, to allow for chaining. */
-    @SuppressWarnings("UnusedReturnValue")
     public final Builder factory(Factory factory)
     {this.factory = factory; return this;}
 
@@ -389,7 +388,6 @@ public final class Threader implements Closeable {
     {add(new RecordVoid(function, error)); return this;}
 
     /** @return this builder, to allow for chaining. */
-    @SuppressWarnings("UnusedReturnValue")
     public final <T> Builder init(int id)
     {final Object args = null; return init(id, args);}
 

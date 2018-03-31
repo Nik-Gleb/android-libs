@@ -114,13 +114,11 @@
 -keep public class arch.** {public protected *;}
 -keep public interface arch.** {public protected *;}
 
--keep class android.arch.lifecycle.** {*;}
--keep interface android.arch.lifecycle.** {*;}
--dontwarn arch.*
+-dontwarn android.arch.lifecycle.*
+-dontwarn arch.interactor.*
 
 #-keep public class * {public protected *;}
 #-keep public interface * {public protected *;}
-
 
 -dontwarn android.support.annotation.*
 

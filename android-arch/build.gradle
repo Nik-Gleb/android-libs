@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 
+
 import proguard.gradle.ProGuardTask
 
 apply plugin: 'java-library'
@@ -39,6 +40,7 @@ targetCompatibility = "1.8"
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+  libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
@@ -85,9 +87,9 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:2.15.0'
 
   implementation project(':java-arch')
-  implementation 'android.arch.lifecycle:runtime:' + archLifeVersion
-  implementation 'android.arch.lifecycle:common-java8:' + archLifeVersion
+  compileOnly 'android.arch.lifecycle:runtime:' + archLifeVersion
+  compileOnly 'android.arch.lifecycle:common-java8:' + archLifeVersion
 
   /** Android dependencies */
-  implementation files('../.android.jar')
+  compileOnly files('../.android.jar')
 }
