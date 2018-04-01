@@ -42,8 +42,8 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   //libraryjars "../.android.jar"
-  libraryjars "$buildDir/../libs/jsr305-3.0.2.jar"
-  injars "$buildDir/../libs/guava-24.1-jre.jar"
+  //libraryjars "$buildDir/../libs/jsr305-3.0.2.jar"
+  //injars "$buildDir/../libs/guava-24.1-jre.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -81,7 +81,7 @@ publish.doLast {
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  //implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   /* JUnit */
   testImplementation 'junit:junit:' + junitVersion
