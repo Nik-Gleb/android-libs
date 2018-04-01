@@ -1,5 +1,5 @@
 /*
- * Valve.java
+ * Jumper.java
  * java-arch
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
@@ -23,41 +23,18 @@
  * SOFTWARE.
  */
 
-package base.lifecycle;
+package arch.lifecycle;
 
 /**
- * Data-Flow Valve.
+ * Data-Flow Jumper.
+ *
+ * @param <T> the type of items
  *
  * @author Nikitenko Gleb
  * @since 1.0, 24/02/2018
  */
-@SuppressWarnings("unused")
-final class Valve<T> implements Jumper<T> {
+interface Jumper<T> extends Consumer<T> {
 
-  /** Consumer replacement.  */
-  private final Jumper<T> mCrossover;
-
-  /** Current consumer */
-  private Consumer<T> mCurrent;
-
-  /**
-   * Construct a new {@link Valve}
-   *
-   * @param crossover consumer replacement
-   */
-  Valve(Jumper<T> crossover) {mCrossover = crossover;}
-
-  /** {@inheritDoc} */
-  @Override public final void consumer(Consumer<T> consumer) {
-    if (consumer == null) consumer = mCrossover;
-    if (mCurrent == consumer) return;
-    final boolean pump = mCurrent == mCrossover;
-    mCurrent = consumer;
-    if (pump) mCrossover.consumer(mCurrent);
-  }
-
-  /** {@inheritDoc} */
-  @Override public final boolean use(T item)
-  {return mCurrent.use(item);}
-
+  /** @param consumer new target for items */
+  void consumer(Consumer<T> consumer);
 }

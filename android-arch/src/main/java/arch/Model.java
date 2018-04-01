@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package base;
+package arch;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

@@ -1,6 +1,6 @@
 /*
- * View.java
- * android-arch
+ * Valve.java
+ * java-arch
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,39 +23,41 @@
  * SOFTWARE.
  */
 
-package base;
-
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-
-import java.io.Closeable;
+package arch.lifecycle;
 
 /**
- * Base view.
+ * Data-Flow Valve.
  *
  * @author Nikitenko Gleb
- * @since 1.0, 10/03/2018
+ * @since 1.0, 24/02/2018
  */
-@SuppressWarnings({ "unused", "WeakerAccess" })
-public interface View extends Closeable {
+@SuppressWarnings("unused")
+final class Valve<T> implements Jumper<T> {
 
-  /** Start view. */
-  default void start() {}
+  /** Consumer replacement.  */
+  private final Jumper<T> mCrossover;
 
-  /** Stop view. */
-  default void stop() {}
+  /** Current consumer */
+  private Consumer<T> mCurrent;
 
-  /** Resume view. */
-  default void resume() {}
-
-  /** Pause view. */
-  default void pause() {}
-
-  /** @param outState saved state container */
-  @SuppressWarnings("unused")
-  default void save(@NonNull Bundle outState) {}
+  /**
+   * Construct a new {@link Valve}
+   *
+   * @param crossover consumer replacement
+   */
+  Valve(Jumper<T> crossover) {mCrossover = crossover;}
 
   /** {@inheritDoc} */
-  @Override default void close() {}
+  @Override public final void consumer(Consumer<T> consumer) {
+    if (consumer == null) consumer = mCrossover;
+    if (mCurrent == consumer) return;
+    final boolean pump = mCurrent == mCrossover;
+    mCurrent = consumer;
+    if (pump) mCrossover.consumer(mCurrent);
+  }
+
+  /** {@inheritDoc} */
+  @Override public final boolean use(T item)
+  {return mCurrent.use(item);}
 
 }

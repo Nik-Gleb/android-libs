@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package base.lifecycle;
+package arch.lifecycle;
 
 import java.util.Queue;
 

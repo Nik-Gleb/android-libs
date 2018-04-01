@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package base;
+package arch;
 
 import android.os.Bundle;
 import android.os.Parcel;

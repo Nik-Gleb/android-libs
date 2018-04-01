@@ -64,6 +64,7 @@ model {
   tasks.generatePomFileForMavenPublication {setEnabled(HAS_MAVEN)}
   tasks.publishMavenPublicationToMavenRepository {setEnabled(HAS_MAVEN)}
 }; tasks.publish.setEnabled(HAS_MAVEN)
+
 task release() {}
 release.dependsOn obfuscate
 

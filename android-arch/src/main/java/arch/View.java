@@ -1,6 +1,6 @@
 /*
- * Consumer.java
- * java-arch
+ * View.java
+ * android-arch
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
@@ -23,23 +23,39 @@
  * SOFTWARE.
  */
 
-package base.lifecycle;
+package arch;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+
+import java.io.Closeable;
 
 /**
- * Data-Flow Consumer.
- *
- * @param <T> the type of items
+ * Base view.
  *
  * @author Nikitenko Gleb
- * @since 1.0, 24/02/2018
+ * @since 1.0, 10/03/2018
  */
-interface Consumer<T> {
+@SuppressWarnings({ "unused", "WeakerAccess" })
+public interface View extends Closeable {
 
-  /**
-   * @param item element
-   *
-   * @return true if the item was used,
-   *         otherwise - false
-   */
-  boolean use(T item);
+  /** Start view. */
+  default void start() {}
+
+  /** Stop view. */
+  default void stop() {}
+
+  /** Resume view. */
+  default void resume() {}
+
+  /** Pause view. */
+  default void pause() {}
+
+  /** @param outState saved state container */
+  @SuppressWarnings("unused")
+  default void save(@NonNull Bundle outState) {}
+
+  /** {@inheritDoc} */
+  @Override default void close() {}
+
 }

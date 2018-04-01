@@ -1,5 +1,5 @@
 /*
- * Jumper.java
+ * UnitTest.java
  * java-arch
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
@@ -23,18 +23,31 @@
  * SOFTWARE.
  */
 
-package base.lifecycle;
+package arch;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Data-Flow Jumper.
+ * Example local unit test, which will execute on the development machine
+ * (host).
  *
- * @param <T> the type of items
- *
- * @author Nikitenko Gleb
- * @since 1.0, 24/02/2018
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-interface Jumper<T> extends Consumer<T> {
+@SuppressWarnings("EmptyMethod")
+public class UnitTest  {
 
-  /** @param consumer new target for items */
-  void consumer(Consumer<T> consumer);
+
+  @SuppressWarnings("ConstantConditions")
+  @Before public final void setUp() {
+  }
+
+  @After public final void tearDown() {
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test public final void testNoIndexNullArray() {
+  }
+
 }

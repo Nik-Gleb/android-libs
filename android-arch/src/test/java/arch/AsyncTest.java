@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package base;
+package arch;
 
 import org.junit.After;
 import org.junit.Before;

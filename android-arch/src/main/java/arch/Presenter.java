@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package base;
+package arch;
 
 import android.app.Activity;
 import android.app.Application;

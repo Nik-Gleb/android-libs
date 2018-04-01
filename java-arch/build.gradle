@@ -39,10 +39,7 @@ targetCompatibility = "1.8"
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
-  libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
-  //libraryjars "../.android.jar"
-  //libraryjars "$buildDir/../libs/jsr305-3.0.2.jar"
-  //injars "$buildDir/../libs/guava-24.1-jre.jar"
+  libraryjars "../.android.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }

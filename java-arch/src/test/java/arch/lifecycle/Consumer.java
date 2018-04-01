@@ -1,5 +1,5 @@
 /*
- * UnitTest.java
+ * Consumer.java
  * java-arch
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
@@ -23,31 +23,23 @@
  * SOFTWARE.
  */
 
-package base;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+package arch.lifecycle;
 
 /**
- * Example local unit test, which will execute on the development machine
- * (host).
+ * Data-Flow Consumer.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @param <T> the type of items
+ *
+ * @author Nikitenko Gleb
+ * @since 1.0, 24/02/2018
  */
-@SuppressWarnings("EmptyMethod")
-public class UnitTest  {
+interface Consumer<T> {
 
-
-  @SuppressWarnings("ConstantConditions")
-  @Before public final void setUp() {
-  }
-
-  @After public final void tearDown() {
-  }
-
-  @SuppressWarnings("ConstantConditions")
-  @Test public final void testNoIndexNullArray() {
-  }
-
+  /**
+   * @param item element
+   *
+   * @return true if the item was used,
+   *         otherwise - false
+   */
+  boolean use(T item);
 }
