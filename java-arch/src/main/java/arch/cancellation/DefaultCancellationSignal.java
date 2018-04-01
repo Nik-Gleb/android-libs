@@ -25,6 +25,8 @@
 
 package arch.cancellation;
 
+import arch.cancellation.CancellationSignal;
+
 /**
  * Default Cancellation Signal.
  *

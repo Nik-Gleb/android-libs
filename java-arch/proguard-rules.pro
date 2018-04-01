@@ -117,7 +117,6 @@
 #-keep public class * {public protected *;}
 #-keep public interface * {public protected *;}
 
-
 -dontwarn android.support.annotation.*
 
 -dontnote android.**
@@ -128,6 +127,10 @@
 -dontnote android.json.**
 -dontnote android.xmlpull.**
 -dontnote dalvik.**
+
+#-dontwarn arch.**
+#-dontwarn camera.Descriptions
+#-dontwarn camera.Output
 
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory

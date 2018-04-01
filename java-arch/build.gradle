@@ -1,6 +1,6 @@
 /*
  * build.gradle
- * java-arch
+ * java-camera
  * 	
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  * 	
@@ -36,7 +36,6 @@ final boolean HAS_MAVEN =
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-//noinspection SpellCheckingInspection
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
@@ -81,13 +80,11 @@ publish.doLast {
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 
 dependencies {
-  //implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+  //implementation fileTree(include: ['*.jar'], dir: 'libs')
   /* JUnit */
   testImplementation 'junit:junit:' + junitVersion
   /* Optional -- Mockito framework */
   testImplementation 'org.mockito:mockito-core:2.15.0'
-
   /** Android dependencies */
   //implementation files('../.android.jar')
 }
