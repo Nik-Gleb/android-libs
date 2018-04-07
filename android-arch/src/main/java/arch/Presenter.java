@@ -26,7 +26,7 @@
 package arch;
 
 import android.app.Activity;
-import android.app.Application;
+import android.app.Application.ActivityLifecycleCallbacks;
 import android.arch.lifecycle.DefaultLifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
@@ -34,198 +34,291 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static arch.Retain.get;
+import static arch.Retain.put;
 
 /**
- * Base scope.
+ * Base presenter.
+ *
+ * @param <T> type of component (activity/fragment)
+ * @param <U> type of router (some {@link Closeable} inheritor)
+ * @param <V> type of view (some {@link View} inheritor)
  *
  * @author Nikitenko Gleb
  * @since 1.0, 10/03/2018
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
-public interface Presenter<T extends View, U extends LifecycleOwner> extends Closeable {
+public interface Presenter <
+      T extends LifecycleOwner,
+      U extends Closeable,
+      V extends View
+    > extends Closeable {
+
+
 
   /**
-   * @param component view-component
-   * @param inState saved state container
+   * @param view instance or null for bind/unbind the view
+   * @param router instance or null for bind/unbind the router
    */
-  void setup(@NonNull U component, @Nullable Bundle inState);
-
-  /** @return true if state wasn't saved */
-  boolean reset();
-
-  /** @param view view for attach, null - detach */
-  void setView(@Nullable T view);
-
-  /** @return view instance */
-  @Nullable
-  T getView();
+  void setView(@Nullable V view, @Nullable U router);
 
   /** @param outState saved state container */
   void save(@NonNull Bundle outState);
 
+  /** @return true if state wasn't saved */
+  boolean reset();
+
   /** {@inheritDoc} */
   @Override default void close() {}
 
+
+
   /**
-   *
-   * @param component application context
-   * @param tag       scope's state-key tag
-   * @param scope     scope factory
+   * @param tag       presenter's state-key tag
+   * @param comp      component (activity/fragment)
    * @param state     saved state container
    *
-   * @param <T>       the type of VIEW
-   * @param <U>       the type of PRESENTER
+   * @param presenter presenter factory
+   * @param router    router factory
+   * @param view      view factory
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   * @param <S> type of presenter (defined by COMPONENT, VIEW and ROUTER)
    *
    * @return the new created scope instance
    */
   @NonNull
   @SuppressWarnings("UnnecessaryInterfaceModifier")
-  public static <T extends View, U extends LifecycleOwner, S extends Presenter<T,U>>
-  S create (@NonNull String tag, @Nullable Bundle state,
-      @NonNull U component, @NonNull Factory<T, U, S> scope) {
-    S result; if (state == null ||
-        (result = Retain.get(state, tag)) == null)
-      result = scope.create(component, state);
-    result.setup(component, state);
+  public static <
+      T extends LifecycleOwner,
+      U extends Closeable,
+      V extends View,
+      S extends Presenter<T, U, V>
+  > S create (
+      @NonNull String tag,
+      @Nullable Bundle state, @NonNull T comp,
+      @NonNull BiFunction<T, Bundle, S> presenter,
+      @NonNull ThreeFunction<T, Bundle, S, U> router,
+      @NonNull ThreeFunction<T, Bundle, S, V> view
+  ) {
+    S p; if (state == null || (p = get(state, tag)) == null)
+      p = presenter.apply(comp, state);
 
-    if (component instanceof Activity)
-      ((Activity) component).getApplication()
-          .registerActivityLifecycleCallbacks
-              (new ActivityCallbacks<>(tag, result));
-    else
-      component.getLifecycle()
-          .addObserver(new OwnerCallbacks<>(result));
+    final U r = router.apply(comp, state, p);
+    final V v = view.apply(comp, state, p);
 
-    return result;
+    final Callbacks callbacks = new Callbacks<>(tag, p, r, v);
+
+    if (comp instanceof Activity)
+      ((Activity) comp).getApplication()
+          .registerActivityLifecycleCallbacks(callbacks);
+    else comp.getLifecycle().addObserver(callbacks);
+
+    return p;
   }
 
+  /**
+   * @param tag   presenter's state-key tag
+   * @param state saved state container
+   *
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
   @SuppressWarnings("UnnecessaryInterfaceModifier")
-  public static <T extends View, U extends LifecycleOwner> void save
-      (@NonNull Presenter<T, U> presenter, @NonNull Bundle outState, @NonNull String tag) {
-    final T view = Objects.requireNonNull(presenter.getView());
-    view.save(outState); presenter.save(outState);
-    Retain.put(outState, tag, presenter);
+  public static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void save(@NonNull String tag, @NonNull Bundle state,
+      @NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
+  {view.save(state); presenter.save(state); put(state, tag, presenter);}
+
+  /**
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void destroy
+  (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view) {
+    view.close();
+    try {router.close();} catch (IOException e) {throw new RuntimeException(e);}
+    if (presenter.reset()) presenter.close();
   }
 
-  @SuppressWarnings("unchecked")
-  static <T extends View, U extends LifecycleOwner>
-  void start(@NonNull Presenter<T, U> presenter) {
-    final T view = Objects.requireNonNull(presenter.getView());
-    view.start(); presenter.setView(view);
-  }
+  /**
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
+  static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void start
+  (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
+  {view.start(); presenter.setView(view, router);}
 
-  @SuppressWarnings("unchecked")
-  static <T extends View, U extends LifecycleOwner>
-  void stop(@NonNull Presenter<T, U> presenter) {
-    final T view = null;  presenter.setView(view);
-    Objects.requireNonNull(presenter.getView()).stop();
-  }
+  /**
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
+  static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void stop
+  (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
+  {final V value = null;  presenter.setView(value, router); view.stop();}
 
-  static <T extends View, U extends LifecycleOwner> void destroy(@NonNull Presenter<T, U> presenter)
-  {Objects.requireNonNull(presenter.getView()).close(); if (presenter.reset()) presenter.close();}
+  /**
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
+  static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void resume
+  (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
+  {view.resume();}
 
-  static <T extends View, U extends LifecycleOwner> void resume(@NonNull Presenter<T, U> presenter)
-  {Objects.requireNonNull(presenter.getView()).resume();}
-
-  static <T extends View, U extends LifecycleOwner> void pause(@NonNull Presenter<T, U> presenter)
-  {Objects.requireNonNull(presenter.getView()).pause();}
+  /**
+   * @param presenter presenter instance
+   * @param router    router instance
+   * @param view      view instance
+   *
+   * @param <T> type of component (activity/fragment)
+   * @param <U> type of router    (some {@link Closeable} inheritor)
+   * @param <V> type of view      (some {@link View} inheritor)
+   */
+  static <T extends LifecycleOwner, U extends Closeable, V extends View>
+  void pause
+  (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
+  {view.pause();}
 
   /** An Activity Lifecycle Callbacks. */
-  final class ActivityCallbacks
-      <T extends View, U extends LifecycleOwner>
-      implements Application.ActivityLifecycleCallbacks {
+  final class Callbacks
+      <T extends LifecycleOwner, U extends Closeable, V extends View>
+    implements ActivityLifecycleCallbacks, DefaultLifecycleObserver {
 
     /** The name of scope. */
     private final String mTag;
     /** Presenter instance. */
-    private final Presenter<T, U> mPresenter;
+    private final Presenter<T, U, V> mPresenter;
+    /** Router instance. */
+    private final U mRouter;
+    /** View instance. */
+    private final V mView;
 
     /**
-     * Constructs a new {@link ActivityCallbacks}.
+     * Constructs a new {@link Callbacks}.
      *
-     * @param tag the tag of presenter
+     * @param tag   presenter's state-key tag
+     *
      * @param presenter presenter instance
+     * @param router    router instance
+     * @param view      view instance
      */
-    ActivityCallbacks
-    (@NonNull String tag, @NonNull Presenter<T,U> presenter)
-    {mTag = tag; mPresenter = presenter;}
+    Callbacks(@NonNull String tag, @NonNull Presenter<T, U, V> presenter,
+        @NonNull U router, @NonNull V view)
+    {mTag = tag; mPresenter = presenter; mRouter = router; mView = view;}
 
     /** {@inheritDoc} */
     @Override public final void onActivityCreated
     (@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    @Override public final void onActivityStarted(@NonNull Activity activity) {start(mPresenter);}
+    @Override public final void onActivityStarted(@NonNull Activity activity)
+    {start(mPresenter, mRouter, mView);}
 
     /** {@inheritDoc} */
-    @Override public final void onActivityResumed(@NonNull Activity activity) {}
+    @Override public final void onStart(@NonNull LifecycleOwner owner)
+    {start(mPresenter, mRouter, mView);}
 
     /** {@inheritDoc} */
-    @Override public final void onActivityPaused(@NonNull Activity activity) {}
+    @Override public final void onActivityResumed(@NonNull Activity activity)
+    {resume(mPresenter, mRouter, mView);}
 
     /** {@inheritDoc} */
-    @Override public final void onActivityStopped(@NonNull Activity activity) {stop(mPresenter);}
+    @Override public final void onResume(@NonNull LifecycleOwner owner)
+    {resume(mPresenter, mRouter, mView);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityPaused(@NonNull Activity activity)
+    {pause(mPresenter, mRouter, mView);}
+
+    /** {@inheritDoc} */
+    @Override public final void onPause(@NonNull LifecycleOwner owner)
+    {pause(mPresenter, mRouter, mView);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivityStopped(@NonNull Activity activity)
+    {stop(mPresenter, mRouter, mView);}
+
+    /** {@inheritDoc} */
+    @Override public final void onStop(@NonNull LifecycleOwner owner)
+    {stop(mPresenter, mRouter, mView);}
 
     /** {@inheritDoc} */
     @Override public final void onActivityDestroyed(@NonNull Activity activity)
-    {activity.getApplication().unregisterActivityLifecycleCallbacks(this); destroy(mPresenter);}
-
-    /** {@inheritDoc} */
-    @Override public final void onActivitySaveInstanceState
-    (@NonNull Activity activity, @NonNull Bundle outState)
-    {save(mPresenter, outState, mTag);}
-
-  }
-
-  /** Lifecycle owner callbacks. */
-  final class OwnerCallbacks
-      <T extends View, U extends LifecycleOwner>
-      implements DefaultLifecycleObserver {
-
-    /** Presenter instance. */
-    private final Presenter<T, U> mPresenter;
-
-    /**
-     * Constructs a new {@link ActivityCallbacks}.
-     *
-     * @param presenter presenter instance
-     */
-    OwnerCallbacks(@NonNull Presenter<T,U> presenter)
-    {mPresenter = presenter;}
-
-    /** {@inheritDoc} */
-    @Override public final void onCreate(@NonNull LifecycleOwner owner) {}
-
-    /** {@inheritDoc} */
-    @Override public final void onStart(@NonNull LifecycleOwner owner) {start(mPresenter);}
-
-    /** {@inheritDoc} */
-    @Override public final void onResume(@NonNull LifecycleOwner owner) {}
-
-    /** {@inheritDoc} */
-    @Override public final void onPause(@NonNull LifecycleOwner owner) {}
-
-    /** {@inheritDoc} */
-    @Override public final void onStop(@NonNull LifecycleOwner owner) {stop(mPresenter);}
+    {activity.getApplication().unregisterActivityLifecycleCallbacks(this);}
 
     /** {@inheritDoc} */
     @Override public final void onDestroy(@NonNull LifecycleOwner owner)
-    {owner.getLifecycle().removeObserver(this); destroy(mPresenter);}
+    {owner.getLifecycle().removeObserver(this);}
+
+    /** {@inheritDoc} */
+    @Override public final void onActivitySaveInstanceState
+    (@NonNull Activity activity, @NonNull Bundle state)
+    {save(mTag, state, mPresenter, mRouter, mView);}
   }
 
-  /** The Presenter Factory */
+  /**
+   * Represents a function that accepts three arguments and produces a result.
+   * This is the two-arity specialization of {@link Function}.
+   *
+   * <p>This is a <a href="package-summary.html">functional interface</a>
+   * whose functional method is {@link #apply(Object, Object, Object)}.
+   *
+   * @param <T> the type of the first argument to the function
+   * @param <U> the type of the second argument to the function
+   * @param <V> the type of the second argument to the function
+   *
+   * @param <R> the type of the result of the function
+   *
+   * @see Function
+   * @since 1.8
+   */
   @FunctionalInterface
-  @SuppressWarnings("UnnecessaryInterfaceModifier")
-  public interface Factory
-      <T extends View, U extends LifecycleOwner, S extends Presenter<T,U>> {
+  interface ThreeFunction<T, U, V, R> {
+
     /**
-     * @param component scope context
-     * @param inState saved state
+     * Applies this function to the given arguments.
      *
-     * @return component scope
+     * @param t the first function argument
+     * @param u the second function argument
+     * @param v the second function argument
+     * @return the function result
      */
-    public @NonNull S create(@NonNull U component, @Nullable Bundle inState);
+    R apply(T t, U u, V v);
   }
 }

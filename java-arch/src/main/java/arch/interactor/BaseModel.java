@@ -35,12 +35,13 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
  * Base java-model.
  *
  * @param <V> the type of view
+ * @param <R> the type of router
  *
  * @author Nikitenko Gleb
  * @since 1.0, 27/02/2018
  */
 @SuppressWarnings({ "WeakerAccess", "unused", "EmptyMethod" })
-public abstract class BaseModel<V> implements Closeable {
+public abstract class BaseModel<V, R> implements Closeable {
 
   /** Global objects cleaner. */
   private static final ExecutorService CLEANER = newSingleThreadExecutor();
@@ -50,6 +51,8 @@ public abstract class BaseModel<V> implements Closeable {
 
   /** The View. */
   protected V view = null;
+  /** The Router. */
+  protected R router = null;
 
   /** The threader. */
   private volatile Threader mThreader = null;
@@ -70,19 +73,20 @@ public abstract class BaseModel<V> implements Closeable {
    * @param view the view-instance
    * @param <T> the type of view
    */
-  public static <T> void setView(BaseModel<T> model, T view)
-  {model.setView(view);}
+  public static <T, R> void setView(BaseModel<T, R> model, T view, R router)
+  {model.setView(view, router);}
 
   /** @param view the view instance for attach/detach */
-  private void setView(V view) {
-    if (this.view == view) return;
-    final Threader threader = mThreader;
-    if (view != null && threader == null)
-    {this.view = view; mThreader = mBuilder.build(); onActivated();}
-    else if (view == null && threader != null)
-    {onDeActivated(); mThreader = null; this.view = null;
-    CLEANER.execute(() -> {threader.close(); onReleased();});}
-    else this.view = view;
+  private void setView(V view, R router) {
+    if (this.view == view) return; final Threader threader = mThreader;
+    if (view != null && threader == null) {
+      this.view = view; this.router = router;
+      mThreader = mBuilder.build(); onActivated();
+    } else if (view == null && threader != null) {
+      onDeActivated(); mThreader = null;
+      this.view = null; this.router = null;
+      CLEANER.execute(() -> {threader.close(); onReleased();});
+    } else {this.view = view; this.router = router;}
   }
 
   /**
@@ -90,8 +94,8 @@ public abstract class BaseModel<V> implements Closeable {
    * @param <T> the type of view
    * @return all active actions
    */
-  public static <T> HashMap<Integer, Object> state
-      (BaseModel<T> model) {return model.state();}
+  public static <T, R> HashMap<Integer, Object> state
+      (BaseModel<T, R> model) {return model.state();}
 
   /** @return all active actions */
   private HashMap<Integer, Object> state()

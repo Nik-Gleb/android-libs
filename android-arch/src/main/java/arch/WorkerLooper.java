@@ -27,15 +27,20 @@ package arch;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.MessageQueue;
-import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.lang.Thread;
 import java.util.function.BiConsumer;
+
+import static android.os.Looper.loop;
+import static android.os.Looper.myLooper;
+import static android.os.Looper.myQueue;
+import static android.os.Looper.prepare;
+import static android.os.Message.obtain;
+import static android.os.Process.setThreadPriority;
 
 /** The worker looper. */
 @SuppressWarnings({ "unused", "WeakerAccess" })
@@ -57,26 +62,21 @@ public final class WorkerLooper implements Closeable {
       @Nullable BiConsumer<Looper, MessageQueue> init,
       @Nullable Runnable close) {
     mThread = new Thread(() -> {
-      if (mClosed) return; Looper.prepare();
-      if (init != null) init.accept
-          (mLooper = Looper.myLooper(), Looper.myQueue());
+      if (mClosed) return; prepare();
+      if (init != null) init.accept(mLooper = myLooper(), myQueue());
       if (mClosed) {if (close != null) close.run(); return;}
-      Looper.loop(); if (close != null) close.run();
-    }){{setName(name); Process.setThreadPriority(priority);}};
+      loop(); if (close != null) close.run();
+    }) {{setName(name); setThreadPriority(priority);}};
     mThread.start();
   }
 
   /** {@inheritDoc} */
   @Override public final void close() {
-    if (mClosed) return;
-    final Looper looper = mLooper;
-    if (looper == null) return;
-    Message.obtain(new Handler(looper),
-        looper::quitSafely).sendToTarget();
-    try {mThread.join();}
-    catch (InterruptedException exception)
-    {Thread.currentThread().interrupt();}
-    mClosed = true;
+    if (mClosed) return; final Looper looper = mLooper;
+    if (looper == null) return; final Handler handler = new Handler(looper);
+    obtain(handler, looper::quitSafely).sendToTarget();
+    try {mThread.join();} catch (InterruptedException exception)
+    {Thread.currentThread().interrupt();} mClosed = true;
   }
 
   /** {@inheritDoc} */

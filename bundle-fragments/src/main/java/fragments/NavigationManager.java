@@ -132,7 +132,7 @@ public class NavigationManager implements Closeable {
     final boolean immediate = false; closeStack(immediate);
     final ExtendedFragment fragment = create(INTRO, args);
     new ExtendedFragmentTransaction(fragments)
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        .setTransition(/*FragmentTransaction.TRANSIT_FRAGMENT_FADE*/FragmentTransaction.TRANSIT_NONE)
         .replace(fragment.container, fragment, fragment.getName())
         .runOnCommit(new Runnable() {
           @Override
@@ -148,10 +148,10 @@ public class NavigationManager implements Closeable {
   protected final void main(@Nullable Bundle args) {
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && rootIsMain) return;
-    final boolean immediate = false; closeStack(immediate);
+    //final boolean immediate = false; closeStack(immediate);
     final ExtendedFragment fragment = create(MAIN, args);
     new ExtendedFragmentTransaction(fragments)
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        .setTransition(/*FragmentTransaction.TRANSIT_FRAGMENT_FADE*/FragmentTransaction.TRANSIT_NONE)
         .replace(fragment.container, fragment, fragment.getName())
         .runOnCommit(new Runnable() {
           @Override
@@ -173,10 +173,11 @@ public class NavigationManager implements Closeable {
     final FragmentManager manager = parentFragment != null ?
         parentFragment.getChildFragmentManager() : fragments;
     if (manager.findFragmentByTag(name) != null) return;
+
     final FragmentTransaction transaction =
         new ExtendedFragmentTransaction(manager)
             .setTransition(replace ?
-                FragmentTransaction.TRANSIT_FRAGMENT_FADE :
+                /*FragmentTransaction.TRANSIT_FRAGMENT_FADE*/FragmentTransaction.TRANSIT_NONE :
                 FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
     final ExtendedFragment fragment = create(name, args);
     final boolean inflate = fragment.container != 0;

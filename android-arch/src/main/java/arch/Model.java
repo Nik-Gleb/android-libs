@@ -112,9 +112,9 @@ public class Model {
    *
    * @param <T> type of model
    */
-  public static <T extends BaseModel<?>> void save
+  public static <T extends BaseModel<?,?>> void save
   (T model, Bundle outState, Packer packer, String name) {
-    final HashMap<Integer, Object> raw = BaseModel.state((BaseModel<?>) model);
+    final HashMap<Integer, Object> raw = BaseModel.state((BaseModel<?,?>) model);
     final SparseArray<Parcelable> packed = new SparseArray<>(raw.size());
 
     for (final Map.Entry<Integer, Object> entry : raw.entrySet()) {
@@ -144,7 +144,7 @@ public class Model {
    *
    * @param <T> type of model
    */
-  public static <T extends BaseModel<?>> void release
+  public static <T extends BaseModel<?,?>> void release
   (T model, Handler handler) {
     final Message msg = detachMessage(model, handler);
     handler.dispatchMessage(msg); msg.recycle();
@@ -159,8 +159,8 @@ public class Model {
    * @param <V> type of view
    * @param <T> type of model
    */
-  public static <V, T extends BaseModel<V>> void start
-  (T model, V view) {BaseModel.setView(model, view);}
+  public static <V, R, T extends BaseModel<V, R>> void start
+  (T model, V view, R router) {BaseModel.setView(model, view, router);}
 
   /**
    * Stop the model.
@@ -170,8 +170,8 @@ public class Model {
    *
    * @param <T> type of model
    */
-  public static <T extends BaseModel<?>> void stop
-  (T model, Handler handler)
+  public static <T extends BaseModel<?,?>>
+  void stop(T model, Handler handler)
   {handler.sendMessageAtFrontOfQueue(detachMessage(model, handler));}
 
   /**
@@ -180,9 +180,9 @@ public class Model {
    */
   private static boolean detach(Message msg) {
     if (msg.what != WHAT_DETACH || msg.obj == null) return false;
-    if (!(msg.obj instanceof BaseModel<?>)) return false;
-    final BaseModel<?> model = (BaseModel<?>) msg.obj;
-    BaseModel.setView(model,null); return true;
+    if (!(msg.obj instanceof BaseModel<?,?>)) return false;
+    final BaseModel<?,?> model = (BaseModel<?,?>) msg.obj;
+    BaseModel.setView(model,null, null); return true;
   }
 
   /**
@@ -193,8 +193,8 @@ public class Model {
    *
    * @return "DETACH" message
    */
-  private static <T extends BaseModel<?>> Message detachMessage
-      (T model, Handler handler)
+  private static <T extends BaseModel<?,?>>
+  Message detachMessage(T model, Handler handler)
   {return Message.obtain(handler, WHAT_DETACH, model);}
 
 
