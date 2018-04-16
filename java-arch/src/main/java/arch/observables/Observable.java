@@ -33,11 +33,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.deepEquals;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -45,8 +47,9 @@ import static java.util.Optional.ofNullable;
  * @since 1.0, 18/07/2017
  */
 @SuppressWarnings("unused")
-public abstract class Observable<T>
-    implements Supplier<Optional<T>>,
+public abstract class Observable<T> implements
+    Supplier<Optional<T>>,
+    BiPredicate<Runnable, Boolean>,
     Closeable {
 
   /** Activated flags. */
@@ -103,38 +106,21 @@ public abstract class Observable<T>
   @SuppressWarnings({ "EmptyMethod", "WeakerAccess" })
   protected void onClose() {}
 
-  /**
-   * Adds an observer to the list.
-   * The observer cannot be null and it must not already be registered.
-   *
-   * @param observer the observer to set
-   * @return false, if the observer is already registered
-   */
-  @SuppressWarnings("WeakerAccess")
-  public final boolean register(Runnable observer) {
-    synchronized (mObservers) {
-      if (mObservers.contains(observer)) return false;
-      else mObservers.add(observer); return true;
-    }
-  }
-
-  /**
-   * Removes a previously registered observer.
-   *
-   * The observer must not be null and it must already have been registered.
-   *
-   * @param observer the observer to reset
-   *
-   * @throws IllegalStateException the observer is not yet registered
-   */
-  @SuppressWarnings("WeakerAccess")
-  public final boolean unregister(Runnable observer) {
-    synchronized (mObservers) {
-      final int index = mObservers.indexOf(observer);
-      if (index == -1) return false;
-      else mObservers.remove(index);
-      return true;
-    }
+  /** {@inheritDoc} */
+  @Override public final boolean test
+  (Runnable observer, Boolean register) {
+    if (requireNonNull(register))
+      synchronized (mObservers) {
+        if (mObservers.contains(observer)) return false;
+        else mObservers.add(observer); return true;
+      }
+    else
+      synchronized (mObservers) {
+        final int index = mObservers.indexOf(observer);
+        if (index == -1) return false;
+        else mObservers.remove(index);
+        return true;
+      }
   }
 
   /** Notify all observers about changes */
@@ -148,9 +134,10 @@ public abstract class Observable<T>
 
   /** Unregister all observers and dependencies */
   private void unregisterAll() {
+    final boolean register = false;
     mDependencies
         .parallelStream()
-        .forEach(child -> child.unregister(mObserver));
+        .forEach(child -> child.test(mObserver, register));
     synchronized (mObservers)
     {mObservers.clear();}
   }
@@ -167,10 +154,11 @@ public abstract class Observable<T>
     } while (!mActivated.compareAndSet(NOT_ACTIVATED, ACTIVATED));
     try {return get();}
     finally {
+      final boolean register = true;
       mDependencies
           .parallelStream()
           .forEach(child ->
-              child.register(mObserver));
+              child.test(mObserver, register));
     }
   }
 
@@ -227,6 +215,7 @@ public abstract class Observable<T>
   @SuppressWarnings("WeakerAccess")
   protected final <U> PropertyReference<U> newProperty()
   {return new PropertyReference<>(mObserver);}
+
 
   /**
    * Boolean CAS-Based Property.
