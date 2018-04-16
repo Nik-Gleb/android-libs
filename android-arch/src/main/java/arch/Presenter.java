@@ -185,7 +185,7 @@ public interface Presenter <
   static <T extends LifecycleOwner, U extends Closeable, V extends View>
   void stop
   (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view)
-  {final V value = null;  presenter.setView(value, router); view.stop();}
+  {final V v = null; final U r = null; presenter.setView(v, r); view.stop();}
 
   /**
    * @param presenter presenter instance

@@ -150,8 +150,7 @@ public abstract class Observable<T>
   private void unregisterAll() {
     mDependencies
         .parallelStream()
-        .forEach(child ->
-            child.unregister(mObserver));
+        .forEach(child -> child.unregister(mObserver));
     synchronized (mObservers)
     {mObservers.clear();}
   }

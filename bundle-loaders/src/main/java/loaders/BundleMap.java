@@ -93,7 +93,6 @@ public class BundleMap extends SparseArray<Bundle> implements Parcelable {
      * @author Gleb Nikitenko
      * @since 1.0, 10/06/16
      */
-
     @SuppressWarnings("WeakerAccess, unused")
     @Keep@KeepPublicProtectedClassMembers
     public static final class Creator implements Parcelable.Creator<BundleMap> {
