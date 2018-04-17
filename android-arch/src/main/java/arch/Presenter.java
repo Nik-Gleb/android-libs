@@ -34,7 +34,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -155,7 +154,7 @@ public interface Presenter <
   void destroy
   (@NonNull Presenter<T, U, V> presenter, @NonNull U router, @NonNull V view) {
     view.close();
-    try {router.close();} catch (IOException e) {throw new RuntimeException(e);}
+    //try {router.close();} catch (IOException e) {throw new RuntimeException(e);}
     if (presenter.reset()) presenter.close();
   }
 
