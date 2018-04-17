@@ -183,7 +183,7 @@ public class NavigationManager implements Closeable {
     final boolean inflate = fragment.container != 0;
     if (!replace) {
       if (!inflate) transaction.add(fragment, fragment.getName());
-      else transaction.add(fragment.container, fragment, fragment.getName());
+      else transaction.replace(fragment.container, fragment, fragment.getName());
       transaction.addToBackStack(BACK_STACK_NAME);
     } else transaction.replace(fragment.container, fragment, fragment.getName());
     if (fragment.title != 0) transaction.setBreadCrumbShortTitle(fragment.title);
