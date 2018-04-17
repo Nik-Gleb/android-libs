@@ -72,7 +72,8 @@ public final class Retain<T> implements Parcelable {
    */
   public static <U> U get(Bundle state, String key) {
     final Retain<U> retain = state.getParcelable(key);
-    return retain != null ? retain.mContent : null;
+    try {return retain != null ? retain.mContent : null;}
+    finally {state.remove(key);}
   }
 
   /**
