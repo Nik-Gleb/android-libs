@@ -30,6 +30,8 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.function.Supplier;
+
 import arch.blocks.Module;
 import arch.blocks.ModuleProvider;
 
@@ -136,7 +138,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    *
    * @return wrapped module
    */
-  public final <T extends Module> ModuleProvider<T> wrap(ModuleProvider<T> value)
+  public final <T extends Module> ModuleProvider<T> wrap(@NonNull Supplier<T> value)
   {return new LooperModuleProvider<>(mInstance, value);}
 
 
@@ -162,7 +164,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
      * @param provider module provider               .
      */
     LooperModuleProvider
-    (@NonNull AndroidThreadFactory factory, @NonNull ModuleProvider<T> provider) {
+    (@NonNull AndroidThreadFactory factory, @NonNull Supplier<T> provider) {
       final ThreadGroup group = null; final String name = null; final long stack = 0L;
       (mThreadModule = factory.newModule(group, name, stack, () -> {
         if (mClosed) return; prepare(); if (mValue == null) synchronized (mLock)
