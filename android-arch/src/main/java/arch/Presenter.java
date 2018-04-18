@@ -28,6 +28,7 @@ package arch;
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.arch.lifecycle.DefaultLifecycleObserver;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,7 +36,8 @@ import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+
+import arch.blocks.ThreeFunction;
 
 import static arch.Retain.get;
 import static arch.Retain.put;
@@ -74,7 +76,9 @@ public interface Presenter <
   /** {@inheritDoc} */
   @Override default void close() {}
 
-
+  /** @param function unregister function */
+  default void setUnregisterFunction
+      (@NonNull Runnable function){}
 
   /**
    * @param tag       presenter's state-key tag
@@ -117,7 +121,11 @@ public interface Presenter <
     if (comp instanceof Activity)
       ((Activity) comp).getApplication()
           .registerActivityLifecycleCallbacks(callbacks);
-    else comp.getLifecycle().addObserver(callbacks);
+    else {
+      final Lifecycle lifecycle = comp.getLifecycle();
+      p.setUnregisterFunction(() -> lifecycle.removeObserver(callbacks));
+      lifecycle.addObserver(callbacks);
+    }
 
     return p;
   }
@@ -291,33 +299,4 @@ public interface Presenter <
     {save(mTag, state, mPresenter, mRouter, mView);}
   }
 
-  /**
-   * Represents a function that accepts three arguments and produces a result.
-   * This is the two-arity specialization of {@link Function}.
-   *
-   * <p>This is a <a href="package-summary.html">functional interface</a>
-   * whose functional method is {@link #apply(Object, Object, Object)}.
-   *
-   * @param <T> the type of the first argument to the function
-   * @param <U> the type of the second argument to the function
-   * @param <V> the type of the second argument to the function
-   *
-   * @param <R> the type of the result of the function
-   *
-   * @see Function
-   * @since 1.8
-   */
-  @FunctionalInterface
-  interface ThreeFunction<T, U, V, R> {
-
-    /**
-     * Applies this function to the given arguments.
-     *
-     * @param t the first function argument
-     * @param u the second function argument
-     * @param v the second function argument
-     * @return the function result
-     */
-    R apply(T t, U u, V v);
-  }
 }

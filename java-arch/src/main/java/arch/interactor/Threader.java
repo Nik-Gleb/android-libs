@@ -38,6 +38,8 @@ import java.util.concurrent.RunnableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import arch.JavaThreadFactory;
+
 /**
  * Main Async Threader.
  *
@@ -226,7 +228,7 @@ public final class Threader implements Closeable {
     /** Handler's callback */
     private final Threader mCallback;
     /** The thread factory. */
-    private final Factory mFactory;
+    private final JavaThreadFactory mFactory;
     /** Functions. */
     private final BaseRecord[] mFunctions;
 
@@ -240,7 +242,7 @@ public final class Threader implements Closeable {
      * @param factory thread factory
      * @param functions functions
      */
-    Handler(Threader callback, Factory factory, BaseRecord[] functions)
+    Handler(Threader callback, JavaThreadFactory factory, BaseRecord[] functions)
     {mCallback = callback; mFactory = factory; mFunctions = functions;}
 
     /** {@inheritDoc} */
@@ -286,33 +288,6 @@ public final class Threader implements Closeable {
     {if (mClosed) return; mClosed = true;}
   }
 
-  /** Thread factory. */
-  public interface Factory {
-
-    /**
-     *
-     * @param group the thread group. If {@code null} and there is a security
-     *              manager, the group is determined by {@linkplain
-     *              SecurityManager#getThreadGroup SecurityManager
-     *              .getThreadGroup()}. If there is not a security manager or
-     *              {@code SecurityManager.getThreadGroup()} returns
-     *              {@code null}, the group is set to the current thread's
-     *              thread group.
-     *
-     * @param  target the object whose {@code run} method is invoked when this
-     *                thread is started. If {@code null}, this thread's run
-     *                method is invoked.
-     *
-     * @param  name the name of the new thread
-     *
-     * @param  stack the desired stack size for the new thread, or zero to
-     *                   indicate that this parameter is to be ignored.
-     *
-     * @return new created thread
-     */
-    Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
-  }
-
   /**
    * @param executor main thread executor
    * @return Threader Builder
@@ -346,7 +321,7 @@ public final class Threader implements Closeable {
     final Executor executor;
 
     /** Thread factory. */
-    Factory factory = null;
+    JavaThreadFactory factory = null;
 
     /** Array of functions. */
     BaseRecord[] functions = new BaseRecord[0];
@@ -362,7 +337,7 @@ public final class Threader implements Closeable {
     {this.serial = serial; this.executor = executor; savedState = state;}
 
     /** @return this builder, to allow for chaining. */
-    public final Builder factory(Factory factory)
+    public final Builder factory(JavaThreadFactory factory)
     {this.factory = factory; return this;}
 
     /** @return this builder, to allow for chaining. */

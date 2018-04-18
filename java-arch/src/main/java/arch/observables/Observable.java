@@ -25,17 +25,18 @@
 
 package arch.observables;
 
-import java.io.Closeable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiPredicate;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import arch.blocks.Manager;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.deepEquals;
@@ -47,10 +48,7 @@ import static java.util.Optional.ofNullable;
  * @since 1.0, 18/07/2017
  */
 @SuppressWarnings("unused")
-public abstract class Observable<T> implements
-    Supplier<Optional<T>>,
-    BiPredicate<Runnable, Boolean>,
-    Closeable {
+public abstract class Observable<T> implements Manager<T> {
 
   /** Activated flags. */
   private static final boolean
@@ -60,10 +58,13 @@ public abstract class Observable<T> implements
    * The list of observers.
    * An observer can be in the list at most once and will never be null.
    */
-  private final ArrayList<Runnable> mObservers = new ArrayList<>();
+  private final Set<Runnable> mObservers = new CopyOnWriteArraySet<>();
 
   /** This instance. */
   private final Observable<T> mInstance = this;
+
+  /** Observers Notifier. */
+  private final Consumer<Runnable> mNotifier = Runnable::run;
 
   /** This as observer for child dependencies. */
   private final Runnable mObserver = mInstance::invalidate;
@@ -79,7 +80,7 @@ public abstract class Observable<T> implements
 
 
   /** Child dependencies. */
-  private final List<Observable> mDependencies;
+  private final List<Manager<?>> mDependencies;
 
   /** The object was released. */
   private volatile boolean mClosed;
@@ -90,7 +91,7 @@ public abstract class Observable<T> implements
    * @param dependencies child dependencies
    */
   @SuppressWarnings("unused")
-  protected Observable(Observable... dependencies) {
+  protected Observable(Manager<?>... dependencies) {
     mDependencies = asList(dependencies);
   }
 
@@ -109,28 +110,14 @@ public abstract class Observable<T> implements
   /** {@inheritDoc} */
   @Override public final boolean test
   (Runnable observer, Boolean register) {
-    if (requireNonNull(register))
-      synchronized (mObservers) {
-        if (mObservers.contains(observer)) return false;
-        else mObservers.add(observer); return true;
-      }
-    else
-      synchronized (mObservers) {
-        final int index = mObservers.indexOf(observer);
-        if (index == -1) return false;
-        else mObservers.remove(index);
-        return true;
-      }
+    return requireNonNull(register) ?
+        mObservers.add(observer) :
+        mObservers.remove(observer);
   }
 
   /** Notify all observers about changes */
-  private void notifyChanged() {
-    synchronized (mObservers) {
-      final int start = mObservers.size() - 1;
-      for (int i = start; i >= 0; i--)
-        mObservers.get(i).run();
-    }
-  }
+  private void notifyChanged()
+  {mObservers.parallelStream().forEach(mNotifier);}
 
   /** Unregister all observers and dependencies */
   private void unregisterAll() {
@@ -171,7 +158,7 @@ public abstract class Observable<T> implements
                     (ofNullable(mValue.get())),
                 mDependencies
                     .parallelStream()
-                    .map(Observable::get)
+                    .map(Manager::get)
             ).toArray(Optional[]::new)
         );
   }

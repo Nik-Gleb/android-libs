@@ -27,6 +27,7 @@ package camera;
 
 import java.util.Optional;
 
+import arch.FrameSize;
 import arch.observables.Observable;
 
 /**

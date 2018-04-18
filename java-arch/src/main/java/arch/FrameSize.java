@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package camera;
+package arch;
 
 import java.util.Objects;
 
@@ -38,13 +38,18 @@ public final class FrameSize {
 
   /** Empty size const */
   private static final int NO_SIZE = 0;
+  /** Empty rate const */
+  private static final float NO_RATE = 0.0f;
+
   /** Empty frame const */
   public static final FrameSize EMPTY =
-      new FrameSize(NO_SIZE, NO_SIZE, NO_SIZE);
+      new FrameSize(NO_SIZE, NO_SIZE, NO_SIZE, NO_RATE);
 
   /** Properties */
   @SuppressWarnings("WeakerAccess")
   public final int wight, height, format;
+  /** Frame rate */
+  public final float rate;
 
   /**
    * Constructs a new {@link FrameSize}.
@@ -52,9 +57,10 @@ public final class FrameSize {
    * @param wight the horizontal size of surface
    * @param height the vertical size of surface
    * @param format the pixel format of surface
+   * @param rate the frame rate of surface
    */
-  public FrameSize(int wight, int height, int format)
-  {this.wight = wight; this.height = height; this.format = format;}
+  public FrameSize(int wight, int height, int format, float rate)
+  {this.wight = wight; this.height = height; this.format = format; this.rate = rate;}
 
   /** {@inheritDoc} */
   @Override public final boolean equals(Object obj) {
@@ -64,12 +70,13 @@ public final class FrameSize {
     return
         wight == frameSize.wight &&
         height == frameSize.height &&
-        format == frameSize.format;
+        format == frameSize.format &&
+        Float.valueOf(rate).equals(frameSize.rate);
   }
 
   /** {@inheritDoc} */
   @Override public final int hashCode()
-  {return Objects.hash(wight, height, format);}
+  {return Objects.hash(wight, height, format, rate);}
 
   /** {@inheritDoc} */
   @Override public final String toString() {
@@ -78,6 +85,7 @@ public final class FrameSize {
             .append("wight=").append(wight)
             .append(", height=").append(height)
             .append(", format=").append(format)
+            .append(", rate=").append(rate)
             .append('}');
     try {return builder.toString();}
     finally {builder.setLength(0);}

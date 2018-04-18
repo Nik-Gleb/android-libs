@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 
+import arch.FrameSize;
 import arch.observables.Observable;
 import arch.observables.Selector;
 
