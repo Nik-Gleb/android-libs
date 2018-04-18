@@ -43,6 +43,7 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
   libraryjars "../java-arch/build/libs/java-arch-release.jar"
+  libraryjars "../java-arch/build/libs/java-arch.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
