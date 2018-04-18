@@ -115,7 +115,7 @@
 -keep public interface arch.** {public protected *;}
 
 -dontwarn android.arch.lifecycle.*
--dontwarn arch.interactor.*
+-dontwarn arch.*
 
 #-keep public class * {public protected *;}
 #-keep public interface * {public protected *;}
