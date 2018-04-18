@@ -47,7 +47,7 @@ import static java.lang.Thread.currentThread;
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
 public final class AndroidThreadFactory implements JavaThreadFactory {
-
+//
   /** This instance. */
   private final AndroidThreadFactory mInstance = this;
 
