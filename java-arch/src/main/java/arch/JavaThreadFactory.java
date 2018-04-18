@@ -29,6 +29,5 @@ public interface JavaThreadFactory {
    *
    * @return new created thread
    */
-  @SuppressWarnings("UnnecessaryInterfaceModifier")
-  public Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
+  Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
 }
