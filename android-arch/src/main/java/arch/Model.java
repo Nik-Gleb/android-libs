@@ -79,7 +79,7 @@ public class Model {
    */
   @SuppressLint("UseSparseArrays")
   public static Threader.Builder create
-  (Bundle inState, Handler handler, Threader.Factory factory,
+  (Bundle inState, Handler handler, JavaThreadFactory factory,
       UnPacker unPacker, String name) {
 
     name += STATE_ACTIONS;
