@@ -6,7 +6,6 @@ package arch;
  * @author Nikitenko Gleb
  * @since 1.0, 18/04/2018
  */
-@FunctionalInterface
 public interface JavaThreadFactory {
 
   /**
@@ -30,5 +29,6 @@ public interface JavaThreadFactory {
    *
    * @return new created thread
    */
-  Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
+  @SuppressWarnings("UnnecessaryInterfaceModifier")
+  public Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
 }
