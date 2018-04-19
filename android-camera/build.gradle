@@ -87,7 +87,7 @@ dependencies {
 
   //implementation fileTree(include: ['*.jar'], dir: 'libs')
   //api 'net.sf.proguard:proguard-annotations:6.0.2'
-  api 'com.android.support:support-annotations:' + supportVersion
+  implementation 'com.android.support:support-annotations:' + supportVersion
 
   //noinspection GradleDependency
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'

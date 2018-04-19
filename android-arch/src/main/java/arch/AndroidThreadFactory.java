@@ -139,7 +139,8 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    *
    * @return wrapped module
    */
-  public final <T extends Module> ModuleProvider<T> wrap(@NonNull Supplier<T> value)
+  @NonNull public final <T extends Module>
+  ModuleProvider<T> wrap(@NonNull Supplier<T> value)
   {return new LooperModuleProvider<>(mInstance, value);}
 
 

@@ -27,7 +27,6 @@ import proguard.gradle.ProGuardTask
 
 plugins {
   id 'java'
-  id 'java-library'
   id 'maven-publish'
 }
 
@@ -84,7 +83,7 @@ dependencies {
 
   //implementation fileTree(include: ['*.jar'], dir: 'libs')
   //api 'net.sf.proguard:proguard-annotations:6.0.2'
-  api 'com.google.code.findbugs:jsr305:3.0.2'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
   //noinspection GradleDependency
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'

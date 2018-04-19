@@ -27,9 +27,9 @@ import proguard.gradle.ProGuardTask
 
 plugins {
   id 'java'
-  id 'java-library'
   id 'maven-publish'
 }
+
 
 final PACKAGE = glebLibs
 final PACKAGE_NAME = "java-ok-tools"
@@ -91,10 +91,10 @@ dependencies {
 
   //implementation fileTree(include: ['*.jar'], dir: 'libs')
   //api 'net.sf.proguard:proguard-annotations:6.0.2'
-  api 'com.google.code.findbugs:jsr305:3.0.2'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
   /** OkHttp library */
-  api 'com.squareup.okhttp3:okhttp:3.10.0'
+  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   /** Clean lib for cancellation  */
   //implementation project(':clean')
 

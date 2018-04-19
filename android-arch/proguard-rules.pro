@@ -24,9 +24,9 @@
 # hide the original source file tag.
 #-renamesourcefileattribute SourceFile
 
--dontobfuscate
+#-dontobfuscate
 #-dontoptimize
--dontshrink
+#-dontshrink
 
 #-verbose
 -optimizationpasses 5
@@ -116,7 +116,7 @@
 -keep public interface arch.** {public protected *;}
 
 -dontwarn android.arch.lifecycle.*
--dontwarn arch.*
+#-dontwarn arch.*
 
 -dontwarn javax.annotation.*
 -dontwarn android.support.annotation.*
