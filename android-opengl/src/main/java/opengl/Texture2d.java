@@ -34,7 +34,7 @@ import java.nio.Buffer;
  * @author Nikitenko Gleb
  * @since 1.0, 12/01/2018
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class Texture2d {
 
   /** Const integers. */
@@ -51,7 +51,8 @@ public final class Texture2d {
    * @param targets array of necessary targets
    * @return array of texture names
    */
-  static int[] createTextures(@NonNull boolean[] targets, int[] temp) {
+  @NonNull public static int[] createTextures
+  (@NonNull boolean[] targets, @NonNull int[] temp) {
     final int[] result = new int[targets.length];
     GLES20.glGenTextures(result.length, result, OFFSET);
     for (int i = 0; i < result.length; i++) {
@@ -65,7 +66,7 @@ public final class Texture2d {
   }
 
   /** @param textures for close */
-  static void closeTextures(@NonNull int... textures)
+  public static void closeTextures(@NonNull int... textures)
   {GLES20.glDeleteTextures(textures.length, textures, OFFSET);}
 
   /**
@@ -78,8 +79,8 @@ public final class Texture2d {
    * @param type the texture type
    * @param buf the buffer
    */
-  static void bindTexture(@NonNull int[] names, @NonNull boolean[] targets, int idx,
-      int width, int height, int fmt, int type, @NonNull Buffer buf, int[] temp)
+  public static void bindTexture(@NonNull int[] names, @NonNull boolean[] targets, int idx,
+      int width, int height, int fmt, int type, @NonNull Buffer buf, @NonNull int[] temp)
   {makeCurrent(names, targets, idx, temp); GLES20.glTexImage2D(temp[1], LEVEL, fmt, width, height, BORDER, fmt, type, buf);}
 
   /**
@@ -97,7 +98,7 @@ public final class Texture2d {
    * @param result the results
    */
   private static void makeCurrent
-  (@NonNull int[] names, @NonNull boolean[] targets, int index, int[] result) {
+  (@NonNull int[] names, @NonNull boolean[] targets, int index, @NonNull int[] result) {
     GLES20.glActiveTexture(result[0] = GLES20.GL_TEXTURE0 + index);
     GLES20.glBindTexture(result[1] = target(targets[index]), result[2] = names[index]);
   }

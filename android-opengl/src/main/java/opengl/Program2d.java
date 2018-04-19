@@ -42,7 +42,7 @@ import proguard.annotation.KeepPublicClassMembers;
  */
 @Keep
 @KeepPublicClassMembers
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class Program2d {
 
   /** Shader str-constants. */
@@ -111,7 +111,7 @@ public final class Program2d {
    * @param external use external shader
    * @return array of int attributes
    */
-  static int[] createProgram(boolean external) {
+  @NonNull public static int[] createProgram(boolean external) {
 
     /*
      * 0 - Program
@@ -160,7 +160,7 @@ public final class Program2d {
    *
    * @param attributes the attributes
    */
-  static void closeProgram(int[] attributes) {
+  public static void closeProgram(@NonNull int[] attributes) {
     GLES20.glDetachShader(attributes[0], attributes[1]);
     GLES20.glDeleteShader(attributes[1]);
     GLES20.glDetachShader(attributes[0], attributes[2]);
@@ -177,7 +177,14 @@ public final class Program2d {
     GLES20.glUseProgram(attrs[my]);
   }
 
-  static void draw(@NonNull int[] attrs, @NonNull float[] stMatrix, int unit) {
+  /**
+   * Draw current state.
+   *
+   * @param attrs    program attributes
+   * @param stMatrix transform matrix
+   * @param unit     current unit
+   */
+  public static void draw(@NonNull int[] attrs, @NonNull float[] stMatrix, int unit) {
 
     saveProgram(attrs);
 
@@ -227,7 +234,7 @@ public final class Program2d {
   }
 
   /** @return identity matrix. */
-  static float[] createIdentityMatrix() {
+  @NonNull public static float[] createIdentityMatrix() {
     final float[] result = new float[16];
     Matrix.setIdentityM (result, OFFSET);
     return result;
