@@ -1,5 +1,7 @@
 package arch;
 
+import javax.annotation.Nonnull;
+
 /**
  * For pool thread factory.
  *
@@ -29,5 +31,5 @@ public interface JavaThreadFactory {
    *
    * @return new created thread
    */
-  Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
+  @Nonnull Thread newThread(ThreadGroup group, Runnable target, String name, long stack);
 }

@@ -34,10 +34,11 @@
 -dontpreverify
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
+#-repackageclasses
 
 #-optimizations !code/simplification/arithmetic
 #-optimizations !code/simplification/cast
--optimizations !code/allocation/variable
+#-optimizations !code/allocation/variable
 #-optimizations !field
 
 -keepparameternames
@@ -114,14 +115,7 @@
 -keep public class camera.** {public protected *;}
 -keep public interface camera.** {public protected *;}
 
--keep class android.arch.lifecycle.** {*;}
--keep interface android.arch.lifecycle.** {*;}
--dontwarn arch.*
-
-#-keep public class * {public protected *;}
-#-keep public interface * {public protected *;}
-
-
+-dontwarn javax.annotation.*
 -dontwarn android.support.annotation.*
 
 -dontnote android.**

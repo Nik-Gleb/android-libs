@@ -26,7 +26,11 @@
 
 import proguard.gradle.ProGuardTask
 
-apply plugin: 'java-library'
+plugins {
+  id 'java'
+  id 'java-library'
+  id 'maven-publish'
+}
 
 final PACKAGE = glebLibs
 final PACKAGE_NAME = "android-arch"
@@ -42,8 +46,6 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
-  libraryjars "../java-arch/build/libs/java-arch-release.jar"
-  libraryjars "../java-arch/build/libs/java-arch.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -54,7 +56,6 @@ jar.doLast {
   }
 }
 
-apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
@@ -81,16 +82,24 @@ publish.doLast {
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   /* JUnit */
-  testImplementation 'junit:junit:' + junitVersion
-  /* Optional -- Mockito framework */
-  testImplementation 'org.mockito:mockito-core:2.15.0'
+  test {useJUnitPlatform(); jvmArgs '-noverify'}
 
-  implementation project(':java-arch')
+  //implementation fileTree(include: ['*.jar'], dir: 'libs')
+  //api 'net.sf.proguard:proguard-annotations:6.0.2'
+  api 'com.google.code.findbugs:jsr305:3.0.2'
+  api project(':java-arch')
+
   compileOnly 'android.arch.lifecycle:runtime:' + archLifeVersion
   compileOnly 'android.arch.lifecycle:common-java8:' + archLifeVersion
+
+  //noinspection GradleDependency
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
+  //noinspection GradleDependency
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
+  /* Optional -- Mockito framework */
+  //testImplementation 'org.mockito:mockito-core:2.15.0'
 
   /** Android dependencies */
   compileOnly files('../.android.jar')

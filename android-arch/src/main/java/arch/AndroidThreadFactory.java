@@ -36,6 +36,7 @@ import arch.blocks.Module;
 import arch.blocks.ModuleProvider;
 
 import static android.os.Looper.loop;
+import static android.os.Looper.myLooper;
 import static android.os.Looper.prepare;
 import static android.os.Message.obtain;
 import static android.os.Process.setThreadPriority;
@@ -100,7 +101,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    *
    * @return new created thread
    */
-  @Override public final Thread newThread
+  @NonNull @Override public final Thread newThread
   (ThreadGroup group, Runnable target, String name, long stack)
   {return newModule(group, name, stack, target);}
 
@@ -167,9 +168,10 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     (@NonNull AndroidThreadFactory factory, @NonNull Supplier<T> provider) {
       final ThreadGroup group = null; final String name = null; final long stack = 0L;
       (mThreadModule = factory.newModule(group, name, stack, () -> {
-        if (mClosed) return; prepare(); if (mValue == null) synchronized (mLock)
-          {if (mValue == null) mValue = provider.get(); mLock.notifyAll();}
-        if (mClosed) {closeValue(); return;} loop(); closeValue();
+        if (mClosed) return; prepare(); mLooper = myLooper();
+        if (mValue == null) synchronized (mLock) {
+          if (mValue == null) mValue = provider.get(); mLock.notifyAll();
+        } if (mClosed) {closeValue(); return;} loop(); closeValue();
       })).start();
     }
 
@@ -182,8 +184,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
       if (mClosed) return; final Looper looper = mLooper;
       if (looper == null) return; final Handler handler = new Handler(looper);
       obtain(handler, looper::quitSafely).sendToTarget();
-      try {mThreadModule.join();} catch (InterruptedException exception)
-      {currentThread().interrupt();} mClosed = true;
+      mThreadModule.close(); mClosed = true;
     }
 
     /** {@inheritDoc} */

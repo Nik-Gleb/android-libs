@@ -47,8 +47,7 @@ import static android.os.Build.VERSION_CODES.M;
  * @since 1.0, 17/12/2017
  */
 @SuppressWarnings("unused")
-@Keep
-@KeepPublicClassMembers
+@Keep@KeepPublicClassMembers
 public enum ColorFormat {
 
   /** RGBA-8888 Mode. */

@@ -35,10 +35,11 @@
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontskipnonpubliclibraryclassmembers
+#-repackageclasses
 
 #-optimizations !code/simplification/arithmetic
 #-optimizations !code/simplification/cast
--optimizations !code/allocation/variable
+#-optimizations !code/allocation/variable
 #-optimizations !field
 
 -keepparameternames
@@ -112,6 +113,13 @@
 -dontnote junit.framework.ComparisonFailure
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
+
+-keep public class opengl.** {public protected *;}
+-keep public interface opengl.** {public protected *;}
+
+-dontwarn javax.annotation.*
+-dontwarn android.support.annotation.*
+-dontwarn proguard.annotation.*
 
 -keep class java.io.FileDescriptor {*;}
 -keep class android.os.ParcelFileDescriptor {*;}

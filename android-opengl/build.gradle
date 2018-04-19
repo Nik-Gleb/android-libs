@@ -1,6 +1,6 @@
 /*
  * build.gradle
- * java-camera
+ * bundle-opengl
  * 	
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  * 	
@@ -32,7 +32,7 @@ plugins {
 }
 
 final PACKAGE = glebLibs
-final PACKAGE_NAME = "java-arch"
+final PACKAGE_NAME = "android-opengl"
 final boolean HAS_MAVEN =
     project.ext.mMavenWrite != null &&
         !project.ext.mMavenWrite.isEmpty()
@@ -43,7 +43,8 @@ targetCompatibility = "1.8"
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
-  //libraryjars "../.android.jar"
+  libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
+  libraryjars "../.android.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -53,6 +54,7 @@ jar.doLast {
     commandLine "zip", "-d","$buildDir/libs/${archivesBaseName}.jar", "META-INF/*"
   }
 }
+
 publishing {
   publications {
     maven(MavenPublication) {
@@ -76,15 +78,16 @@ publish.doLast {
   delete project.ext.mGradleCachePath + gradleCacheFiles + cachePath
 }
 
-repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 dependencies {
 
   /* JUnit */
   test {useJUnitPlatform(); jvmArgs '-noverify'}
 
   //implementation fileTree(include: ['*.jar'], dir: 'libs')
-  //api 'net.sf.proguard:proguard-annotations:6.0.2'
-  api 'com.google.code.findbugs:jsr305:3.0.2'
+  api 'net.sf.proguard:proguard-annotations:6.0.2'
+  api 'com.android.support:support-annotations:' + supportVersion
+  api 'com.android.support:support-core-utils:' + supportVersion
+  api 'com.android.support:support-fragment:' + supportVersion
 
   //noinspection GradleDependency
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
@@ -94,5 +97,17 @@ dependencies {
   //testImplementation 'org.mockito:mockito-core:2.15.0'
 
   /** Android dependencies */
-  //implementation files('../.android.jar')
+  compileOnly files('../.android.jar')
+
+  //androidTestImplementation 'com.android.support.test:runner:' + runnerVersion
+  //androidTestImplementation 'com.android.support.test:rules:' + runnerVersion
+
+  /*
+  implementation 'junit:junit:' + junitVersion
+  implementation 'com.android.support.test:runner:' + runnerVersion
+  implementation 'com.android.support.test:rules:' + runnerVersion
+  */
+
+
 }
+//apply plugin: 'com.getkeepsafe.dexcount'

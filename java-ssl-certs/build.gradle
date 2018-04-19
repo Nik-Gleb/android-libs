@@ -25,7 +25,11 @@
 
 import proguard.gradle.ProGuardTask
 
-apply plugin: 'java-library'
+plugins {
+  id 'java'
+  id 'java-library'
+  id 'maven-publish'
+}
 
 final PACKAGE = glebLibs
 final PACKAGE_NAME = "java-ssl-certs"
@@ -49,8 +53,6 @@ jar.doLast {
     commandLine "zip", "-d","$buildDir/libs/${archivesBaseName}.jar", "META-INF/*"
   }
 }
-
-apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
@@ -64,6 +66,7 @@ model {
   tasks.generatePomFileForMavenPublication {setEnabled(HAS_MAVEN)}
   tasks.publishMavenPublicationToMavenRepository {setEnabled(HAS_MAVEN)}
 }; tasks.publish.setEnabled(HAS_MAVEN)
+
 task release() {}
 release.dependsOn obfuscate
 
@@ -81,10 +84,19 @@ processTestResources.dependsOn copyTestResources
 
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 dependencies {
-  //implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   /* JUnit */
-  testImplementation 'junit:junit:' + junitVersion
+  test {useJUnitPlatform(); jvmArgs '-noverify'}
+
+  //implementation fileTree(include: ['*.jar'], dir: 'libs')
+  //api 'net.sf.proguard:proguard-annotations:6.0.2'
+  api 'com.google.code.findbugs:jsr305:3.0.2'
+
+  //noinspection GradleDependency
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
+  //noinspection GradleDependency
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
   /* Optional -- Mockito framework */
-  testImplementation 'org.mockito:mockito-core:2.15.0'
+  //testImplementation 'org.mockito:mockito-core:2.15.0'
+
 }

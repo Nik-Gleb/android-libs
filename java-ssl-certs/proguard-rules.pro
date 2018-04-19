@@ -34,10 +34,11 @@
 -dontpreverify
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
+#-repackageclasses
 
 #-optimizations !code/simplification/arithmetic
 #-optimizations !code/simplification/cast
--optimizations !code/allocation/variable
+#-optimizations !code/allocation/variable
 #-optimizations !field
 
 -keepparameternames
@@ -114,6 +115,7 @@
 -keep public class !android.libs.ssl-certs.BuildConfig {public protected *;}
 -keep public interface * {public protected *;}
 
+-dontwarn javax.annotation.*
 -dontwarn android.support.annotation.*
 
 -dontwarn **$$Lambda$*

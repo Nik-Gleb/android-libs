@@ -108,4 +108,5 @@ public class ThreadModule extends Thread implements Module {
     /** Calls by {@link Thread#interrupt()} */
     void onInterrupted();
   }
+
 }

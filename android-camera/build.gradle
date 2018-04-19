@@ -25,7 +25,11 @@
 
 import proguard.gradle.ProGuardTask
 
-apply plugin: 'java-library'
+plugins {
+  id 'java'
+  id 'java-library'
+  id 'maven-publish'
+}
 
 final PACKAGE = glebLibs
 final PACKAGE_NAME = "android-camera"
@@ -39,6 +43,7 @@ targetCompatibility = "1.8"
 task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   configuration 'proguard-rules.pro'
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+  libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
@@ -50,7 +55,6 @@ jar.doLast {
   }
 }
 
-apply plugin: 'maven-publish'
 publishing {
   publications {
     maven(MavenPublication) {
@@ -77,15 +81,21 @@ publish.doLast {
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-  implementation 'com.android.support:support-annotations:' + supportVersion
 
   /* JUnit */
-  testImplementation 'junit:junit:' + junitVersion
+  test {useJUnitPlatform(); jvmArgs '-noverify'}
+
+  //implementation fileTree(include: ['*.jar'], dir: 'libs')
+  //api 'net.sf.proguard:proguard-annotations:6.0.2'
+  api 'com.android.support:support-annotations:' + supportVersion
+
+  //noinspection GradleDependency
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
+  //noinspection GradleDependency
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
   /* Optional -- Mockito framework */
-  testImplementation 'org.mockito:mockito-core:2.15.0'
+  //testImplementation 'org.mockito:mockito-core:2.15.0'
 
   /** Android dependencies */
-  implementation files('../.android.jar')
+  compileOnly files('../.android.jar')
 }
