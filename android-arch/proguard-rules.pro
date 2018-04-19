@@ -24,7 +24,7 @@
 # hide the original source file tag.
 #-renamesourcefileattribute SourceFile
 
-#-dontobfuscate
+-dontobfuscate
 #-dontoptimize
 -dontshrink
 
