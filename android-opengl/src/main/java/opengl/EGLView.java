@@ -64,12 +64,6 @@ public final class EGLView implements Closeable {
   /** The log-cat tag. */
   private static final String TAG = "EGLView";
 
-  /**
-   * EGLCore object we're associated with.
-   * It may be associated with multiple surfaces.
-   */
-  @NonNull private final EGLCore mEglCore;
-
   /** The EGL-Surface. */
   @NonNull private final EGLSurface mEGLSurface;
 
@@ -77,6 +71,12 @@ public final class EGLView implements Closeable {
   private final boolean mRelease;
   /** Platform surface */
   private final Object mSurface;
+
+  /**
+   * EGLCore object we're associated with.
+   * It may be associated with multiple surfaces.
+   */
+  @NonNull public final EGLCore core;
 
   /** The horizontal size. */
   public final int width;
@@ -97,9 +97,9 @@ public final class EGLView implements Closeable {
    */
   private EGLView(@NonNull EGLCore core, @NonNull Object surface,
       @WindowType int type, boolean release) {
-    mEGLSurface = (mEglCore = core).createSurface(surface);
-    width = mEglCore.querySurface(mEGLSurface, EGL_WIDTH);
-    height = mEglCore.querySurface(mEGLSurface, EGL_HEIGHT);
+    mEGLSurface = (this.core = core).createSurface(surface);
+    width = this.core.querySurface(mEGLSurface, EGL_WIDTH);
+    height = this.core.querySurface(mEGLSurface, EGL_HEIGHT);
     this.type = type; mSurface = surface; mRelease = release;
   }
 
@@ -114,14 +114,14 @@ public final class EGLView implements Closeable {
    */
   private EGLView(@NonNull EGLCore core, int width, int height,
       @WindowType int type, boolean release) {
-    mEGLSurface = (mEglCore = core).createSurface
+    mEGLSurface = (this.core = core).createSurface
         (this.width = width, this.height = height);
     this.type = type; mSurface = null; mRelease = release;
   }
 
   /** {@inheritDoc} */
   @Override public void close() {
-    mEglCore.releaseSurface(mEGLSurface);
+    core.releaseSurface(mEGLSurface);
     if (mRelease) {
       switch (type) {
         case SURFACE:
@@ -141,20 +141,20 @@ public final class EGLView implements Closeable {
 
   /** @return true if this view is current. */
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  final boolean isCurrent() {return mEglCore.isCurrent(mEGLSurface);}
+  final boolean isCurrent() {return core.isCurrent(mEGLSurface);}
 
   /** Makes our EGL context and surface current. */
-  public final void makeCurrent() {mEglCore.makeCurrent(mEGLSurface);}
+  public final void makeCurrent() {core.makeCurrent(mEGLSurface);}
 
   /** Makes our EGL context and no-surface current. */
-  public final void makeNothing() {mEglCore.makeNothingCurrent();}
+  public final void makeNothing() {core.makeNothingCurrent();}
 
   /**
    * Makes our EGL context and surface current for drawing.
    * Using the supplied surface for reading.
    */
   public final void makeCurrentReadFrom(@NonNull EGLView readSurface)
-  {mEglCore.makeCurrent(mEGLSurface, readSurface.mEGLSurface);}
+  {core.makeCurrent(mEGLSurface, readSurface.mEGLSurface);}
 
   /**
    * Calls setPresentationTime and eglSwapBuffers.
@@ -163,8 +163,8 @@ public final class EGLView implements Closeable {
    * @param nsecs presentation time stamp to EGL, in nanoseconds.
    */
   public final void swapBuffers(long nsecs) {
-    if (nsecs > 0) mEglCore.setPresentationTime(mEGLSurface, nsecs);
-    mEglCore.swapBuffers(mEGLSurface);
+    if (nsecs > 0) core.setPresentationTime(mEGLSurface, nsecs);
+    core.swapBuffers(mEGLSurface);
   }
 
   /**
