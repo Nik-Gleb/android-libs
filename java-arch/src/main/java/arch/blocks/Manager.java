@@ -10,4 +10,5 @@ import java.util.function.BiPredicate;
  * @since 1.0, 18/04/2018
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public interface Manager<T> extends Provider<Optional<T>>, BiPredicate<Runnable, Boolean> {}
+public interface Manager<T> extends Provider<Optional<T>>, BiPredicate<Runnable, Boolean>
+{/** Registration flags. */  boolean REGISTER = true, UNREGISTER = false;}

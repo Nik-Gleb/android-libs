@@ -29,15 +29,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.function.Supplier;
 
 import arch.blocks.Module;
-import arch.blocks.ModuleProvider;
+import arch.blocks.Provider;
 
-import static android.os.Looper.loop;
-import static android.os.Looper.myLooper;
-import static android.os.Looper.prepare;
 import static android.os.Message.obtain;
 import static android.os.Process.setThreadPriority;
 import static java.lang.Thread.currentThread;
@@ -139,52 +139,41 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    *
    * @return wrapped module
    */
-  @NonNull public final <T extends Module>
-  ModuleProvider<T> wrap(@NonNull Supplier<T> value)
-  {return new LooperModuleProvider<>(mInstance, value);}
+  @NonNull public final <T extends Module> Supplier<T> wrap(@NonNull Supplier<T> value)
+  {return new LooperModule<>(mInstance, new Task<>(value));}
 
 
   /** The worker looper. */
-  private static final class LooperModuleProvider<T extends Module> implements ModuleProvider<T> {
+  private static final class LooperModule<T extends Module>
+      implements Provider<T> {
 
-    /** The thread */
+    /** Worker Thread. */
     private final ThreadModule mThreadModule;
-    /** The looper. */
-    private volatile Looper mLooper = null;
-    /** Lock monitor. */
-    private final Object mLock = new Object();
-    /** Provided value */
-    private volatile T mValue = null;
+
+    /** Worker Task. */
+    private final Task<T> mTask;
 
     /** "CLOSE" flag-state. */
     private volatile boolean mClosed;
 
     /**
-     * Constructs a new {@link LooperModuleProvider}
+     * Constructs a new {@link LooperModule}
      *
      * @param factory thread factory
-     * @param provider module provider               .
+     * @param task module provider               .
      */
-    LooperModuleProvider
-    (@NonNull AndroidThreadFactory factory, @NonNull Supplier<T> provider) {
+    LooperModule
+    (@NonNull AndroidThreadFactory factory, @NonNull Task<T> task) {
       final ThreadGroup group = null; final String name = null; final long stack = 0L;
-      (mThreadModule = factory.newModule(group, name, stack, () -> {
-        if (mClosed) return; prepare(); mLooper = myLooper();
-        if (mValue == null) synchronized (mLock) {
-          if (mValue == null) mValue = provider.get(); mLock.notifyAll();
-        } if (mClosed) {closeValue(); return;} loop(); closeValue();
-      })).start();
+      (mThreadModule = factory.newModule(group, name, stack, mTask = task)).start();
     }
-
-    /** Close provided value */
-    private void closeValue() {final T value = mValue;
-    if (value == null) return; value.close(); mValue = null;}
 
     /** {@inheritDoc} */
     @Override public final void close() {
-      if (mClosed) return; final Looper looper = mLooper;
-      if (looper == null) return; final Handler handler = new Handler(looper);
-      obtain(handler, looper::quitSafely).sendToTarget();
+      if (mClosed) return; mTask.close();
+      /*try {mThreadModule.join();}
+      catch (InterruptedException e)
+      {throw new RuntimeException(e);}*/
       mThreadModule.close(); mClosed = true;
     }
 
@@ -193,7 +182,79 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     {try {close();} finally {super.finalize();}}
 
     /** {@inheritDoc} */
-    @Override public final T get() {
+    @Override public final T get() {return mTask.get();}
+  }
+
+  /** Looper Task. */
+  private static final class Task<T> implements Runnable, Provider<T> {
+
+    /** Lock monitor. */
+    private final Object mLock = new Object();
+    /** The looper. */
+    private volatile Looper mLooper = null;
+    /** Provided value */
+    private volatile T mValue = null;
+    /** Value factory. */
+    private volatile Supplier<T> mSupplier;
+
+    /** "CLOSE" flag-state. */
+    private volatile boolean mClosed;
+
+    /**
+     * Constructs a new {@link Task}
+     *
+     * @param supplier source supplier
+     */
+    Task(@NonNull Supplier<T> supplier)
+    {mSupplier = supplier;}
+
+    /** {@inheritDoc} */
+    @Override public final void close() {
+      if (mClosed) return; final Looper looper = getLooper();
+      obtain(new Handler(looper), looper::quitSafely).sendToTarget();
+      Log.d("THREAD", "close: ");
+      mClosed = true;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected final void finalize() throws Throwable
+    {try {close();} finally {super.finalize();}}
+
+
+    /** {@inheritDoc} */
+    @Override public final void run() {
+      if (mClosed) return; Looper.prepare();
+      final Looper looper = mLooper; T value = mValue;
+      final Supplier<T> factory = mSupplier;
+      if (factory != null && (value == null || looper == null))
+        synchronized (mLock) {
+          if (mSupplier != null) mSupplier = null;
+          if (mLooper == null) mLooper = Looper.myLooper();
+          if (mValue == null) mValue = value = factory.get();
+        }
+      if (!mClosed) Looper.loop();
+      Log.d("THREAD", "AFTER_LOOP " + value);
+      if (value instanceof Closeable)
+        try {((Closeable)value).close();}
+        catch (IOException e)
+        {throw new RuntimeException(e);}
+    }
+
+    /** @return current looper */
+    private Looper getLooper() {
+      if (mLooper == null)
+        synchronized (mLock) {
+          while (mLooper == null) {
+            try {mLock.wait();}
+            catch (InterruptedException e)
+            {currentThread().interrupt();}
+          }
+        }
+      return mLooper;
+    }
+
+    /** {@inheritDoc} */
+    @Override @NonNull public final T get() {
       if (mValue == null)
         synchronized (mLock) {
           while (mValue == null) {

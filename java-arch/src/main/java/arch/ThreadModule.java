@@ -25,8 +25,6 @@
 
 package arch;
 
-import java.lang.reflect.Field;
-
 import arch.blocks.Module;
 
 /**
@@ -38,11 +36,8 @@ import arch.blocks.Module;
 @SuppressWarnings({ "unused", "WeakerAccess" })
 public class ThreadModule extends Thread implements Module {
 
-  /** Lock monitor. */
-  private final Object mLock = getLock();
-
   /** Interruption listener. */
-  private OnInterruptedListener mOnInterruptedListener = null;
+  private volatile Runnable onInterruptedListener = null;
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
@@ -67,26 +62,11 @@ public class ThreadModule extends Thread implements Module {
   public ThreadModule(ThreadGroup threadGroup, Runnable runnable, String s, long l)
   {super(threadGroup, runnable, s, l);}
 
-  /** @param listener interruption callback. */
-  public final void setOnInterruptedListener(OnInterruptedListener listener)
-  {synchronized (mLock) {mOnInterruptedListener = listener;}}
-
   /** {@inheritDoc} */
   @Override public final void interrupt() {
     super.interrupt();
-    synchronized (mLock) {
-      if (mOnInterruptedListener != null)
-        mOnInterruptedListener.onInterrupted();
-    }
-  }
-
-  /** @return internal locker. */
-  private Object getLock() {
-    final String name = "blockerLock";
-    try {final Field field = Thread.class.getDeclaredField(name);
-      field.setAccessible(true); return field.get(this);}
-    catch (NoSuchFieldException | IllegalAccessException e)
-    {throw new RuntimeException(e);}
+    final Runnable listener = onInterruptedListener;
+    if (listener != null) listener.run();
   }
 
   /** {@inheritDoc} */
@@ -95,18 +75,10 @@ public class ThreadModule extends Thread implements Module {
 
   /** {@inheritDoc} */
   @Override public final void close() {
-    if (mClosed) return; synchronized (mLock) {
-      while (isAlive()) try {mLock.wait();}
+    if (mClosed) return; synchronized (this) {
+      while (isAlive()) try {wait();}
       catch (InterruptedException exception)
       {Thread.currentThread().interrupt();}
     } mClosed = true;
   }
-
-  /** Interruption listener. */
-  @FunctionalInterface
-  public interface OnInterruptedListener {
-    /** Calls by {@link Thread#interrupt()} */
-    void onInterrupted();
-  }
-
 }
