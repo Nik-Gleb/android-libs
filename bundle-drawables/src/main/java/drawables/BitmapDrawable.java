@@ -233,8 +233,8 @@ public class BitmapDrawable extends Drawable implements Closeable {
      * @param bitmap content bitmap
      * @param round rounding size
      */
-    public BitmapDrawable(Bitmap bitmap, int width, int height, int round, int clipX, int clipY) {
-        mClipRect = new Rect(clipX, clipY, width, height);
+    public BitmapDrawable(Bitmap bitmap, int width, int height, int round, Rect clip) {
+        mClipRect = clip;
         mAlphaMatrixFilter = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ?
             null : new AlphaMatrixFilter(); updateColorFilter();
         mIntrinsicSize.set(width, height);
