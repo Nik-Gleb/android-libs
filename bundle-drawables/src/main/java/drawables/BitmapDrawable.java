@@ -107,6 +107,8 @@ public class BitmapDrawable extends Drawable implements Closeable {
     private final Point mSmallestSize = new Point();
     /** The intrinsic size. */
     private final Point mIntrinsicSize = new Point(-1,-1);
+    /** Clip rect. */
+    private final Rect mClipRect;
     /** The paint */
     private final Paint mPaint = new Paint(DEFAULT_PAINT_FLAGS);
 
@@ -158,6 +160,7 @@ public class BitmapDrawable extends Drawable implements Closeable {
      * @param bitmapDrawable horizontal size
      */
     public BitmapDrawable(@NonNull BitmapDrawable bitmapDrawable) {
+        mClipRect = null;
         mDstRectF.set(bitmapDrawable.mDstRectF); mOriginRectF.set(bitmapDrawable.mOriginRectF);
         mOutlineRect.set(bitmapDrawable.mOutlineRect); mRoundedPoint.set(bitmapDrawable.mRoundedPoint);
         mSize.set(bitmapDrawable.mSize.x, bitmapDrawable.mSize.y);
@@ -183,6 +186,7 @@ public class BitmapDrawable extends Drawable implements Closeable {
      * @param round rounding size
      */
     public BitmapDrawable(int width, int height, int round) {
+        mClipRect = null;
         mAlphaMatrixFilter = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ?
                 null : new AlphaMatrixFilter(); updateColorFilter();
         mIntrinsicSize.set(width, height); mRounded = round;
@@ -198,6 +202,7 @@ public class BitmapDrawable extends Drawable implements Closeable {
      * @param round rounding size
      */
     public BitmapDrawable(Bitmap bitmap, int round) {
+        mClipRect = null;
         mAlphaMatrixFilter = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ?
                 null : new AlphaMatrixFilter(); updateColorFilter();
         mIntrinsicSize.set(bitmap.getWidth(), bitmap.getHeight());
@@ -213,8 +218,25 @@ public class BitmapDrawable extends Drawable implements Closeable {
      * @param round rounding size
      */
     public BitmapDrawable(Bitmap bitmap, int width, int height, int round) {
+        mClipRect = null;
         mAlphaMatrixFilter = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ?
                 null : new AlphaMatrixFilter(); updateColorFilter();
+        mIntrinsicSize.set(width, height);
+        mRounded = round; setBitmap(bitmap);
+        if (!isRounded()) setTileModeXY(null, null);
+        else setTileModeXY(Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+    }
+
+    /**
+     * Constructs a new {@link BitmapDrawable}.
+     *
+     * @param bitmap content bitmap
+     * @param round rounding size
+     */
+    public BitmapDrawable(Bitmap bitmap, int width, int height, int round, int clipX, int clipY) {
+        mClipRect = new Rect(clipX, clipY, width, height);
+        mAlphaMatrixFilter = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ?
+            null : new AlphaMatrixFilter(); updateColorFilter();
         mIntrinsicSize.set(width, height);
         mRounded = round; setBitmap(bitmap);
         if (!isRounded()) setTileModeXY(null, null);
@@ -469,14 +491,15 @@ public class BitmapDrawable extends Drawable implements Closeable {
 
         //if (!bitmap.isRecycled()) {
             if (mRounded == -1)
-                canvas.drawBitmap(bitmap, mDstRectF.left, mDstRectF.top, paint);
+                if (mClipRect == null)
+                    canvas.drawBitmap(bitmap, mDstRectF.left, mDstRectF.top, paint);
+                else
+                    canvas.drawBitmap(bitmap, mClipRect, mDstRectF, paint);
             else
                 canvas.drawRoundRect(mDstRectF, mRoundedPoint.x, mRoundedPoint.y, paint);
         //}
 
         //canvas.restore();
-
-
 
     }
 
