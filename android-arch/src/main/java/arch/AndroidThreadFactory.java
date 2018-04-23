@@ -29,7 +29,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -212,7 +211,6 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     @Override public final void close() {
       if (mClosed) return; final Looper looper = getLooper();
       obtain(new Handler(looper), looper::quitSafely).sendToTarget();
-      Log.d("THREAD", "close: ");
       mClosed = true;
     }
 
@@ -233,7 +231,6 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
           if (mValue == null) mValue = value = factory.get();
         }
       if (!mClosed) Looper.loop();
-      Log.d("THREAD", "AFTER_LOOP " + value);
       if (value instanceof Closeable)
         try {((Closeable)value).close();}
         catch (IOException e)
