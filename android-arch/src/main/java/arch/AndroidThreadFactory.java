@@ -170,9 +170,6 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     /** {@inheritDoc} */
     @Override public final void close() {
       if (mClosed) return; mTask.close();
-      /*try {mThreadModule.join();}
-      catch (InterruptedException e)
-      {throw new RuntimeException(e);}*/
       mThreadModule.close(); mClosed = true;
     }
 

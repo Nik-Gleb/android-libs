@@ -75,10 +75,14 @@ public class ThreadModule extends Thread implements Module {
 
   /** {@inheritDoc} */
   @Override public final void close() {
-    if (mClosed) return; synchronized (this) {
+    if (mClosed) return;
+    /*synchronized (this) {
       while (isAlive()) try {wait();}
       catch (InterruptedException exception)
       {Thread.currentThread().interrupt();}
-    } mClosed = true;
+    }*/
+    try {join();} catch (InterruptedException e)
+    {Thread.currentThread().interrupt();}
+    mClosed = true;
   }
 }
