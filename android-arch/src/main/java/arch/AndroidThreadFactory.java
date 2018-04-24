@@ -209,8 +209,12 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
 
     /** {@inheritDoc} */
     @Override public final void close() {
-      if (mClosed) return; final Looper looper = getLooper();
-      obtain(new Handler(looper), looper::quitSafely).sendToTarget();
+      if (mClosed) return;
+      final Looper looper = getLooper();
+      mValue = null; mLooper = null;
+      obtain(new Handler(looper),
+          looper::quitSafely)
+          .sendToTarget();
       mClosed = true;
     }
 
