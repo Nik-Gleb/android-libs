@@ -164,7 +164,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     LooperModule
     (@NonNull AndroidThreadFactory factory, @NonNull Task<T> task) {
       final ThreadGroup group = null; final String name = null; final long stack = 0L;
-      (mThreadModule = factory.newModule(group, name, stack, mTask = task)).start();
+      mThreadModule = factory.newModule(group, name, stack, mTask = task);
     }
 
     /** {@inheritDoc} */
@@ -178,7 +178,11 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     {try {close();} finally {super.finalize();}}
 
     /** {@inheritDoc} */
-    @Override public final T get() {return mTask.get();}
+    @Override public final T get() {start(); return mTask.get();}
+
+    /** Attempt to start thread */
+    private void start()
+    {if (mThreadModule.getState() == Thread.State.NEW) mThreadModule.start();}
   }
 
   /** Looper Task. */
