@@ -391,6 +391,11 @@ public final class Threader implements Closeable {
       try {return new Threader(builder);}
       finally {savedState.clear();}
     }
+
+    /** {@inheritDoc} */
+    @Override protected final void finalize() throws Throwable
+    {factory = null; functions = null; mInitState = null; mInitState = null;
+    super.finalize();}
   }
 
   /** "GET" function meta. */
