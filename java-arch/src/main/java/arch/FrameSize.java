@@ -47,20 +47,20 @@ public final class FrameSize {
 
   /** Properties */
   @SuppressWarnings("WeakerAccess")
-  public final int wight, height, format;
+  public final int width, height, format;
   /** Frame rate */
   public final float rate;
 
   /**
    * Constructs a new {@link FrameSize}.
    *
-   * @param wight the horizontal size of surface
+   * @param width the horizontal size of surface
    * @param height the vertical size of surface
    * @param format the pixel format of surface
    * @param rate the frame rate of surface
    */
-  public FrameSize(int wight, int height, int format, float rate)
-  {this.wight = wight; this.height = height; this.format = format; this.rate = rate;}
+  public FrameSize(int width, int height, int format, float rate)
+  {this.width = width; this.height = height; this.format = format; this.rate = rate;}
 
   /** {@inheritDoc} */
   @Override public final boolean equals(Object obj) {
@@ -68,7 +68,7 @@ public final class FrameSize {
     if (!(obj instanceof FrameSize)) return false;
     final FrameSize frameSize = (FrameSize) obj;
     return
-        wight == frameSize.wight &&
+        width == frameSize.width &&
         height == frameSize.height &&
         format == frameSize.format &&
         Float.valueOf(rate).equals(frameSize.rate);
@@ -76,13 +76,13 @@ public final class FrameSize {
 
   /** {@inheritDoc} */
   @Override public final int hashCode()
-  {return Objects.hash(wight, height, format, rate);}
+  {return Objects.hash(width, height, format, rate);}
 
   /** {@inheritDoc} */
   @Override public final String toString() {
     final StringBuilder builder =
         new StringBuilder("FrameSize{")
-            .append("wight=").append(wight)
+            .append("width=").append(width)
             .append(", height=").append(height)
             .append(", format=").append(format)
             .append(", rate=").append(rate)
