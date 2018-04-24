@@ -32,6 +32,8 @@ import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import arch.blocks.Module;
@@ -49,7 +51,10 @@ import static java.lang.Thread.currentThread;
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
 public final class AndroidThreadFactory implements JavaThreadFactory {
-//
+
+  /** Async starter for loopers */
+  private static final Executor STARTER = Executors.newSingleThreadExecutor();
+
   /** This instance. */
   private final AndroidThreadFactory mInstance = this;
 
@@ -181,8 +186,10 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     @Override public final T get() {start(); return mTask.get();}
 
     /** Attempt to start thread */
-    private void start()
-    {if (mThreadModule.getState() == Thread.State.NEW) mThreadModule.start();}
+    private void start() {
+      if (mThreadModule.getState() != Thread.State.NEW) return;
+      STARTER.execute(mThreadModule::start);
+    }
   }
 
   /** Looper Task. */
