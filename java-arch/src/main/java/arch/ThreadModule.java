@@ -74,15 +74,14 @@ public class ThreadModule extends Thread implements Module {
   {try {close();} finally {super.finalize();}}
 
   /** {@inheritDoc} */
+  @SuppressWarnings("StatementWithEmptyBody")
   @Override public final void close() {
     if (mClosed) return;
-    /*synchronized (this) {
-      while (isAlive()) try {wait();}
+    //synchronized (this) {
+      while (isAlive()); /*try {wait();}
       catch (InterruptedException exception)
-      {Thread.currentThread().interrupt();}
-    }*/
-    try {join();} catch (InterruptedException e)
-    {Thread.currentThread().interrupt();}
+      {Thread.currentThread().interrupt();}*/
+    //}
     mClosed = true;
   }
 }
