@@ -32,14 +32,17 @@ import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import arch.blocks.Module;
-import arch.blocks.Provider;
 
 import static android.os.Message.obtain;
 import static android.os.Process.setThreadPriority;
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Main Thread Factory.
@@ -138,55 +141,55 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    *
    * @return wrapped module
    */
-  @NonNull public final <T extends Module> Supplier<T> wrap(@NonNull Supplier<T> value)
-  {return new LooperModule<>(mInstance, new Task<>(value));}
+  @NonNull public final <T extends Module> Supplier<T>
+  wrap(@NonNull Supplier<T> value)
+  {return new WeakProvider<>(value, mInstance);}
 
+  /**
+   * @author Nikitenko Gleb
+   * @since 1.0, 20/04/2018
+   */
+  private static final class WeakProvider<T> implements Supplier<T> {
 
-  /** The worker looper. */
-  private static final class LooperModule<T extends Module>
-      implements Provider<T> {
+    /** Weak Atomic Reference */
+    private final AtomicReference<WeakReference<Supplier<T>>>
+        mReference = new AtomicReference<>();
 
-    /** Worker Thread. */
-    private final ThreadModule mThreadModule;
-
-    /** Worker Task. */
-    private final Task<T> mTask;
-
-    /** "CLOSE" flag-state. */
-    private volatile boolean mClosed;
+    /** Thread factory. */
+    private final AndroidThreadFactory mFactory;
+    /** Weak original factory */
+    private final Supplier<T> mSupplier;
 
     /**
-     * Constructs a new {@link LooperModule}
+     * Constructs a new {@link WeakProvider}
      *
-     * @param factory thread factory
-     * @param task module provider               .
+     * @param supplier source factory
      */
-    LooperModule
-    (@NonNull AndroidThreadFactory factory, @NonNull Task<T> task) {
-      final ThreadGroup group = null; final String name = null; final long stack = 0L;
-      mThreadModule = factory.newModule(group, name, stack, mTask = task);
+    WeakProvider
+    (@NonNull Supplier<T> supplier, @NonNull AndroidThreadFactory factory)
+    {mSupplier = supplier; mFactory = factory;}
+
+    /** {@inheritDoc} */
+    @Override @NonNull public final T get() {
+      Supplier<T> result; final WeakProvider<T> instance = this;
+      final UnaryOperator<WeakReference<Supplier<T>>> updater = instance::get;
+      do {result = requireNonNull(mReference.updateAndGet(updater)).get();}
+      while (result == null); return result.get();
     }
 
-    /** {@inheritDoc} */
-    @Override public final void close() {
-      if (mClosed) return; mTask.close();
-      mThreadModule.close(); mClosed = true;
+    /**
+     * @param reference incoming reference
+     * @return outgoing reference
+     */
+    @NonNull private WeakReference<Supplier<T>> get
+    (@Nullable WeakReference<Supplier<T>> reference) {
+      if (reference != null && reference.get() != null) return reference;
+      return new WeakReference<>(new Task<>(mSupplier, mFactory));
     }
-
-    /** {@inheritDoc} */
-    @Override protected final void finalize() throws Throwable
-    {try {close();} finally {super.finalize();}}
-
-    /** {@inheritDoc} */
-    @Override public final T get() {start(); return mTask.get();}
-
-    /** Attempt to start thread */
-    private void start()
-    {if (mThreadModule.getState() == Thread.State.NEW) mThreadModule.start();}
   }
 
   /** Looper Task. */
-  private static final class Task<T> implements Runnable, Provider<T> {
+  private static final class Task<T> implements Runnable, Supplier<T>, Closeable {
 
     /** Lock monitor. */
     private final Object mLock = new Object();
@@ -196,6 +199,8 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     private volatile T mValue = null;
     /** Value factory. */
     private volatile Supplier<T> mSupplier;
+    /** Worker Thread. */
+    private volatile ThreadModule mThreadModule;
 
     /** "CLOSE" flag-state. */
     private volatile boolean mClosed;
@@ -205,8 +210,11 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
      *
      * @param supplier source supplier
      */
-    Task(@NonNull Supplier<T> supplier)
-    {mSupplier = supplier;}
+    Task(@NonNull Supplier<T> supplier, @NonNull AndroidThreadFactory factory) {
+      mSupplier = supplier; final Runnable target = this; final long stack = 0L;
+      final ThreadGroup group = null; final String name = null;
+      (mThreadModule = factory.newModule(group, name, stack, target)).start();
+    }
 
     /** {@inheritDoc} */
     @Override public final void close() {
@@ -216,6 +224,8 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
       obtain(new Handler(looper),
           looper::quitSafely)
           .sendToTarget();
+      mThreadModule.close();
+      mThreadModule = null;
       mClosed = true;
     }
 
