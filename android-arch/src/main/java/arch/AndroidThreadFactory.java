@@ -27,12 +27,12 @@ package arch;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -126,9 +126,9 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
    */
   @NonNull private ThreadModule newModule(ThreadGroup group, String name,
       long stack, Runnable target) {name = mName != null ? mName : name;
-    final ThreadModule result = new ThreadModule(group, target, name, stack)
-    {@Override public final void run() {setThreadPriority(mProcessPriority);
-      super.run();}}; result.setDaemon(false); result.setPriority(mThreadPriority);
+    final ThreadModule result = new AndroidThreadFactory.ThreadModule
+    (group, target, name, stack); result.setDaemon(false);
+    result.setPriority(mThreadPriority); result.setProcess(mProcessPriority);
     return result;
   }
 
@@ -145,14 +145,52 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
   wrap(@NonNull Supplier<T> value)
   {return new WeakProvider<>(value, mInstance);}
 
+  /** Thread module. */
+  private static final class ThreadModule extends arch.ThreadModule {
+
+    /** Process priority */
+    private int mProcess = Process.THREAD_PRIORITY_DEFAULT;
+
+    /** {@inheritDoc} */
+    ThreadModule() {super();}
+    /** {@inheritDoc} */
+    ThreadModule(Runnable target) {super(target);}
+    /** {@inheritDoc} */
+    ThreadModule(ThreadGroup group, Runnable target)
+    {super(group, target);}
+    /** {@inheritDoc} */
+    ThreadModule(String name)
+    {super(name);}
+    /** {@inheritDoc} */
+    ThreadModule(ThreadGroup group, String name)
+    {super(group, name);}
+    /** {@inheritDoc} */
+    ThreadModule(Runnable target, String name)
+    {super(target, name);}
+    /** {@inheritDoc} */
+    ThreadModule(ThreadGroup group, Runnable target, String name)
+    {super(group, target, name);}
+    /** {@inheritDoc} */
+    ThreadModule(ThreadGroup group, Runnable target, String name, long stack)
+    {super(group, target, name, stack);}
+
+    /** @param priority base process priority */
+    void setProcess(int priority) {mProcess = priority;}
+
+    /** {@inheritDoc} */
+    @Override public final void run()
+    {setThreadPriority(mProcess); super.run();}
+
+  }
+
   /**
    * @author Nikitenko Gleb
    * @since 1.0, 20/04/2018
    */
-  private static final class WeakProvider<T> implements Supplier<T> {
+  private static final class WeakProvider<T> implements Supplier<T>, Closeable {
 
     /** Weak Atomic Reference */
-    private final AtomicReference<WeakReference<Supplier<T>>>
+    private final AtomicReference<Task<T>>
         mReference = new AtomicReference<>();
 
     /** Thread factory. */
@@ -171,25 +209,37 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
 
     /** {@inheritDoc} */
     @Override @NonNull public final T get() {
-      Supplier<T> result; final WeakProvider<T> instance = this;
-      final UnaryOperator<WeakReference<Supplier<T>>> updater = instance::get;
-      do {result = requireNonNull(mReference.updateAndGet(updater)).get();}
+      Task<T> result; final WeakProvider<T> instance = this;
+      final UnaryOperator<Task<T>> updater = instance::get;
+      do {result = requireNonNull(mReference.updateAndGet(updater));}
       while (result == null); return result.get();
     }
 
     /**
-     * @param reference incoming reference
+     * @param task incoming reference
+     *
      * @return outgoing reference
      */
-    @NonNull private WeakReference<Supplier<T>> get
-    (@Nullable WeakReference<Supplier<T>> reference) {
-      if (reference != null && reference.get() != null) return reference;
-      return new WeakReference<>(new Task<>(mSupplier, mFactory));
+    @NonNull private Task<T> get(@Nullable Task<T> task)
+    {return task != null ? task : new Task<>(mSupplier, mFactory);}
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("ConstantConditions")
+    @Override public final void close() {
+      Task<T> task = null; task = mReference.getAndSet(task);
+      if (task != null) task.close();
     }
+
+    /** {@inheritDoc} */
+    @Override protected final void finalize() throws Throwable
+    {try {close();} finally {super.finalize();}}
   }
 
   /** Looper Task. */
   private static final class Task<T> implements Runnable, Supplier<T>, Closeable {
+
+    /** Worker Thread. */
+    private final ThreadModule mThreadModule;
 
     /** Lock monitor. */
     private final Object mLock = new Object();
@@ -199,9 +249,6 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     private volatile T mValue = null;
     /** Value factory. */
     private volatile Supplier<T> mSupplier;
-    /** Worker Thread. */
-    private volatile ThreadModule mThreadModule;
-
     /** "CLOSE" flag-state. */
     private volatile boolean mClosed;
 
@@ -225,7 +272,6 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
           looper::quitSafely)
           .sendToTarget();
       mThreadModule.close();
-      mThreadModule = null;
       mClosed = true;
     }
 
