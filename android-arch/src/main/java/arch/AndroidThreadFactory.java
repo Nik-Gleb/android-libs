@@ -267,12 +267,23 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
     @Override public final void close() {
       if (mClosed) return;
       final Looper looper = getLooper();
+      final Handler handler = new Handler(looper);
+      final T value = mValue;
       mValue = null; mLooper = null;
-      obtain(new Handler(looper),
-          looper::quitSafely)
-          .sendToTarget();
+      obtain(handler, () -> close(value)).sendToTarget();
+      obtain(handler, looper::quitSafely).sendToTarget();
       mThreadModule.close();
       mClosed = true;
+    }
+
+    /** @param value closeable */
+    private static void close
+    (@Nullable Object value) {
+      if (value == null) return;
+      if (value instanceof Closeable)
+        try {((Closeable)value).close();}
+        catch (IOException e)
+        {throw new RuntimeException(e);}
     }
 
     /** {@inheritDoc} */
@@ -293,10 +304,7 @@ public final class AndroidThreadFactory implements JavaThreadFactory {
           mLock.notifyAll();
         }
       if (!mClosed) Looper.loop();
-      if (value instanceof Closeable)
-        try {((Closeable)value).close();}
-        catch (IOException e)
-        {throw new RuntimeException(e);}
+      close(value);
     }
 
     /** @return current looper */
