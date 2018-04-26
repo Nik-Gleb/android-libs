@@ -168,11 +168,18 @@ public class NavigationManager implements Closeable {
   /** Show secondary screen */
   protected final void show
   (@NonNull String name, boolean replace, @Nullable Bundle args, @Nullable String parent) {
+    final FragmentTransaction result = transaction(name, replace, args, parent);
+    if (result != null) result.commit();
+  }
+
+  /** Create transaction for secondary screen */
+  @Nullable protected final FragmentTransaction transaction
+  (@NonNull String name, boolean replace, @Nullable Bundle args, @Nullable String parent) {
     final Fragment parentFragment = parent != null && !parent.isEmpty() ?
         fragments.findFragmentByTag(parent) : null;
     final FragmentManager manager = parentFragment != null ?
         parentFragment.getChildFragmentManager() : fragments;
-    if (manager.findFragmentByTag(name) != null) return;
+    if (manager.findFragmentByTag(name) != null) return null;
 
     final FragmentTransaction transaction =
         new ExtendedFragmentTransaction(manager)
@@ -184,11 +191,11 @@ public class NavigationManager implements Closeable {
     if (!replace) {
       if (!inflate) transaction.add(fragment, fragment.getName());
       else transaction.replace(fragment.container, fragment, fragment.getName());
-      transaction.addToBackStack(BACK_STACK_NAME);
+      transaction.addToBackStack(parent != null ? parent : BACK_STACK_NAME);
     } else transaction.replace(fragment.container, fragment, fragment.getName());
     if (fragment.title != 0) transaction.setBreadCrumbShortTitle(fragment.title);
     if (fragment.subtitle != 0) transaction.setBreadCrumbTitle(fragment.subtitle);
-    transaction.commit();
+    return transaction;
   }
 
   @SuppressWarnings("unchecked")

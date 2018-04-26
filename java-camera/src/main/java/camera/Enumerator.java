@@ -25,13 +25,14 @@
 
 package camera;
 
-import java.io.Closeable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import arch.FrameSize;
+import arch.blocks.Manager;
+import arch.blocks.Module;
 import arch.observables.Observable;
 import arch.observables.Selector;
 
@@ -49,11 +50,8 @@ public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
   /** Descriptions selector. */
   private final Selector<Description> mSelector;
 
-  /** Output for camera. */
-  private final Output<T> mOutput;
-
   /** The factory of cameras. */
-  private final BiFunction<Description, T, CameraDevice> mMapper;
+  private final Function<Description, CameraDevice> mMapper;
 
   /** Executor */
   private final Executor mExecutor;
@@ -67,10 +65,10 @@ public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
    *
    * @param selector selector of description
    */
-  public Enumerator(Selector<Description> selector, Output<T> output,
-      BiFunction<Description, T, CameraDevice> mapper, Executor executor) {
+  public Enumerator(Selector<Description> selector, Manager<FrameSize> output,
+      Function<Description, CameraDevice> mapper, Executor executor) {
     super(selector, output); mExecutor = executor;
-    mMapper = mapper; mSelector = selector; mOutput = output;
+    mMapper = mapper; mSelector = selector;
   }
 
   /** Sync camera by output */
@@ -153,7 +151,7 @@ public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
         closeCam(cameraDevice);
       }
       result = hasDescription ?
-          mMapper.apply(newDescription, mOutput.surface) : null;
+          mMapper.apply(newDescription) : null;
     }
     try {return result;}
     finally {syncByOutput(result, frameSize);}
@@ -165,7 +163,7 @@ public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
    * @author Nikitenko Gleb
    * @since 1.0, 15/03/2018
    */
-  public interface CameraDevice extends Closeable {
+  public interface CameraDevice extends Module {
 
     /** Current frame size */
     FrameSize getFrameSize();
@@ -178,8 +176,5 @@ public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
 
     /** Stop capturing. */
     void stop();
-
-    /** {@inheritDoc} */
-    @Override void close();
   }
 }
