@@ -39,13 +39,11 @@ import arch.observables.Selector;
 /**
  * The camera enumerator.
  *
- * @param <T> type of surface
- *
  * @author Nikitenko Gleb
  * @since 1.0, 15/03/2018
  */
 @SuppressWarnings({ "unused", "WeakerAccess" })
-public final class Enumerator<T> extends Observable<Enumerator.CameraDevice> {
+public final class Enumerator extends Observable<Enumerator.CameraDevice> {
 
   /** Descriptions selector. */
   private final Selector<Description> mSelector;

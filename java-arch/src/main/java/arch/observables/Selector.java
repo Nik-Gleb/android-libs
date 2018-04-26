@@ -30,6 +30,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntUnaryOperator;
 
+import arch.blocks.Manager;
+
 /**
  * Universal Selector.
  *
@@ -48,7 +50,7 @@ public final class Selector<T>
   private final T[] mEmpty = (T[]) new Object[0];
 
   /** Array provider. */
-  private final Observable<T[]> mProvider;
+  private final Manager<T[]> mProvider;
 
   /** Current index. */
   private PropertyInteger mIndex =
@@ -59,7 +61,7 @@ public final class Selector<T>
    *
    * @param provider values provider
    */
-  public Selector(Observable<T[]> provider)
+  public Selector(Manager<T[]> provider)
   {super(provider); mProvider = provider;}
 
   /** @param index new index for select */
