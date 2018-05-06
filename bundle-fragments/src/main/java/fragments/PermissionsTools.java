@@ -11,6 +11,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Set;
 
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
+
 import static android.os.Process.myPid;
 import static android.os.Process.myUid;
 
@@ -21,6 +24,7 @@ import static android.os.Process.myUid;
  * @since 1.0, 06/05/2018
  */
 @SuppressWarnings("unused")
+@Keep@KeepPublicProtectedClassMembers
 public final class PermissionsTools {
 
   /**
