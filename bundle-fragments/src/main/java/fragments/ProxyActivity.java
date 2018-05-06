@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
@@ -85,11 +84,12 @@ public final class ProxyActivity extends Activity {
           extras.get(EXTRA_REQUEST_PERMISSIONS_NAMES));
       final int[] results = requireNonNull((int[])
           extras.get(EXTRA_REQUEST_PERMISSIONS_RESULTS));
-      IntStream.range(0, permissions.length).forEach(value -> {
-        final int res = results[value];
-        results[value] = res == PackageManager.PERMISSION_DENIED &&
-            !shouldShowRequestPermissionRationale(permissions[value]) ? -2 : res;
-      }); data.putExtra(EXTRA_REQUEST_PERMISSIONS_RESULTS, results);
+      for (int i = 0; i < permissions.length; i++) {
+        final int res = results[i];
+        results[i] = res == PackageManager.PERMISSION_DENIED &&
+            !shouldShowRequestPermissionRationale(permissions[i]) ? -2 : res;
+      }
+      data.putExtra(EXTRA_REQUEST_PERMISSIONS_RESULTS, results);
     } send(mBinders.get(index), new Result(result, data), index);
   }
 
@@ -111,6 +111,7 @@ public final class ProxyActivity extends Activity {
    * @return activity result
    */
   @Nullable
+  @SuppressWarnings("unused")
   public static Optional<Result> execute
       (@NonNull Context context, @NonNull Intent intent)
   {return new Transport(context, intent).result;}
