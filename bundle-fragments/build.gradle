@@ -57,7 +57,7 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion minSdk; targetSdkVersion SDK_VER
+    minSdkVersion /*minSdk*/24; targetSdkVersion SDK_VER
     dexOptions {
       javaMaxHeapSize jvmHeapSize
       maxProcessCount 8

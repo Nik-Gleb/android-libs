@@ -23,4 +23,13 @@
   ~ SOFTWARE.
   -->
 
-<manifest package="android.libs.fragments"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="android.libs.fragments">
+  <application>
+    <activity
+      android:name="fragments.ProxyActivity"
+      android:theme="@style/ProxyActivityTheme"
+      android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+      android:excludeFromRecents="true" android:launchMode="singleTask"/>
+  </application>
+</manifest>
