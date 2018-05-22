@@ -135,6 +135,7 @@ public final class ProxyActivity extends Activity {
 
   /** Proxy result. */
   @SuppressWarnings("WeakerAccess")
+  @Keep@KeepPublicProtectedClassMembers
   public static final class Result implements Parcelable {
 
     /** The Parcelable Creator. */
