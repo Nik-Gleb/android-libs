@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import proguard.annotation.Keep;
+import proguard.annotation.KeepName;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static java.lang.Thread.currentThread;
@@ -135,8 +136,7 @@ public final class ProxyActivity extends Activity {
 
   /** Proxy result. */
   @SuppressWarnings("WeakerAccess")
-  @Keep
-  @KeepPublicProtectedClassMembers
+  @Keep@KeepPublicProtectedClassMembers
   public static final class Result implements Parcelable {
 
     /** The Parcelable Creator. */
@@ -144,9 +144,11 @@ public final class ProxyActivity extends Activity {
     public static final Creator CREATOR = new Creator();
 
     /** Result code. */
-    @Keep public final int result;
+    @Keep@KeepName
+    public final int result;
 
     /** Result data. */
+    @Keep@KeepName
     @Nullable public final Intent data;
 
     /**
