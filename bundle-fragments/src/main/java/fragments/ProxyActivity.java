@@ -135,7 +135,8 @@ public final class ProxyActivity extends Activity {
 
   /** Proxy result. */
   @SuppressWarnings("WeakerAccess")
-  @Keep@KeepPublicProtectedClassMembers
+  @Keep
+  @KeepPublicProtectedClassMembers
   public static final class Result implements Parcelable {
 
     /** The Parcelable Creator. */
@@ -143,7 +144,7 @@ public final class ProxyActivity extends Activity {
     public static final Creator CREATOR = new Creator();
 
     /** Result code. */
-    public final int result;
+    @Keep public final int result;
 
     /** Result data. */
     @Nullable public final Intent data;
