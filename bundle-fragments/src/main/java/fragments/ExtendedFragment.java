@@ -80,7 +80,10 @@ public class ExtendedFragment extends ExtendedDialogFragment {
     public final View onCreateView(@NonNull LayoutInflater inflater,
         @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return content != 0 ? inflater.inflate(content, container, ATTACH_TO_ROOT) :
-            super.onCreateView(inflater, container, savedInstanceState);
+            getDialog() != null && getDialog().getWindow() != null &&
+                getDialog().getWindow().getDecorView() != null ?
+                getDialog().getWindow().getDecorView() :
+                super.onCreateView(inflater, container, savedInstanceState);
     }
 
 
