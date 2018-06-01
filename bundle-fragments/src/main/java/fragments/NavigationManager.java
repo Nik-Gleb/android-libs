@@ -110,13 +110,16 @@ public class NavigationManager implements Closeable {
   @Nullable protected Intent getDefaultIntent() {return null;}
 
   /** Close the stack. */
-  protected final void closeStack(boolean immediate) {
+  @SuppressWarnings("UnusedReturnValue")
+  protected final boolean closeStack(boolean immediate) {
     if (immediate)
-      fragments.popBackStackImmediate
+      return fragments.popBackStackImmediate
           (BACK_STACK_NAME, POP_BACK_STACK_INCLUSIVE);
-    else
-      fragments.popBackStack
-          (BACK_STACK_NAME, POP_BACK_STACK_INCLUSIVE);
+    else {
+      final boolean popped = fragments.getBackStackEntryCount() > 0;
+      fragments.popBackStack(BACK_STACK_NAME, POP_BACK_STACK_INCLUSIVE);
+      return popped;
+    }
   }
 
   /** Exit from application. */
