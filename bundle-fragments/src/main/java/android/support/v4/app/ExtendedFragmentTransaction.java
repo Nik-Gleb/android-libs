@@ -189,9 +189,8 @@ public final class ExtendedFragmentTransaction extends FragmentTransaction {
      * @return the same FragmentTransaction instance
      */
     @Override
-    public FragmentTransaction setPrimaryNavigationFragment(Fragment fragment) {
-        return null;
-    }
+    public final FragmentTransaction setPrimaryNavigationFragment(Fragment fragment)
+    {mFragmentTransaction.setPrimaryNavigationFragment(fragment); return this;}
 
     /**
      * @return <code>true</code> if this transaction contains no operations,

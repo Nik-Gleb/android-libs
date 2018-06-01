@@ -31,9 +31,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.ExtendedDialogFragment;
 import android.support.v4.app.ExtendedFragmentTransaction;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -45,6 +45,9 @@ import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+import static android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+import static android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Base Navigation Manager.
@@ -57,12 +60,11 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 @KeepPublicProtectedClassMembers
 public class NavigationManager implements Closeable {
 
-  /** The name of back stack. */
-  private static final String BACK_STACK_NAME = /*"stack"*/null;
+  /** Root back stack. */
+  private static final String ROOT_STACK = "ROOT";
 
   /** Common screens name. */
   private static final String MAIN = "MAIN", INTRO = "INTRO";
-
 
   /** This instance */
   private final NavigationManager mInstance = this;
@@ -86,6 +88,9 @@ public class NavigationManager implements Closeable {
   /** Screens package. */
   private final String mScreensPackage;
 
+  /** Stack name */
+  private final String mStack;
+
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
 
@@ -94,30 +99,49 @@ public class NavigationManager implements Closeable {
    *
    * @param fragments fragment manager
    */
-  protected NavigationManager
-  (@NonNull FragmentManager fragments, @NonNull String screensPackage) {
-    mScreensPackage = screensPackage;
-    if((mActivity = ExtendedDialogFragment.getActivity
-        (this.fragments = fragments)) == null)
-      throw new NullPointerException("Activity is null!");
-    setIntent(mActivity.getIntent());
+  private NavigationManager
+  (@NonNull FragmentActivity activity, @NonNull FragmentManager fragments,
+      @NonNull String screens, @NonNull String name) {
+    mScreensPackage = screens; mStack = name; this.fragments = fragments;
+    mActivity = activity; setIntent(mActivity.getIntent());
     mOnStackChanged.onBackStackChanged();
     fragments.addOnBackStackChangedListener(mOnStackChanged);
   }
 
-  /** The launch intent by default */
+  /**
+   * Constructs a new {@link NavigationManager}
+   *
+   * @param fragment parent fragment
+   */
+  protected NavigationManager(@NonNull ExtendedFragment fragment) {
+    this(requireNonNull(fragment.getActivity()), fragment.getChildFragmentManager(),
+        fragment.getClass().getPackage().getName(), fragment.getName());
+  }
+
+  /**
+   * Constructs a new {@link NavigationManager}
+   *
+   * @param activity parent activity
+   */
+  protected NavigationManager(@NonNull FragmentActivity activity) {
+    this(activity, activity.getSupportFragmentManager(),
+        activity.getClass().getPackage().getName(), ROOT_STACK);
+  }
+
+
+    /** The launch intent by default */
   @SuppressWarnings("SameReturnValue")
   @Nullable protected Intent getDefaultIntent() {return null;}
 
   /** Close the stack. */
   @SuppressWarnings("UnusedReturnValue")
-  protected final boolean closeStack(boolean immediate) {
+  protected final boolean close(boolean immediate, boolean inclusive) {
     if (immediate)
       return fragments.popBackStackImmediate
-          (BACK_STACK_NAME, POP_BACK_STACK_INCLUSIVE);
+          (mStack, inclusive ? POP_BACK_STACK_INCLUSIVE : 0);
     else {
       final boolean popped = fragments.getBackStackEntryCount() > 0;
-      fragments.popBackStack(BACK_STACK_NAME, POP_BACK_STACK_INCLUSIVE);
+      fragments.popBackStack(mStack, inclusive ? POP_BACK_STACK_INCLUSIVE : 0);
       return popped;
     }
   }
@@ -132,15 +156,16 @@ public class NavigationManager implements Closeable {
   protected final void intro(@Nullable Bundle args) {
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && !rootIsMain) return;
-    final boolean immediate = false; closeStack(immediate);
+    //final boolean immediate = true, inclusive = true; close(immediate, inclusive);
+    final NavigationManager navigation = this;
     final ExtendedFragment fragment = create(INTRO, args);
     new ExtendedFragmentTransaction(fragments)
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        .setTransition(TRANSIT_FRAGMENT_FADE)
         .replace(fragment.container, fragment, fragment.getName())
         .runOnCommit(new Runnable() {
           @Override
           public void run() {
-            renderStackState(fragment.title, fragment.title);
+            navigation.renderStackState(fragment.title, fragment.title);
           }
         }).commit();
   }
@@ -151,53 +176,45 @@ public class NavigationManager implements Closeable {
   protected final void main(@Nullable Bundle args) {
     final Boolean rootIsMain = rootIsMain(fragments, MAIN, INTRO);
     if (rootIsMain != null && rootIsMain) return;
-    //final boolean immediate = false; closeStack(immediate);
+    //final boolean immediate = true, inclusive = true; close(immediate, inclusive);
+    final NavigationManager navigation = this;
     final ExtendedFragment fragment = create(MAIN, args);
     new ExtendedFragmentTransaction(fragments)
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        .setPrimaryNavigationFragment(fragment)
+        .setTransition(TRANSIT_FRAGMENT_FADE)
         .replace(fragment.container, fragment, fragment.getName())
         .runOnCommit(new Runnable() {
           @Override
           public void run() {
-            NavigationManager.this.renderStackState(fragment.title,
-                fragment.subtitle);
-            final Intent intent;
-            if ((intent = NavigationManager.this.getIntent()) != null)
-              NavigationManager.this.go(intent);
+            navigation.renderStackState(fragment.title, fragment.subtitle);
           }
         }).commit();
   }
 
   /** Show secondary screen */
   protected final void show
-  (@NonNull String name, boolean replace, @Nullable Bundle args, @Nullable String parent) {
-    final FragmentTransaction result = transaction(name, replace, args, parent);
+  (@NonNull String name, boolean replace, @Nullable Bundle args) {
+    final FragmentTransaction result = transaction(name, replace, args);
     if (result != null) result.commit();
   }
 
   /** Create transaction for secondary screen */
   @Nullable protected final FragmentTransaction transaction
-  (@NonNull String name, boolean replace, @Nullable Bundle args, @Nullable String parent) {
-    final Fragment parentFragment = parent != null && !parent.isEmpty() ?
-        fragments.findFragmentByTag(parent) : null;
-    final FragmentManager manager = parentFragment != null ?
-        parentFragment.getChildFragmentManager() : fragments;
-    if (manager.findFragmentByTag(name) != null) return null;
-
+  (@NonNull String name, boolean replace, @Nullable Bundle args) {
+    if (fragments.findFragmentByTag(name) != null) return null;
     final FragmentTransaction transaction =
-        new ExtendedFragmentTransaction(manager)
-            .setTransition(replace ?
-                FragmentTransaction.TRANSIT_FRAGMENT_FADE :
-                FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        new ExtendedFragmentTransaction(fragments).setTransition
+            (replace ? TRANSIT_FRAGMENT_FADE : TRANSIT_FRAGMENT_OPEN);
     final ExtendedFragment fragment = create(name, args);
     final boolean inflate = fragment.container != 0;
     if (!replace) {
       if (!inflate) transaction.add(fragment, fragment.getName());
       else transaction.replace(fragment.container, fragment, fragment.getName());
-      transaction.addToBackStack(parent != null ? parent : BACK_STACK_NAME);
+      transaction.addToBackStack(mStack);
     } else transaction.replace(fragment.container, fragment, fragment.getName());
     if (fragment.title != 0) transaction.setBreadCrumbShortTitle(fragment.title);
     if (fragment.subtitle != 0) transaction.setBreadCrumbTitle(fragment.subtitle);
+    if (replace) transaction.setPrimaryNavigationFragment(fragment);
     return transaction;
   }
 
@@ -245,9 +262,9 @@ public class NavigationManager implements Closeable {
       (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;}
 
   /** @return launch intent */
-  @Nullable private Intent getIntent() {
+  @Nullable public final Intent getIntent() {
     /*final boolean immediate = false;
-    if (mIntent != null) closeStack(immediate);*/
+    if (mIntent != null) close(immediate);*/
     try {return mIntent;} finally {mIntent = null;}
   }
 
@@ -260,7 +277,8 @@ public class NavigationManager implements Closeable {
    *
    * @param top the top back stack entry
    */
-  private void onBackStackChanged(@Nullable FragmentManager.BackStackEntry top) {
+  private void onBackStackChanged
+  (@Nullable FragmentManager.BackStackEntry top) {
     if (mActivity instanceof AppCompatActivity) {
        final ActionBar actionBar =
            ((AppCompatActivity) mActivity)
