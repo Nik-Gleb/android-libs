@@ -58,7 +58,7 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 public class NavigationManager implements Closeable {
 
   /** The name of back stack. */
-  private static final String BACK_STACK_NAME = "stack";
+  private static final String BACK_STACK_NAME = /*"stack"*/null;
 
   /** Common screens name. */
   private static final String MAIN = "MAIN", INTRO = "INTRO";
