@@ -44,7 +44,12 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
+  libraryjars "libs/common-1.1.1.jar"
+  libraryjars "libs/core-testing-1.1.1.jar"
+  libraryjars "libs/lifecycle-common-1.1.1.jar"
+  libraryjars "libs/livedata-1.1.1.jar"
   libraryjars "libs/livedata-core-1.1.1.jar"
+  libraryjars "libs/runtime-1.1.1.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -73,15 +78,11 @@ release.dependsOn obfuscate
 
 repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 dependencies {
-
-  test {useJUnitPlatform(); jvmArgs '-noverify'}
-
+  test { useJUnitPlatform(); jvmArgs '-noverify' }
   compileOnly files('../.android.jar')
+  compileOnly fileTree(dir: 'libs', include: ['*.jar'])
   implementation 'com.android.support:support-annotations:' + supportVersion
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion
   testRuntime 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
-
 }

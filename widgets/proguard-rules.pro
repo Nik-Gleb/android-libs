@@ -1,7 +1,7 @@
 # Add project specific ProGuard rules here.
 # By default, the flags in this file are appended to flags specified
 # in /home/gleb/android-sdk-linux/tools/proguard/proguard-android.txt
-# You can update the include path and order by changing the proguardFiles
+# You can edit the include path and order by changing the proguardFiles
 # directive in build.gradle.
 #
 # For more details, see
@@ -34,11 +34,11 @@
 -dontpreverify
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
-#-repackageclasses
+-dontskipnonpubliclibraryclassmembers
 
 #-optimizations !code/simplification/arithmetic
 #-optimizations !code/simplification/cast
-#-optimizations !code/allocation/variable
+-optimizations !code/allocation/variable
 #-optimizations !field
 
 -keepparameternames
@@ -52,6 +52,7 @@
 #   Common Android Settings
 #
 -keepclasseswithmembernames class * {native <methods>;}
+-keepclasseswithmembers class * {native <methods>;}
 
 -keepclassmembers class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator CREATOR;
@@ -89,15 +90,15 @@
 -dontnote libcore.icu.ICU
 -dontnote android.content.res.ThemedResourceCache
 -dontnote android.graphics.Insets
--dontnote android.support.v7.widget.ViewUtils
--dontnote android.support.v4.text.ICUCompatApi23
--dontnote android.support.v4.text.ICUCompatApi21
--dontnote android.support.v4.text.ICUCompatIcs
+-dontnote android.android.support.v7.widget.ViewUtils
+-dontnote android.android.support.v4.text.ICUCompatApi23
+-dontnote android.android.support.v4.text.ICUCompatApi21
+-dontnote android.android.support.v4.text.ICUCompatIcs
 
-#-keep class android.support.graphics.drawable.PathParser$PathDataNode {*;}
-#-keep class android.support.** {*;}
+#-keep class android.android.support.graphics.drawable.PathParser$PathDataNode {*;}
+#-keep class android.android.support.** {*;}
 -keep class org.junit.** {*;}
-#-keep class com.android.support.test.** {*;}
+#-keep class com.android.android.support.test.** {*;}
 
 -dontnote junit.framework.TestListener
 -dontnote junit.framework.AssertionFailedError
@@ -112,28 +113,17 @@
 -dontnote junit.runner.BaseTestRunner
 -dontnote junit.runner.Version
 
--keep public class extensions.** {public protected *;}
--keep public interface extensions.** {public protected *;}
--keep class extensions.Executors$Task {*;}
--keep class extensions.ThreadFactory {*;}
-
--dontwarn javax.annotation.*
--dontwarn android.support.annotation.*
--dontwarn proguard.annotation.*
-
 -keep class java.io.FileDescriptor {*;}
 -keep class android.os.ParcelFileDescriptor {*;}
 -dontnote java.io.FileDescriptor
 -dontnote android.os.ParcelFileDescriptor
 
--dontnote android.**
--dontnote com.android.**
--dontnote org.apache.**
--dontnote org.json.**
--dontnote org.xmlpull.**
--dontnote android.json.**
--dontnote android.xmlpull.**
--dontnote dalvik.**
-
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory
+
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}

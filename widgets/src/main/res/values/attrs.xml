@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:custom="http://schemas.android.com/apk/android.libs.widgets">
+
+  <!-- Themes attributes -->
+  <declare-styleable name="Theme">
+    <attr name="collectionRecyclerView" format="reference"/>
+    <attr name="collectionItemView" format="reference"/>
+  </declare-styleable>
+
+  <!--  Collection Container Attributes  -->
+  <declare-styleable name="CollectionRecyclerView" parent="RecyclerView">
+    <!--  Defines the count of columns/rows of side.  -->
+    <attr name="side" format="integer"/>
+    <attr name="measure" format="boolean"/>
+  </declare-styleable>
+
+
+</resources>

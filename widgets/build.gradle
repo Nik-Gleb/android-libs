@@ -1,6 +1,6 @@
 /*
  * build.gradle
- * bundle-fragments
+ * widgets
  * 	
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  * 	
@@ -29,7 +29,7 @@ apply plugin: 'com.android.library'
 /*================== DECLARATIONS =====================*/
 
 final PACKAGE = glebLibs
-final PACKAGE_NAME = "fragments"
+final PACKAGE_NAME = "widgets"
 final boolean HAS_MAVEN =
     project.ext.mMavenWrite != null &&
         !project.ext.mMavenWrite.isEmpty()
@@ -110,9 +110,24 @@ task release() {}
 release.dependsOn "assembleRelease"
 
 dependencies {
+
+  //test { useJUnitPlatform(); jvmArgs '-noverify' }
+
   implementation 'com.infstory:proguard-annotations:1.0.2'
   implementation 'com.android.support:support-annotations:' + supportVersion
-  implementation 'com.android.support:support-fragment:' + supportVersion
   implementation 'com.android.support:appcompat-v7:' + supportVersion
+  implementation 'com.android.support:recyclerview-v7:' + supportVersion
+
+  implementation 'com.github.bumptech.glide:glide:4.7.1'
+
+  testImplementation 'android.arch.core:core-testing:' + archLifeVersion
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
+  testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion
+  //testRuntime 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
+
+  androidTestImplementation 'android.arch.core:core-testing:' + archLifeVersion
+  androidTestImplementation 'com.android.support.test:runner:' + runnerVersion
+  androidTestImplementation 'com.android.support.test:rules:' + runnerVersion
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + espressoVersion
 }
-apply plugin: 'com.getkeepsafe.dexcount'
+//apply plugin: 'com.getkeepsafe.dexcount'
