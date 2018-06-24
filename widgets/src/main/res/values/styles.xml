@@ -2,7 +2,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:custom="http://schemas.android.com/apk/android.libs.widgets">
 
-  <style name="CollectionRecyclerView">
+  <style name="CollectionRecyclerView" parent="android:Widget">
     <item name="android:descendantFocusability">afterDescendants</item>
     <!--<item name="layoutManager">GridLayoutManager</item>-->
     <item name="spanCount">1</item>
@@ -12,18 +12,16 @@
     <item name="measure">false</item>
   </style>
 
-  <style name="CollectionItemView">
+  <style name="CollectionItemView" parent="android:Widget">
     <item name="android:focusable">true</item>
     <item name="android:clickable">true</item>
-    <item name="background">@drawable/btn_default_material_shape</item>
-    <item name="textAppearance">?attr/textAppearanceButton</item>
-    <item name="minHeight">48dip</item>
-    <item name="minWidth">88dip</item>
-    <item name="stateListAnimator">@anim/button_state_list_anim_material</item>
+    <item name="android:background">@drawable/btn_default_material_shape</item>
+    <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+    <item name="android:minHeight">48dip</item>
+    <item name="android:minWidth">88dip</item>
+    <item name="android:stateListAnimator">@drawable/button_state_list_anim_material</item>
     <item name="android:windowClipToOutline">true</item>
-    <item name="focusable">true</item>
-    <item name="clickable">true</item>
-    <item name="gravity">center_vertical|center_horizontal</item>
+    <item name="android:gravity">center_vertical|center_horizontal</item>
 
   </style>
 </resources>

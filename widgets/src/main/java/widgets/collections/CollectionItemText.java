@@ -138,6 +138,8 @@ public class CollectionItemText extends AppCompatTextView
   }
 
   /** Item data */
+  @Keep
+  @KeepPublicProtectedClassMembers
   public static final class Item extends CollectionAdapter.Item {
 
     /** Empty item. */

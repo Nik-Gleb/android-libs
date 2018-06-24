@@ -263,6 +263,8 @@ public class CollectionItemView extends View
 
 
   /** Item data */
+  @Keep
+  @KeepPublicProtectedClassMembers
   public static final class Item extends CollectionAdapter.Item {
 
     /** Empty item. */
