@@ -127,3 +127,8 @@
   **[] $VALUES;
   public *;
 }
+
+-keep public class **.R
+-keep public class **.R$* {
+    <fields>;
+}

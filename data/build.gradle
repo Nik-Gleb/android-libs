@@ -29,7 +29,7 @@ apply plugin: 'com.android.library'
 /*================== DECLARATIONS =====================*/
 
 final PACKAGE = glebLibs
-final PACKAGE_NAME = "widgets"
+final PACKAGE_NAME = "data"
 final boolean HAS_MAVEN =
     project.ext.mMavenWrite != null &&
         !project.ext.mMavenWrite.isEmpty()

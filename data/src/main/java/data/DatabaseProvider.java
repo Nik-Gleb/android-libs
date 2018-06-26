@@ -29,6 +29,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
+
 import static android.database.DatabaseUtils.dumpCursor;
 
 /**
@@ -528,7 +531,8 @@ final class DatabaseProvider extends SQLiteProvider {
    * for background threads to finish. Started and stopped directly by specific
    * background tasks when needed.
    */
-  public static class EmptyService extends Service
+  @Keep @KeepPublicProtectedClassMembers
+  public static final class EmptyService extends Service
   {/** {@inheritDoc} */ @Override
   public final IBinder onBind(Intent intent) {return null;}}
 
