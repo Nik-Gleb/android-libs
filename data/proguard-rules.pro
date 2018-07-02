@@ -120,3 +120,7 @@
 
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory
+
+-keep public class data.DataSource {
+    public void inject*;
+}
