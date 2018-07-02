@@ -43,7 +43,7 @@ import dagger.Provides;
 @dagger.Module public class Module implements Closeable {
 
   /** Closeable dependencies. */
-  @NonNull private final Stack<Closeable> mCloseables = new Stack<>();
+  @NonNull private final Stack mCloseables = new Stack<>();
 
   /** Closed state. */
   private volatile boolean mClosed;
@@ -56,14 +56,16 @@ import dagger.Provides;
   @Override public final void close() {
     if (mClosed) return; mClosed = true;
     while (!mCloseables.empty()) {
-      try {mCloseables.pop().close();}
+      try {((Closeable)mCloseables.pop()).close();}
       catch (IOException ignored) {}
     }
   }
 
   /** @return closeable dependencies. */
-  @Provides @Named("stack") @NonNull protected final
-  Stack<Closeable> closeables() {return mCloseables;}
+  @SuppressWarnings("unchecked")
+  @Provides @Named("stack") @NonNull
+  protected final Stack closeables()
+  {return mCloseables;}
 
   /** @return module */
   @Provides @Named("module") @NonNull protected final

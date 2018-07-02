@@ -140,6 +140,7 @@ public final class BatchOps {
    *
    * @return this builder, to allow for chaining.
    */
+  @SuppressWarnings("WeakerAccess")
   @NonNull
   public final BatchOps update
   (@NonNull DataResource resource, @NonNull String key, @NonNull byte[] value) {
@@ -169,6 +170,20 @@ public final class BatchOps {
             .build()
     );
     return this;
+  }
+
+  /**
+   * @param update   true for update, false for insert
+   * @param resource data resource
+   * @param key      key of updatable
+   * @param value    raw data
+   *
+   * @return this builder, to allow for chaining.
+   */
+  @NonNull
+  public final BatchOps put(boolean update, @NonNull DataResource resource,
+      @NonNull String key, @NonNull byte[] value) {
+    return update ? update(resource, key, value) : insert(resource, key, value);
   }
 
   /**

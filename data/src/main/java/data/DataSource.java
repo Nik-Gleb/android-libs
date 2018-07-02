@@ -72,7 +72,6 @@ import javax.inject.Singleton;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import proguard.annotation.Keep;
-import proguard.annotation.KeepName;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static android.text.TextUtils.isEmpty;
@@ -113,8 +112,9 @@ import static java.util.Objects.requireNonNull;
       .acquireContentProviderClient(dependencies.authority());}
 
   /** @param closeables for push */
-  @Keep @KeepName @Inject public final void inject
-  (@NonNull @Named("stack") Stack<Closeable> closeables)
+  @SuppressWarnings("unchecked")
+  @Inject public final void inject
+  (@NonNull @Named("stack") Stack closeables)
   {closeables.push(this);}
 
   /** {@inheritDoc} */
