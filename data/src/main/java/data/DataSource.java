@@ -112,7 +112,7 @@ import static java.util.Objects.requireNonNull;
       .acquireContentProviderClient(dependencies.authority());}
 
   /** @param closeables for push */
-  @Inject public final void inject
+  @Keep@Inject public final void inject
   (@NonNull @Named("stack") Stack<Closeable> closeables)
   {closeables.push(this);}
 
