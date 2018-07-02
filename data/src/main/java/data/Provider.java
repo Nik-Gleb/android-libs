@@ -34,6 +34,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.content.res.AssetFileDescriptor;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,12 +44,15 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import static android.content.ClipDescription.compareMimeTypes;
 
@@ -68,11 +72,13 @@ interface Provider {
   int LENGTH = -1;
 
   /** The Data Columns */
-  String[] DATA_COLUMNS =
-      { MediaStore.Files.FileColumns.DATA };
+  String[] DATA_COLUMNS = { MediaStore.Files.FileColumns.DATA };
 
   /** The read mode. */
   String READ_MODE = "r";
+
+  /** File name pattern. */
+  Pattern FILE_PATTERN = Pattern.compile("[a-zA-Z_0-9.\\-()%]+");
 
   /** @param uri the unsupported uri */
   static <T> T stub(@NonNull Uri uri)
@@ -108,7 +114,7 @@ interface Provider {
 
   /**
    * Override this to handle requests to perform a batch of operations, or the
-   * default implementation will iterate over the operations and call
+   * default implementation will iterate over the operations and read
    * {@link ContentProviderOperation#apply} on each of them.
    * If all calls to {@link ContentProviderOperation#apply} succeed
    * then a {@link ContentProviderResult} array with as many
@@ -137,7 +143,7 @@ interface Provider {
   /**
    * Implement this to handle requests to insert a new row.
    *
-   * <p>As a courtesy, call {@link ContentResolver#notifyChange(Uri,
+   * <p>As a courtesy, read {@link ContentResolver#notifyChange(Uri,
    * android.database.ContentObserver) notifyChange()} after inserting.
    *
    * <p>This method can be called from multiple threads, as described in
@@ -157,7 +163,7 @@ interface Provider {
    *
    * <p>The implementation should update all rows matching the selection
    * to set the columns according to the provided values map.
-   * As a courtesy, call {@link ContentResolver#notifyChange(Uri,
+   * As a courtesy, read {@link ContentResolver#notifyChange(Uri,
    * android.database.ContentObserver) notifyChange()} after updating.
    *
    * <p>This method can be called from multiple threads, as described in
@@ -180,7 +186,7 @@ interface Provider {
    *
    * <p>The implementation should apply the selection clause when performing
    * deletion, allowing the operation to affect multiple rows in a directory.
-   * As a courtesy, call {@link ContentResolver#notifyChange(Uri,
+   * As a courtesy, read {@link ContentResolver#notifyChange(Uri,
    * android.database.ContentObserver) notifyChange()} after deleting.
    *
    * <p>This method can be called from multiple threads, as described in
@@ -196,8 +202,8 @@ interface Provider {
    * @param selection An optional restriction to apply to rows when deleting.
    * @return The number of rows affected.
    */
-  default int delete(@NonNull Uri uri, @Nullable String selection,
-      @Nullable String[] selectionArgs)
+  default int delete
+  (@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs)
   {return stub(uri);}
 
   /**
@@ -207,7 +213,7 @@ interface Provider {
    * <a href="{@docRoot}guide/topics/fundamentals/processes-and-threads.html#Threads">Processes
    * and Threads</a>.
    * <p>
-   * Example client call:<p>
+   * Example client read:<p>
    * <pre>// Request a specific record.
    * Cursor managedCursor = managedQuery(
    ContentUris.withAppendedId(Contacts.People.CONTENT_URI, 2),
@@ -274,7 +280,7 @@ interface Provider {
    * <a href="{@docRoot}guide/topics/fundamentals/processes-and-threads.html#Threads">Processes
    * and Threads</a>.
    * <p>
-   * Example client call:<p>
+   * Example client read:<p>
    * <pre>// Request a specific record.
    * Cursor managedCursor = managedQuery(
    ContentUris.withAppendedId(Contacts.People.CONTENT_URI, 2),
@@ -343,7 +349,7 @@ interface Provider {
    *
    * <p>Note that there are no permissions needed for an application to
    * access this information; if your content provider requires read and/or
-   * write permissions, or is not exported, all applications can still call
+   * write permissions, or is not exported, all applications can still read
    * this method regardless of their access permissions.  This allows them
    * to retrieve the MIME type for a URI when dispatching intents.
    *
@@ -355,10 +361,10 @@ interface Provider {
 
   /**
    * Override this to handle requests to insert a set of new rows, or the
-   * default implementation will iterate over the values and call
+   * default implementation will iterate over the values and read
    * {@link #insert} on each of them.
    *
-   * <p>As a courtesy, call {@link ContentResolver#notifyChange(Uri,
+   * <p>As a courtesy, read {@link ContentResolver#notifyChange(Uri,
    * android.database.ContentObserver) notifyChange()} after inserting.
    *
    * <p>This method can be called from multiple threads, as described in
@@ -389,7 +395,7 @@ interface Provider {
    *
    * <p>The returned ParcelFileDescriptor is owned by the caller, so it is
    * their responsibility to close it when done.  That is, the implementation
-   * of this method should create a new ParcelFileDescriptor for each call.
+   * of this method should create a new ParcelFileDescriptor for each read.
    *
    * <p>If opened with the exclusive "r" or "w" modes, the returned
    * ParcelFileDescriptor can be a pipe or socket pair to enable streaming
@@ -436,8 +442,7 @@ interface Provider {
    * @see #getType(Uri)
    * @see ParcelFileDescriptor#parseMode(String)
    */
-  default @Nullable
-  ParcelFileDescriptor openFile
+  default @Nullable ParcelFileDescriptor openFile
   (@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException
   {throw new FileNotFoundException("No files supported by provider at " + uri);}
 
@@ -456,7 +461,7 @@ interface Provider {
    *
    * <p>The returned ParcelFileDescriptor is owned by the caller, so it is
    * their responsibility to close it when done.  That is, the implementation
-   * of this method should create a new ParcelFileDescriptor for each call.
+   * of this method should create a new ParcelFileDescriptor for each read.
    *
    * <p>If opened with the exclusive "r" or "w" modes, the returned
    * ParcelFileDescriptor can be a pipe or socket pair to enable streaming
@@ -495,7 +500,7 @@ interface Provider {
    * @param signal A signal to cancel the operation in progress, or
    *            {@code null} if none. For example, if you are downloading a
    *            file from the network to service a "rw" mode request, you
-   *            should periodically call
+   *            should periodically read
    *            {@link CancellationSignal#throwIfCanceled()} to check whether
    *            the client has canceled the request and abort the download.
    *
@@ -511,11 +516,9 @@ interface Provider {
    * @see ParcelFileDescriptor#parseMode(String)
    */
   @SuppressWarnings("unused")
-  default @Nullable
-  ParcelFileDescriptor openFile(@NonNull Uri uri,
-      @NonNull String mode,
-      @Nullable CancellationSignal signal) throws FileNotFoundException
-  {return openFile(uri, mode);}
+  default @Nullable ParcelFileDescriptor openFile
+  (@NonNull Uri uri, @NonNull String mode, @Nullable CancellationSignal signal)
+      throws FileNotFoundException {return openFile(uri, mode);}
 
   /**
    * This is like {@link #openFile}, but can be implemented by providers
@@ -528,8 +531,8 @@ interface Provider {
    * <p>If you implement this, your clients must be able to deal with such
    * file slices, either directly with
    * {@link ContentResolver#openAssetFileDescriptor}, or by using the higher-level
-   * {@link ContentResolver#openInputStream ContentResolver.openInputStream}
-   * or {@link ContentResolver#openOutputStream ContentResolver.openOutputStream}
+   * {@link ContentResolver#openInputStream DataSource.openInputStream}
+   * or {@link ContentResolver#openOutputStream DataSource.openOutputStream}
    * methods.
    * <p>
    * The returned AssetFileDescriptor can be a pipe or socket pair to enable
@@ -584,8 +587,8 @@ interface Provider {
    * <p>If you implement this, your clients must be able to deal with such
    * file slices, either directly with
    * {@link ContentResolver#openAssetFileDescriptor}, or by using the higher-level
-   * {@link ContentResolver#openInputStream ContentResolver.openInputStream}
-   * or {@link ContentResolver#openOutputStream ContentResolver.openOutputStream}
+   * {@link ContentResolver#openInputStream DataSource.openInputStream}
+   * or {@link ContentResolver#openOutputStream DataSource.openOutputStream}
    * methods.
    * <p>
    * The returned AssetFileDescriptor can be a pipe or socket pair to enable
@@ -623,11 +626,8 @@ interface Provider {
    * @see #openFile(Uri, String)
    * @see #getType(Uri)
    */
-  default @Nullable
-  AssetFileDescriptor openAssetFile(@NonNull Uri uri,
-      @NonNull String mode,
-      @NonNull CancellationSignal cancellationSignal) throws
-      FileNotFoundException
+  default @Nullable AssetFileDescriptor openAssetFile (@NonNull Uri uri, @NonNull String mode,
+  @NonNull CancellationSignal cancellationSignal) throws FileNotFoundException
   {return openAssetFile(uri, mode);}
 
   /**
@@ -679,26 +679,18 @@ interface Provider {
    * @see #getStreamTypes(Uri, String)
    * @see ClipDescription#compareMimeTypes(String, String)
    */
-  default @Nullable
-  AssetFileDescriptor openTypedAssetFile(@NonNull Uri uri,
+  default @Nullable AssetFileDescriptor openTypedAssetFile(@NonNull Uri uri,
       @NonNull String mimeTypeFilter, @Nullable Bundle opts) throws
-      FileNotFoundException
-  {
+      FileNotFoundException {
 
-    // If they can take anything, the untyped open call is good enough.
-    if ("*/*".equals(mimeTypeFilter)) {
-      return openAssetFile(uri, READ_MODE);
-    }
+    // If they can take anything, the untyped open read is good enough.
+    if ("*/*".equals(mimeTypeFilter)) return openAssetFile(uri, READ_MODE);
 
-    // Use old untyped open call if this provider has a type for this URI and
+    // Use old untyped open read if this provider has a type for this URI and
     // it matches the request.
     final String baseType = getType(uri);
-    if (baseType != null && compareMimeTypes(baseType, mimeTypeFilter)) {
-      return openAssetFile(uri, READ_MODE);
-    }
-
-    throw new FileNotFoundException
-        ("Can't open " + uri + " as type " + mimeTypeFilter);
+    if (baseType != null && compareMimeTypes(baseType, mimeTypeFilter)) return openAssetFile(uri, READ_MODE);
+    throw new FileNotFoundException ("Can't open " + uri + " as type " + mimeTypeFilter);
   }
 
   /**
@@ -750,9 +742,8 @@ interface Provider {
    * @see #getStreamTypes(Uri, String)
    * @see ClipDescription#compareMimeTypes(String, String)
    */
-  default @Nullable
-  AssetFileDescriptor openTypedAssetFile(@NonNull Uri uri,
-      @NonNull String mimeTypeFilter, @Nullable Bundle opts,
+  default @Nullable AssetFileDescriptor openTypedAssetFile
+  (@NonNull Uri uri, @NonNull String mimeTypeFilter, @Nullable Bundle opts,
       @Nullable CancellationSignal signal) throws FileNotFoundException
   {return openTypedAssetFile(uri, mimeTypeFilter, opts);}
 
@@ -770,31 +761,24 @@ interface Provider {
    * @return Returns a new ParcelFileDescriptor that can be used by the
    * client to access the file.
    */
-  @NonNull
-  default ParcelFileDescriptor openFileHelperInternal(@NonNull Uri uri,
-      @NonNull String mode) throws FileNotFoundException {
+  default @NonNull ParcelFileDescriptor openFileHelperInternal
+  (@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
     final String sel = null, sort = null;
     final String[] selArgs = null;
     final Cursor cursor = query(uri, DATA_COLUMNS, sel, selArgs, sort);
     int count = (cursor != null) ? cursor.getCount() : 0;
     if (count != 1) {
       // If there is not exactly one result, throw an appropriate exception.
-      if (cursor != null) {
-        cursor.close();
-      }
-      if (count == 0) {
-        throw new FileNotFoundException("No entry for " + uri);
-      }
+      if (cursor != null) cursor.close();
+      if (count == 0) throw new FileNotFoundException("No entry for " + uri);
       throw new FileNotFoundException("Multiple items at " + uri);
     }
 
     cursor.moveToFirst();
     final int index = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-    final String path = (index >= 0 ? cursor.getString(index) : null);
-    cursor.close();
-    if (path == null) {
-      throw new FileNotFoundException("Column _data not found.");
-    }
+    final String path = (index >= 0 ? cursor.getString(index) : null); cursor.close();
+    if (path == null) throw new FileNotFoundException("Column _data not found.");
+
     final int modeBits = ParcelFileDescriptor.parseMode(mode);
     return ParcelFileDescriptor.open(new File(path), modeBits);
   }
@@ -820,8 +804,8 @@ interface Provider {
    * @see #getType(Uri)
    * @see ClipDescription#compareMimeTypes(String, String)
    */
-  default @Nullable String[] getStreamTypes(@NonNull Uri uri,
-      @NonNull String mimeTypeFilter)
+  default @Nullable String[] getStreamTypes
+  (@NonNull Uri uri, @NonNull String mimeTypeFilter)
   {return null;}
 
   /**
@@ -832,22 +816,21 @@ interface Provider {
    * checking on this entry into the content provider besides the basic ability
    * for the application to get access to the provider at all.
    *
-   * <p>For example, it has no idea whether the call being executed may read or
+   * <p>For example, it has no idea whether the read being executed may read or
    * write data in the provider, so can't enforce those individual permissions.
    *
    * <p>Any implementation of this method <strong>must</strong> do its own
    * permission checks on incoming calls to make sure they are allowed.</p>
    *
-   * @param method method name to call.  Opaque to framework, but should not
+   * @param method method name to read.  Opaque to framework, but should not
    * be {@code null}.
    * @param arg provider-defined String argument.  May be {@code null}.
    * @param extras provider-defined Bundle argument.  May be {@code null}.
    * @return provider-defined return value.  May be {@code null}, which is also
-   *   the default for providers which don't implement any call methods.
+   *   the default for providers which don't implement any read methods.
    */
   default @Nullable
-  Bundle call(@NonNull String method, @Nullable String arg,
-      @Nullable Bundle extras)
+  Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras)
   {return null;}
 
   /**
@@ -880,8 +863,8 @@ interface Provider {
    * This will be closed for you after you return.
    * @param args additional arguments to the dump request.
    */
-  default void dump(@NonNull FileDescriptor fd, @NonNull PrintWriter writer,
-      @Nullable String[] args)
+  default void dump
+  (@NonNull FileDescriptor fd, @NonNull PrintWriter writer, @Nullable String[] args)
   {writer.println("nothing to dump");}
 
   /** @return all paths */
@@ -929,4 +912,103 @@ interface Provider {
       {return instance.update(uri, values, selection, selectionArgs);}
     };
   }
+
+  /**
+   * @param clazz provider class
+   *
+   * @return provider tag
+   */
+  @NonNull static String getTag(@NonNull Class<? extends Provider> clazz) {
+    String[] result; if ((result = clazz.getName().split("\\.")).length <= 0)
+      throw new IllegalArgumentException("Invalid class");
+    else return result[result.length - 1].replace("Provider", "").toLowerCase();
+  }
+
+  /**
+   * An optional insert, update or delete URI parameter that allows the caller
+   * to specify that it is a sync adapter. The default value is false. If set
+   * to true, the modified row is not marked as "dirty" (needs to be synced)
+   * and when the provider calls
+   * {@link ContentResolver#notifyChange(Uri, android.database.ContentObserver, boolean)},
+   * the third parameter "syncToNetwork" is set to false.
+   *
+   * @see Uri.Builder#appendQueryParameter(String, String)
+   */
+  String CALLER_IS_SYNCADAPTER = "caller_is_syncadapter";
+
+  /**
+   * @param uri uri addresses
+   * @return true - sync adapter
+   */
+  static boolean isCallerSyncAdapter(@NonNull Uri uri)
+  {return uri.getBooleanQueryParameter(CALLER_IS_SYNCADAPTER, false);}
+
+  /**
+   * @param resolver  content resolver
+   * @param uri       uri resource
+   * @param observer  content observer
+   */
+  static void notifyUri(@NonNull ContentResolver resolver, @NonNull Uri uri, @Nullable ContentObserver observer)
+  {resolver.notifyChange(uri, observer, uri.getBooleanQueryParameter(CALLER_IS_SYNCADAPTER, false));}
+
+  /** @param signal cancellation signal for check */
+  static void isCanceled(@Nullable CancellationSignal signal)
+  {if (signal != null) signal.throwIfCanceled();}
+
+  /**
+   * @param path to file
+   * @return mime-type
+   */
+  @NonNull static String getMimeType(@NonNull String path) {
+    final String result =
+        MimeTypeMap.getSingleton().getMimeTypeFromExtension
+            (MimeTypeMap.getFileExtensionFromUrl(path));
+    return TextUtils.isEmpty(result) ? "application/octet-stream" : result;
+  }
+
+  /**
+   * Returns the file extension or an empty string iff there is no
+   * extension. This method is a convenience method for obtaining the
+   * extension of a url and has undefined results for other Strings.
+   *
+   * @param uri uri resource
+   *
+   * @return The file extension of the given url.
+   */
+  @NonNull static String getFileExtensionFromUrl(@NonNull String uri) {
+    if (!TextUtils.isEmpty(uri)) {
+      final int fragment = uri.lastIndexOf('#');
+      if (fragment > 0) uri = uri.substring(0, fragment);
+      final int query = uri.lastIndexOf('?');
+      if (query > 0) uri = uri.substring(0, query);
+      final int filenamePos = uri.lastIndexOf('/');
+      final String filename = 0 <= filenamePos ?
+          uri.substring(filenamePos + 1) : uri;
+
+      // if the filename contains special characters, we don't
+      // consider it valid for our matching purposes:
+      if (!filename.isEmpty() && FILE_PATTERN.matcher(filename).matches()) {
+        final int dotPos = filename.lastIndexOf('.');
+        if (0 <= dotPos) return filename.substring(dotPos + 1);
+      }
+    }
+    return "";
+  }
+
+  /**
+   * @param dir files directory
+   * @param uri file uri resource
+   *
+   * @return java file object
+   */
+  @NonNull static File file(@NonNull File dir, @NonNull Uri uri)
+  {return new File(dir, uri.getEncodedPath());}
+
+  /**
+   * @param file file instance
+   *
+   * @return the name of file without ext
+   */
+  @NonNull static String name(@NonNull File file)
+  {return file.getName().replaceFirst("[.][^.]+$", "");}
 }

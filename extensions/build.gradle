@@ -50,6 +50,7 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "libs/livedata-1.1.1.jar"
   libraryjars "libs/livedata-core-1.1.1.jar"
   libraryjars "libs/runtime-1.1.1.jar"
+  libraryjars "libs/android-support-v4.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -80,8 +81,18 @@ repositories { jcenter(); google(); maven { url myMavenRepoReadUrl } }
 dependencies {
   test { useJUnitPlatform(); jvmArgs '-noverify' }
   compileOnly files('../.android.jar')
-  compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+  //compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+  implementation files('libs/android-support-v4.jar')
+  implementation files('libs/livedata-1.1.1.jar')
+  implementation files('libs/livedata-core-1.1.1.jar')
+  implementation files('libs/lifecycle-common-1.1.1.jar')
+  //implementation files('libs/runtime-1.1.1.jar')
+  //implementation files('libs/common-1.1.1.jar')
   implementation 'com.android.support:support-annotations:' + supportVersion
+  implementation 'javax.inject:javax.inject:1'
+  implementation 'com.google.dagger:dagger:2.16'
+  annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion
   testRuntime 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion

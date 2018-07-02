@@ -1,374 +1,474 @@
 package data;
 
+import android.annotation.SuppressLint;
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.os.ParcelFileDescriptor.AutoCloseOutputStream;
+import android.os.OperationCanceledException;
+import android.os.RemoteException;
+import android.provider.BaseColumns;
+import android.provider.MediaStore;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
-import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import okhttp3.MediaType;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.Okio;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
+import static android.text.TextUtils.isEmpty;
+import static java.util.Collections.newSetFromMap;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.runAsync;
-import static okhttp3.MediaType.parse;
 
 /**
  * @author Nikitenko Gleb
- * @since 1.0, 18/06/2018
+ * @since 1.0, 27/06/2018
  */
-@SuppressWarnings("unused")
-@Keep
-@KeepPublicProtectedClassMembers
-public interface DataSource extends Closeable {
+@SuppressWarnings({ "unused", "WeakerAccess" })
+@Keep@KeepPublicProtectedClassMembers
+@Singleton public final class DataSource implements Closeable {
 
-  /** Bundle keys. */
-  String TYPE = "type", MODE = "mode", READ = "r", WRITE = "w";
+  /** Access mode, mime type. */
+  static final String MODE = "mode", TYPE = "type", DATA = "data";
 
-  /** @return base content uri */
-  @NonNull
-  Uri getContentUri();
+  /** Content Resolver. */
+  private final ContentResolver mResolver;
+
+  /** Content provider client. */
+  private final ContentProviderClient mClient;
+
+  /** Cancellation signals. */
+  private final Set<CancellationSignal> mCancels = newSetFromMap
+      (new ConcurrentHashMap<CancellationSignal, Boolean>());
+
+  /** "CLOSE" flag-state. */
+  private volatile boolean mClosed;
 
   /**
-   * @param table table name
-   * @return uri address
-   */
-  @NonNull default Uri getTable(@NonNull String table)
-  {return getContentUri().buildUpon().path(table).build();}
-
-  /**
-   * @param table table name
-   * @param id id of row
+   * Constructs a new {@link DataSource}
    *
-   * @return uri address
+   * @param resolver content resolver
+   * @param authority content authority
    */
-  @NonNull default Uri getRow(@NonNull String table, long id)
-  {return ContentUris.withAppendedId(getTable(table), id);}
+  @Inject public DataSource
+  (@NonNull ContentResolver resolver, @NonNull String authority)
+  {mClient = resolver.acquireContentProviderClient(authority);
+  mResolver = resolver;}
 
-  /**
-   * @param table table name
-   * @param key string key
-   *
-   * @return uri address
-   */
-  @NonNull default Uri getRow(@NonNull String table, @NonNull String key)
-  {return getRow(table, key.hashCode() & 0x00000000ffffffffL);}
+  /** @param closeables for push */
+  @Inject public final void inject
+  (@NonNull @Named("stack") Stack<Closeable> closeables)
+  {closeables.push(this);}
 
   /** {@inheritDoc} */
-  @Override
-  void close();
+  @AnyThread @Override public final void close() {
+    if (mClosed) return; mClosed = true;
+    for (final Iterator<CancellationSignal> it = mCancels.iterator(); it.hasNext();)
+    {final CancellationSignal signal = it.next(); it.remove(); signal.cancel();}
+    mClient.close();
+  }
+
+  /** {@inheritDoc} */
+  @AnyThread @Override protected final void finalize() throws Throwable
+  {try {close();} finally {super.finalize();}}
+
+  /** Check not-closed state. */
+  @WorkerThread private void checkState()
+  {if (mClosed) throw new IllegalStateException("Already closed");}
 
   /**
-   * @param uri data resource
-   * @param data input content
+   * @param uri       uri of resource
+   * @param request   request body
+   * @param executor  request executor
    *
-   * @return output content
+   * @return  response of request
    */
-  @Nullable
-  AssetFileDescriptor transact
-  (@NonNull Uri uri, @Nullable AssetFileDescriptor data);
+  @WorkerThread @NonNull final ResponseBody call
+  (@NonNull Uri uri, @NonNull RequestBody request, @NonNull Executor executor)
+      throws IOException {return call(uri, OkUtils.fromRequest(request, executor));}
 
   /**
-   * @param uri data resource
-   * @param data input content
+   * @param uri uri of resource
    *
-   * @return output content
+   * @return response of request
    */
-  @Nullable default ResponseBody transact
-  (@NonNull Uri uri, @Nullable RequestBody data)  {
-    final AssetFileDescriptor input = data != null ? fromRequest(data) : null;
-    final AssetFileDescriptor output = transact(uri, input);
-    return output != null ? toResponse(output) : null;
+  @WorkerThread @NonNull final ResponseBody read(@NonNull Uri uri)
+      throws IOException {return call(uri, null);}
+
+  /** @param uri uri of resource */
+  @WorkerThread final void write(@NonNull Uri uri, @NonNull RequestBody request)
+      throws IOException {OkUtils.write(openFile(uri, null), request);}
+
+  /**
+   * @param uri   uri of resource
+   * @param args  request arguments
+   *
+   * @return response of request
+   */
+  @WorkerThread @NonNull private ResponseBody call
+  (@NonNull Uri uri, @Nullable AssetFileDescriptor args) throws IOException {
+    final Bundle options = args == null ? Bundle.EMPTY : new Bundle();
+    if (options != Bundle.EMPTY) options.putParcelable(OkUtils.REQUEST, args);
+    return OkUtils.toResponse(openFile(uri, options));
   }
 
   /**
-   * @param uri the data resource
-   * @return stream of rows
+   * @param uri     uri resource
+   * @param options open options
+   *
+   * @return resource descriptor
    */
-  @NonNull default Cursor cursor(@NonNull Uri uri)
-  {throw new UnsupportedOperationException();}
+  @WorkerThread @NonNull final AssetFileDescriptor openFile
+  (@NonNull Uri uri, @Nullable Bundle options) throws IOException {
+    final Set<String> keys = new HashSet<>(uri.getQueryParameterNames());
+    final String mode = cutQuery(uri, keys, MODE);
+    final String type = cutQuery(uri, keys, TYPE);
+    final Uri.Builder builder = uri.buildUpon().clearQuery();
+    for (final String key : keys) builder.appendQueryParameter
+        (key, uri.getQueryParameter(key)); uri = builder.build();
+    return !isEmpty(mode) ? openAssetFile(uri, mode) :
+        openTypedAssetFileDescriptor(uri, isEmpty(type) ? "*/*" : type, options);
+  }
 
   /**
-   * @param uri the data resource
-   * @return stream of rows
+   * @param uri   uri resource
+   * @param keys  query keys
+   * @param key   search key
+   *
+   * @return query value
    */
-  @NonNull default Stream<TableRow> query(@NonNull Uri uri)
-  {return TableRow.stream(cursor(uri));}
+  @Nullable private static String cutQuery
+  (@NonNull Uri uri, @NonNull Set<String> keys, @NonNull String key) {
+    if (!keys.contains(key)) return null;
+    else
+      try {return uri.getQueryParameter(key);}
+      finally {keys.remove(key);}
+  }
 
   /**
-   * @param uri data resource
-   * @param raw raw bytes
+   * @param uri   uri resource
+   * @param mode  access mode
+   *
+   * @return descriptor result
    */
-  default void put(@NonNull Uri uri, @NonNull byte[] raw)
-  {throw new UnsupportedOperationException();}
-
-  /** @param uri data resource */
-  default void delete(@NonNull Uri uri)
-  {throw new UnsupportedOperationException();}
+  @WorkerThread @NonNull private AssetFileDescriptor openAssetFile
+  (@NonNull Uri uri, @NonNull String mode) throws IOException {
+    checkState(); final CancellationSignal cancel; mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.openAssetFile(uri, mode, cancel));}
+    catch (OperationCanceledException | RemoteException e)
+    {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+  }
 
   /**
-   * @param uri data resource
-   * @param observer content observer
+   * @param uri     uri resource
+   * @param type    type of request
+   * @param options bundle options
+   *
+   * @return        response data
    */
-  @NonNull default ContentObserver register
+  @WorkerThread @NonNull private AssetFileDescriptor openTypedAssetFileDescriptor
+  (@NonNull Uri uri, @NonNull String type, @Nullable Bundle options) throws IOException {
+    checkState(); final CancellationSignal cancel; mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.openTypedAssetFileDescriptor(uri, type, options, cancel));}
+    catch (OperationCanceledException | RemoteException e)
+    {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+  }
+
+
+
+  /**
+   * @param uri           uri resource
+   *
+   * @return              stream of values
+   */
+  @WorkerThread @NonNull final <T> Stream<T> query(@NonNull Uri uri,  @Nullable String[] proj,
+  @Nullable String sel, @Nullable String[] args, @Nullable String sort, @NonNull Function<Cursor, T> mapper) {
+    checkState(); final CancellationSignal cancel; mCancels.add(cancel = new CancellationSignal());
+    try {return toEntities(requireNonNull(mClient.query(uri, proj, sel, args, sort, cancel)), mapper);}
+    catch (RemoteException exception) {throw new RuntimeException(exception);} finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param cursor cursor
+   * @param mapper cursor mapper
+   *
+   * @return stream of entities
+   */
+  @Keep @NonNull static <T> Stream<T> toEntities
+  (@NonNull Cursor cursor, @NonNull Function<Cursor, T> mapper) {
+    return StreamSupport.stream(((Iterable<T>) () -> new Iterator<T>() {
+      private boolean hasNext = false; {setHasNext(cursor.moveToFirst());}
+      @Override public final boolean hasNext() {return hasNext;}
+      @Override @NonNull public final T next()
+      {try {return mapper.apply(cursor);}
+      finally {setHasNext(cursor.moveToNext());}}
+      private void setHasNext(boolean value)
+      {if(!(hasNext = value)) cursor.close();}
+    }).spliterator(), false);
+  }
+
+  /**
+   * @param uri uri of resource
+   *
+   * @return type of resource
+   */
+  @WorkerThread @NonNull final String getType(@NonNull Uri uri) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.getType(uri));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param uri uri of resource
+   * @param mimeTypeFilter mime-filter
+   *
+   * @return stream types of resource
+   */
+  @WorkerThread @NonNull final String[] getStreamTypes
+  (@NonNull Uri uri, @NonNull String mimeTypeFilter) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.getStreamTypes(uri, mimeTypeFilter));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /** {@inheritDoc} */
+  @WorkerThread final void
+  put(@NonNull Uri uri, @NonNull byte[] raw) {
+    final boolean update; long id;
+    try {id = ContentUris.parseId(uri);}
+    catch (NumberFormatException exception) {id = -1;}
+    if (id != -1) {
+      final Cursor cursor = cursor(uri, new String[]{ BaseColumns._ID});
+      update = cursor.getCount() == 1; cursor.close();
+    } else update = false;
+    final ContentValues values = new ContentValues();
+    if (id != -1) values.put(BaseColumns._ID, id);
+    values.put(DATA, raw);
+    try {
+      if (!update) mClient.insert(uri, values);
+      else mClient.update(uri, values, null, null);
+    } catch (RemoteException ignored) {}
+  }
+
+  /**
+   * @param uri resource
+   * @param projection columns
+   *
+   * @return cursor data
+   */
+  @SuppressWarnings("unused")
+  @SuppressLint("Recycle")
+  @NonNull private Cursor cursor(@NonNull Uri uri, @Nullable String[] projection) {
+    Cursor cursor; try {cursor = mClient.query(uri, null, null, null, null);}
+    catch (RemoteException exception) {cursor = null;}
+    return cursor == null ? new MatrixCursor(new String[]{ BaseColumns._ID, DATA}) : cursor;
+  }
+
+  /**
+   * @param uri    uri resource
+   * @param values content values
+   *
+   * @return result uri
+   */
+  @WorkerThread @NonNull final Uri insert
+  (@NonNull Uri uri, @Nullable ContentValues values) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.insert(uri, values));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param uri     uri resource
+   * @param values  content values
+   *
+   * @return result count
+   */
+  @WorkerThread final int bulkInsert
+  (@NonNull Uri uri, @NonNull ContentValues[] values) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.bulkInsert(uri, values));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param uri           uri resource
+   * @param sel     selection string
+   * @param args selection args
+   *
+   * @return result count
+   */
+  @WorkerThread final int delete
+  (@NonNull Uri uri, @Nullable String sel, @Nullable String[] args) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.delete(uri, sel, args));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param uri uri resource
+   */
+  @WorkerThread final void delete(@NonNull Uri uri) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {mClient.delete(uri, null, null);}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param uri           uri of resource
+   * @param values        content values
+   * @param sel     selection string
+   * @param args selection args
+   *
+   * @return  count of values
+   */
+  @WorkerThread final int update(@NonNull Uri uri,
+  @Nullable ContentValues values, @Nullable String sel, @Nullable String[] args) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return mClient.update(uri, values, sel, args);}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param operations content provider operations
+   *
+   * @return apply operations results
+   */
+  @WorkerThread @NonNull final ContentProviderResult[] applyBatch
+  (@NonNull ArrayList<ContentProviderOperation> operations) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.applyBatch(operations));}
+    catch (RemoteException | OperationApplicationException e)
+    {throw new RuntimeException(e);} finally {mCancels.remove(cancel);}
+  }
+
+  /**
+   * @param method  custom method
+   * @param arg     method arguments
+   * @param extras  extras
+   *
+   * @return  bundle result
+   */
+  @WorkerThread @NonNull final Bundle call
+  (@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
+    try {return requireNonNull(mClient.call(method, arg, extras));}
+    catch (RemoteException e) {throw new RuntimeException(e);}
+    finally {mCancels.remove(cancel);}
+  }
+
+  /** {@inheritDoc} */
+  @NonNull final ContentObserver register
   (@NonNull Uri uri, @NonNull BiConsumer<Boolean, Uri> observer,
-      @Nullable Handler handler)
-  {throw new UnsupportedOperationException();}
+      @Nullable Handler handler, boolean selfNotify, boolean descedants) {
+    final ContentObserver result = new Observer(observer, handler, selfNotify);
+    mResolver.registerContentObserver(uri, descedants, result);
+    try {return result;} finally {mResolver.notifyChange(uri, result);}
+  }
 
-  /** @param observer content observer */
-  default void unregister(@NonNull ContentObserver observer)
-  {throw new UnsupportedOperationException();}
+  /** {@inheritDoc} */
+  final void unregister(@NonNull ContentObserver observer)
+  {mResolver.unregisterContentObserver(observer);}
 
   /**
-   * @param data input content
+   * @param uri uri resource
    *
-   * @return asset file descriptor
+   * @return  data intent
+   *
+   * @throws IOException I/O Failure
    */
-  @NonNull static AssetFileDescriptor fromRequest(@NonNull RequestBody data) {
-    try {
-      final ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-      final Bundle extras; final MediaType type = data.contentType();
-
-      if (type == null) extras = Bundle.EMPTY;
-      else {extras = new Bundle();
-      extras.putString(TYPE, type.toString());}
-
-      try {return new AssetFileDescriptor
-          (pipe[0], 0, data.contentLength(), extras);}
-      finally {
-        runAsync(() -> {
-          try (final BufferedSink sink = sink
-              (new AutoCloseOutputStream(pipe[1])))
-          {data.writeTo(sink);} catch (IOException exception)
-          {throw new RuntimeException(exception);}
-        });
-      }
-
-    } catch (IOException exception)
-    {throw new RuntimeException(exception);}
+  @NonNull final Intent getIntent(@NonNull Uri uri) throws IOException {
+    try {return new Intent().setDataAndTypeAndNormalize(uri = mClient.canonicalize(uri),
+        mClient.getType(requireNonNull(uri))).addFlags("w".equals(uri.getQueryParameter(MODE)) ?
+        Intent.FLAG_GRANT_WRITE_URI_PERMISSION : Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        .putExtra(Intent.EXTRA_STREAM, uri).putExtra(MediaStore.EXTRA_OUTPUT, uri);
+    } catch (RemoteException | NullPointerException exception) {throw new IOException(exception.getMessage());}
   }
 
   /**
-   * @param descriptor descriptor
+   * @param key key of row
    *
-   * @return request body
+   * @return long id analog
    */
-  @NonNull static RequestBody toRequest(@NonNull AssetFileDescriptor descriptor) {
-    return new RequestBody() {
+  static long keyToId(@NonNull String key)
+  {return key.hashCode() & 0x00000000ffffffffL;}
 
-      /** {@inheritDoc} */
-      @Nullable @Override
-      public final MediaType contentType() {
-        final Bundle extras = descriptor.getExtras();
-        return extras == Bundle.EMPTY ? null :
-            parse(requireNonNull(extras.getString(TYPE)));
-      }
+  /** @return new created operations butch builder */
+  @NonNull public final BatchOps applyBatch() {return new BatchOps(this);}
 
-      /** {@inheritDoc} */
-      @Override
-      public final void
-      writeTo(@NonNull BufferedSink sink) throws IOException {
-        try (final BufferedSource source = source
-            (descriptor.createInputStream()))
-        {source.readAll(sink);}
-      }
+  /** Observer record. */
+  private static final class Observer extends ContentObserver {
 
-      /** {@inheritDoc} */
-      @Override
-      public final long contentLength()
-      {return descriptor.getLength();}
-    };
+    /** Data mObserver. */
+    private final BiConsumer<Boolean, Uri> mObserver;
+
+    /** Deliver self notification. */
+    private final boolean mSelfNotify;
+
+    /**
+     * Creates a content mObserver.
+     *
+     * @param observer file mObserver
+     */
+    Observer(@NonNull BiConsumer<Boolean, Uri> observer, @Nullable Handler handler, boolean selfNotify)
+    {super(handler); this.mObserver = observer; mSelfNotify = selfNotify;}
+
+    /** {@inheritDoc} */
+    @Override
+    public final void onChange(boolean selfChange, @Nullable Uri uri)
+    {super.onChange(selfChange, uri); mObserver.accept(selfChange, uri); }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean deliverSelfNotifications()
+    {return mSelfNotify;}
   }
-
-  /**
-   * @param data output content
-   *
-   * @return descriptor
-   */
-  @NonNull static AssetFileDescriptor fromResponse(@NonNull ResponseBody data) {
-    try {
-      final ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-      final Bundle extras; final MediaType type = data.contentType();
-
-      if (type == null) extras = Bundle.EMPTY;
-      else {extras = new Bundle();
-        extras.putString(TYPE, type.toString());}
-
-      try {return new AssetFileDescriptor
-          (pipe[0], 0, data.contentLength(), extras);}
-      finally {
-        runAsync(() -> {
-          try (final BufferedSink sink = sink
-              (new AutoCloseOutputStream(pipe[1]))) {
-            data.source().readAll(sink);
-          } catch (IOException exception) {
-            throw new RuntimeException(exception);
-          }
-        });
-      }
-    } catch (IOException exception)
-    {throw new RuntimeException(exception);}
-  }
-
-  /**
-   * @param descriptor descriptor
-   *
-   * @return response body
-   */
-  @NonNull static ResponseBody toResponse(
-      @NonNull AssetFileDescriptor descriptor) {
-    return new ResponseBody() {
-
-      /** Buffered source. */
-      final BufferedSource mSource;
-
-      {try {mSource = DataSource.source(descriptor.createInputStream());}
-        catch (IOException exception) {throw new RuntimeException(exception);}}
-
-      /** {@inheritDoc} */
-      @Nullable @Override
-      public final MediaType contentType() {
-        final Bundle extras = descriptor.getExtras();
-        return extras == Bundle.EMPTY || extras == null ? null :
-            parse(requireNonNull(extras.getString(TYPE)));
-      }
-
-      /** {@inheritDoc} */
-      @Override
-      public final long contentLength()
-      {return descriptor.getLength();}
-
-      /** {@inheritDoc} */
-      @Override
-      public final
-      BufferedSource source()
-      {return mSource;}
-
-    };
-  }
-
-  /**
-   * @param input input stream
-   * @return buffered source
-   */
-  @NonNull static BufferedSource source(@NonNull InputStream input)
-  {return Okio.buffer(Okio.source(input));}
-
-  /**
-   * @param output output stream
-   * @return buffered sink
-   */
-  @NonNull static BufferedSink sink(@NonNull OutputStream output)
-  {return Okio.buffer(Okio.sink(output));}
-
-  /**
-   * @return access mode appended
-   */
-  @NonNull default Uri asReadResource()
-  {return getContentUri().buildUpon().appendQueryParameter(MODE, READ).build();}
-
-  /**
-   * @return access mode appended
-   */
-  @NonNull default Uri asWriteResource()
-  {return getContentUri().buildUpon().appendQueryParameter(MODE, WRITE).build();}
-
-  /*
-   * @param file the file resource for open
-   * @return json-object representation
-   */
-  /*@NonNull default JSONObject jsonObject(@NonNull String file) {
-    try (final BufferedSource source = source(file))
-    {return new JSONObject(source.readUtf8());}
-    catch (JSONException | IOException exception)
-    {throw new RuntimeException(exception);}
-  }*/
-
-  /*
-   * @param file the file resource for open
-   * @return json-array representation
-   */
-  /*@NonNull default JSONArray jsonArray(@NonNull String file) {
-    try (final BufferedSource source = source(file))
-    {return new JSONArray(source.readUtf8());}
-    catch (JSONException | IOException exception)
-    {throw new RuntimeException(exception);}
-  }*/
-
-  /*
-   * @param file    input file
-   * @param parser  serialization parser
-   * @param <T>     type of object
-   * @return        object instance
-   */
-  /*@NonNull default <T> T load(@NonNull String file,
-      @NonNull Function<BufferedSource, T> parser) {
-    try(final BufferedSource source = source(input(file)))
-    {return parser.apply(source);} catch (IOException exception)
-    {throw new RuntimeException(exception);}
-  }*/
-
-  /*
-   * @param file   output file
-   * @param parser serialization parser
-   * @param value  value for write
-   * @param <T> type of value
-   */
-  /*default <T> void save(@NonNull String file, @NonNull T value,
-      @NonNull BiConsumer<BufferedSink, T> parser) {
-    try(final BufferedSink sink = sink(output(file)))
-    {parser.accept(sink, value);}
-    catch (IOException exception)
-    {throw new RuntimeException(exception);}
-  }*/
-
-  /**
-   * @param assets assets manager
-   *
-   * @return data source instance
-   */
-  @NonNull static DataSource create
-  (@NonNull AssetManager assets)
-  {return new AssetsSource(assets);}
-
-  /**
-   * @param resolver  content resolver
-   * @param read      read permissions
-   * @param write     write permissions
-   *
-   * @return data source instance
-   */
-  @NonNull static DataSource create(
-      @NonNull ContentResolver resolver,
-      @NonNull BooleanSupplier read,
-      @NonNull BooleanSupplier write)
-  {return new ExternalSource(resolver, write, read);}
-
-  /** @return data source instance */
-  @NonNull static DataSource create
-  (@NonNull ContentResolver resolver, @NonNull String authority)
-  {return new LocalSource(resolver, authority);}
-
 }

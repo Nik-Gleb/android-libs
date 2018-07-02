@@ -52,7 +52,7 @@ import static android.provider.BaseColumns._ID;
  * @since 1.0, 04/10/2016
  */
 @SuppressWarnings("WeakerAccess, unused")
-public final class DatabaseTable {
+final class DatabaseTable {
 
     /** Data column */
     public static final String DATA_COLUMN = "data";
@@ -137,11 +137,15 @@ public final class DatabaseTable {
     /** Preferences table */
     public final boolean preferences;
 
+    /** Content uri for this table. */
+    final Uri contentUri;
+
     /** Default constructor */
     @SuppressWarnings("unchecked")
-    public DatabaseTable(@NonNull String name, boolean preferences) {
-        tableName = name; rowName = tableName.substring(0, tableName.length()-1);
+    public DatabaseTable(@NonNull String name, boolean preferences, @NonNull Uri contentUri) {
+        tableName = name; rowName = tableName.substring(0, tableName.length() - 1);
         onlyForSync = false; syncColumns = providerColumns = Collections.EMPTY_SET;
+        this.contentUri = contentUri.buildUpon().appendPath(name).build();
         this.preferences = preferences;
     }
 
@@ -151,10 +155,10 @@ public final class DatabaseTable {
      * @param authority content provider authority
      */
     public final String addUris(@NonNull String authority) {
-        final String companyName = authority.split("\\.")[1];
+        final String[] parts = authority.split("\\.");
+        final String companyName = parts.length > 1 ? parts[1] : parts[0];
         mUriMatcher.addURI(authority, tableName, TYPE_DIR);
         mUriMatcher.addURI(authority, tableName + "/#", TYPE_ITEM);
-        mUriMatcher.addURI(authority, tableName + "/-#", TYPE_ITEM);
         mContentType = CONTENT_TYPE_PREFIX + companyName + "." + rowName;
         mContentItemType = CONTENT_ITEM_TYPE_PREFIX + companyName + "." + rowName;
         return tableName;

@@ -35,7 +35,7 @@ import java.util.Locale;
  * @since 1.0, 19/08/2016
  */
 @SuppressWarnings("WeakerAccess, unused")
-public final class DatabaseHelper extends SQLiteOpenHelper {
+final class DatabaseHelper extends SQLiteOpenHelper {
 
     /** The log-cat tag */
     private static final String TAG = "DatabaseHelper";
@@ -153,8 +153,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
      */
     public static synchronized DatabaseHelper getInstance
     (@NonNull Context context, @NonNull String name, int version, @NonNull DatabaseTable[] tables) {
-        if (sSingleton == null)
-          sSingleton = new DatabaseHelper(context, name, version, tables);
+        if (sSingleton == null) sSingleton = new DatabaseHelper(context, name, version, tables);
         return sSingleton;
     }
 

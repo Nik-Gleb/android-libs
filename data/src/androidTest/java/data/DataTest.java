@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package widgets;
+package data;
 
 
 import android.support.test.runner.AndroidJUnit4;
@@ -45,9 +45,9 @@ import proguard.annotation.KeepPublicClassMembers;
 @SuppressWarnings("EmptyMethod")
 @Keep@KeepPublicClassMembers
 @RunWith(AndroidJUnit4.class)
-public final class WidgetsTest {
+public final class DataTest {
 
-    public WidgetsTest() {super();}
+    public DataTest() {super();}
 
     @Before public final void setUp() {}
     @After public final void tearDown() {}
@@ -55,7 +55,6 @@ public final class WidgetsTest {
     @Test
     public final void testMain() {
         System.out.println(System.currentTimeMillis());
-
     }
 
 }

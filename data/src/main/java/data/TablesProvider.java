@@ -38,10 +38,10 @@ import static android.database.DatabaseUtils.dumpCursor;
  * @author Nikitenko Gleb
  * @since 1.0, 19/06/2018
  */
-final class DatabaseProvider extends SQLiteProvider {
+final class TablesProvider extends SQLiteProvider {
 
   /** The log-cat tag */
-  private static final String TAG = "DatabaseProvider";
+  private static final String TAG = "TablesProvider";
 
   /** Keep database flag */
   private static final boolean KEEP_DATABASE_BY_CLOSE = true;
@@ -106,16 +106,16 @@ final class DatabaseProvider extends SQLiteProvider {
    *
    * @param context application context
    */
-  DatabaseProvider(@NonNull Context context, @NonNull String authority,
+  TablesProvider(@NonNull Context context, @NonNull String authority,
       @NonNull String name, int version, @NonNull String[] tables) {
     super(context);
     mContentUri = new Uri.Builder()
-        .scheme(ContentResolver.SCHEME_CONTENT)
+        .scheme(Provider.getTag(getClass()))
         .authority(authority).build();
     mName = name; mVersion = version;
     mTables = new DatabaseTable[tables.length];
     for (int i = 0; i < mTables.length; i++)
-      mTables[i] = new DatabaseTable(tables[i], i == 0);
+      mTables[i] = new DatabaseTable(tables[i], i == 0, mContentUri);
 
      mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH) {{
       for (int i = 0; i < mTables.length; i++) {
@@ -124,7 +124,6 @@ final class DatabaseProvider extends SQLiteProvider {
         final String tableName = table.addUris(authority);
         addURI(authority, tableName, index);
         addURI(authority, tableName + "/#", index);
-        addURI(authority, tableName + "/-#", index);
       }
     }};
   }
@@ -136,7 +135,6 @@ final class DatabaseProvider extends SQLiteProvider {
     for (final DatabaseTable mTable : mTables) {
       paths.add(mTable.tableName);
       paths.add(mTable.tableName + "/#");
-      paths.add(mTable.tableName + "/-#");
     }
     return paths.toArray(new String[paths.size()]);
   }
@@ -162,55 +160,46 @@ final class DatabaseProvider extends SQLiteProvider {
   }
 
   /** {@inheritDoc} */
-  @Override
-  public final Bundle call
+  @Override public final Bundle call
   (@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
     final DatabaseTable table = getTableByUri(mContentUri.buildUpon()
         .appendEncodedPath(method).build()); return table.call(arg, extras);
   }
 
   /** {@inheritDoc} */
-  @Override
-  @NonNull
-  public final Cursor query(@NonNull
-      Uri uri, String[] projection, String selection,
-      String[] selectionArgs, String sortOrder)
-  {return query(uri, projection, selection, selectionArgs, sortOrder, null);}
+  @Override @NonNull public final Cursor query
+  (@NonNull Uri uri, String[] proj, String sel, String[] args, String sort)
+  {return query(uri, proj, sel, args, sort, null);}
 
   /** {@inheritDoc} */
-  @Override
-  @NonNull
-  public final Cursor query(@NonNull Uri uri, String[] projection,
-      String selection, String[] selectionArgs,
-      String sortOrder, CancellationSignal signal) {
+  @Override @NonNull public final Cursor query
+  (@NonNull Uri uri, String[] proj, String sel, String[] args, String sort, CancellationSignal signal) {
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
-      Log.println(Log.DEBUG, TAG, " >>> QUERY: " + uri + ", " + Arrays.toString(projection) + "; " +
-          selection + " " + Arrays.toString(selectionArgs) + "; " + sortOrder);
+    if (Log.isLoggable(TAG, Log.DEBUG))
+      Log.println(Log.DEBUG, TAG, " >>> QUERY: " + uri + ", " + Arrays.toString(proj) + "; " +
+          sel + " " + Arrays.toString(args) + "; " + sort);
 
     final DatabaseTable table = getTableByUri(uri); final boolean isItem = table.isItem(uri);
     validateQueryParameters(table.getAllowedQueryParams(), uri.getQueryParameterNames());
-    verifyTransactionAllowed(TRANSACTION_QUERY, isItem, table, uri, null, selection, selectionArgs, false);
+    verifyTransactionAllowed(TRANSACTION_QUERY, isItem, table, uri, null, sel, args, false);
 
     final Cursor result = isItem ?
-        table.query(uri.getLastPathSegment(), projection, signal):
-        table.query(selection, selectionArgs, sortOrder, projection, signal);
+        table.query(uri.getLastPathSegment(), proj, signal):
+        table.query(sel, args, sort, proj, signal);
 
-    if (mContentResolver != null) result.setNotificationUri(mContentResolver, uri);
+    result.setNotificationUri(mContentResolver, uri);
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(Log.DEBUG, TAG, " <<< QUERY: " + dumpCursorToString(result));
 
     return result;
   }
 
   /** The equivalent of the {@link #insert} method, but invoked within a transaction. */
-  @Override
-  protected final Uri insertInTransaction(@NonNull Uri uri, @Nullable
-      ContentValues values,
-      boolean callerIsSyncAdapter) {
+  @Override protected final Uri insertInTransaction
+  (@NonNull Uri uri, @Nullable ContentValues values, boolean callerIsSyncAdapter) {
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(
           Log.DEBUG, TAG, " >>> INSERT(" + (callerIsSyncAdapter ? "SYNC" : "APP") +
           "): " + uri + ", " + values);
@@ -222,84 +211,78 @@ final class DatabaseProvider extends SQLiteProvider {
 
     //noinspection UnnecessaryLocalVariable
     final Uri result = table.insert(uri, values);
-    sendUpdateNotification(result, callerIsSyncAdapter);
+    sendUpdateNotification(/*result*/table.contentUri, callerIsSyncAdapter);
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(Log.DEBUG, TAG, " <<< INSERT(RESULT): " + result);
 
     return result;
   }
 
   /** The equivalent of the {@link #delete} method, but invoked within a transaction. */
-  @Override
-  protected final int deleteInTransaction(Uri uri, String selection, String[] selectionArgs,
-      boolean callerIsSyncAdapter) {
+  @Override protected final int deleteInTransaction
+  (@NonNull Uri uri, String sel, String[] args, boolean callerIsSyncAdapter) {
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(
           Log.DEBUG, TAG, " >>> DELETE(" + (callerIsSyncAdapter ? "SYNC" : "APP") + "): " + uri + "; " +
-          selection + " " + Arrays.toString(selectionArgs));
+              sel + " " + Arrays.toString(args));
 
     final DatabaseTable table = getTableByUri(uri); final boolean isItem = table.isItem(uri);
     validateQueryParameters(table.getAllowedQueryParams(), uri.getQueryParameterNames());
     verifyTransactionAllowed(TRANSACTION_DELETE, isItem, table, uri, null,
-        selection, selectionArgs, callerIsSyncAdapter);
+        sel, args, callerIsSyncAdapter);
 
     final int result = isItem ?
         table.delete(uri.getLastPathSegment()):
-        table.delete(selection, selectionArgs);
+        table.delete(sel, args);
 
     if (uri.getBooleanQueryParameter("reset", false))
       table.getWritableDatabase().execSQL
           ("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + table.tableName + "'");
 
-    if (result != 0) sendUpdateNotification(uri, callerIsSyncAdapter);
+    if (result != 0) sendUpdateNotification(/*uri*/table.contentUri, callerIsSyncAdapter);
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(Log.DEBUG, TAG, " <<< DELETE(RESULT): " + result);
 
     return result;
   }
 
   /** The equivalent of the {@link #update} method, but invoked within a transaction. */
-  @Override
-  protected final int updateInTransaction(Uri uri, ContentValues values,
-      String selection, String[] selectionArgs,
-      boolean callerIsSyncAdapter) {
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+  @Override protected final int updateInTransaction
+  (@NonNull Uri uri, ContentValues values, String sel, String[] args, boolean callerIsSyncAdapter) {
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(
           Log.DEBUG, TAG, " >>> UPDATE(" + (callerIsSyncAdapter ? "SYNC" : "APP") +
-          "): " + uri + ", " + values + "; " + selection + " " + Arrays.toString(selectionArgs));
+          "): " + uri + ", " + values + "; " + sel + " " + Arrays.toString(args));
 
     final DatabaseTable table = getTableByUri(uri); final boolean isItem = table.isItem(uri);
     validateQueryParameters(table.getAllowedQueryParams(), uri.getQueryParameterNames());
     verifyTransactionAllowed(TRANSACTION_UPDATE, isItem, table, uri, values,
-        selection, selectionArgs, callerIsSyncAdapter);
+        sel, args, callerIsSyncAdapter);
 
     final int result = isItem ?
         table.update(uri.getLastPathSegment(), values):
-        table.update(selection, selectionArgs, values);
+        table.update(sel, args, values);
 
     if (result != 0) sendUpdateNotification(uri, callerIsSyncAdapter);
 
-    //if (Log.isLoggable(TAG, Log.DEBUG))
+    if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(Log.DEBUG, TAG, " <<< UPDATE(RESULT): " + result);
 
     return result;
   }
 
   /** {@inheritDoc} */
-  @Nullable
-  @Override
-  public final String getType(@NonNull Uri uri) {
+  @Nullable @Override public final String getType(@NonNull Uri uri) {
     final DatabaseTable table = getTableByUri(uri);
     return table.getType(table.getCode(uri));
   }
 
   /** {@inheritDoc} */
-  @Override
-  public String[] getStreamTypes(@NonNull Uri uri, @NonNull
-      String mimeTypeFilter) {
+  @Override public String[] getStreamTypes
+  (@NonNull Uri uri, @NonNull String mimeTypeFilter) {
     final DatabaseTable table = getTableByUri(uri);
     return table.getStreamTypes(table.getCode(uri), mimeTypeFilter);
   }
@@ -379,7 +362,7 @@ final class DatabaseProvider extends SQLiteProvider {
         SYNC_UPDATE_BROADCAST_TIMEOUT_MILLIS :
         UPDATE_BROADCAST_TIMEOUT_MILLIS;
     // Despite the fact that we actually only ever use one message at a time
-    // for now, it is really important to call obtainMessage() to created a
+    // for now, it is really important to read obtainMessage() to created a
     // clean instance.  This avoids potentially infinite loops resulting
     // adding the same instance to the message queue twice, since the
     // message queue implements its linked list using a field from Message.
@@ -390,7 +373,7 @@ final class DatabaseProvider extends SQLiteProvider {
 
   /**
    * This method should not ever be called directly, to prevent sending too
-   * many potentially expensive broadcasts.  Instead, call
+   * many potentially expensive broadcasts.  Instead, read
    * {@link #sendUpdateNotification(boolean)} instead.
    *
    * @see #sendUpdateNotification(boolean)
@@ -398,8 +381,8 @@ final class DatabaseProvider extends SQLiteProvider {
   private void sendUpdateNotification(Uri uri) {
     final Intent intent = new Intent(Intent.ACTION_PROVIDER_CHANGED);
     intent.setDataAndTypeAndNormalize(uri, getType(uri));
-    try{context.sendBroadcast(intent, null);}
-    catch (UnsupportedOperationException ignore) {}
+    try {context.sendBroadcast(intent);}
+    catch (UnsupportedOperationException ignore) {ignore.printStackTrace();}
   }
 
   /** @param queryParameterNames to validation */
@@ -508,20 +491,20 @@ final class DatabaseProvider extends SQLiteProvider {
   /** Common callback */
   private static class Callback implements Handler.Callback  {
 
-    /** The weak reference to {@link DatabaseProvider} */
-    private final WeakReference<DatabaseProvider> mProvider;
+    /** The weak reference to {@link TablesProvider} */
+    private final WeakReference<TablesProvider> mProvider;
 
     /**
-     * Constructs a new {@link Callback} with {@link DatabaseProvider}
+     * Constructs a new {@link Callback} with {@link TablesProvider}
      * @param provider the reference of content provider
      */
-    Callback(DatabaseProvider provider)
+    Callback(TablesProvider provider)
     {mProvider = new WeakReference<>(provider);}
 
     /** {@inheritDoc} */
     @Override
     public final boolean handleMessage(Message msg) {
-      final DatabaseProvider provider = mProvider.get();
+      final TablesProvider provider = mProvider.get();
       return provider == null || provider.handleMessage(msg);
     }
   }
@@ -531,7 +514,7 @@ final class DatabaseProvider extends SQLiteProvider {
    * for background threads to finish. Started and stopped directly by specific
    * background tasks when needed.
    */
-  @Keep @KeepPublicProtectedClassMembers
+  @Keep@KeepPublicProtectedClassMembers
   public static final class EmptyService extends Service
   {/** {@inheritDoc} */ @Override
   public final IBinder onBind(Intent intent) {return null;}}

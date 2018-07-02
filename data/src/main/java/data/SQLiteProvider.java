@@ -30,10 +30,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import static data.Provider.isCallerSyncAdapter;
 
 /**
  * General purpose {@link ContentProvider} base class that uses SQLiteDatabase for storage.
@@ -42,22 +45,10 @@ import java.util.Set;
  * @since 1.0, 24/09/2016
  */
 @SuppressWarnings("WeakerAccess, unused")
-public abstract class SQLiteProvider implements Provider {
+abstract class SQLiteProvider implements Provider {
 
     /** The log-cat tag. */
     private static final String TAG = "SQLiteProvider";
-
-    /**
-     * An optional insert, update or delete URI parameter that allows the caller
-     * to specify that it is a sync adapter. The default value is false. If set
-     * to true, the modified row is not marked as "dirty" (needs to be synced)
-     * and when the provider calls
-     * {@link ContentResolver#notifyChange(Uri, android.database.ContentObserver, boolean)},
-     * the third parameter "syncToNetwork" is set to false.
-     *
-     * @see Uri.Builder#appendQueryParameter(String, String)
-     */
-    public static final String CALLER_IS_SYNCADAPTER = "caller_is_syncadapter";
 
     /** Sleep after yield delay. */
     private static final int SLEEP_AFTER_YIELD_DELAY = 400;
@@ -84,13 +75,11 @@ public abstract class SQLiteProvider implements Provider {
      *
      * @param context application context
      */
-    SQLiteProvider
-        (@NonNull Context context)
+    SQLiteProvider(@NonNull Context context)
     {this.context = context;}
 
     /** {@inheritDoc} */
-    @Override
-    public boolean onCreate() {
+    @Override public boolean onCreate() {
         mOpenHelper = getDatabaseHelper(context);
         return mOpenHelper != null;
     }
@@ -99,30 +88,25 @@ public abstract class SQLiteProvider implements Provider {
     protected abstract SQLiteOpenHelper getDatabaseHelper(Context context);
 
     /** The equivalent of the {@link #insert} method, but invoked within a transaction.*/
-    protected abstract Uri insertInTransaction(Uri uri, ContentValues values,
-                                            boolean callerIsSyncAdapter);
+    protected abstract Uri insertInTransaction
+    (@NonNull Uri uri, ContentValues values, boolean callerIsSyncAdapter);
 
     /** The equivalent of the {@link #update} method, but invoked within a transaction. */
-    protected abstract int updateInTransaction(Uri uri, ContentValues values, String selection,
-                                            String[] selectionArgs, boolean callerIsSyncAdapter);
+    protected abstract int updateInTransaction
+    (@NonNull Uri uri, @Nullable ContentValues values,
+        @Nullable String sel, @Nullable String[] args, boolean callerIsSyncAdapter);
 
     /** The equivalent of the {@link #delete} method, but invoked within a transaction.*/
-    protected abstract int deleteInTransaction(Uri uri, String selection, String[] selectionArgs,
-                                            boolean callerIsSyncAdapter);
+    protected abstract int deleteInTransaction
+    (@NonNull Uri uri, @Nullable String sel, @Nullable String[] args, boolean callerIsSyncAdapter);
 
     /** Call this to add a URI to the list of URIs to be notified when the transaction is committed. */
-    protected final void postNotifyUri(Uri uri)
+    protected final void postNotifyUri(@NonNull Uri uri)
     {synchronized (mChangedUris) {mChangedUris.add(uri);}}
 
-    /**
-     * @param uri uri addresses
-     * @return access mode
-     */
-    private boolean isCallerSyncAdapter(Uri uri)
-    {return uri.getBooleanQueryParameter(CALLER_IS_SYNCADAPTER, false);}
-
     /** @return is batch applying */
-    private boolean applyingBatch() {return mApplyingBatch.get() != null && mApplyingBatch.get();}
+    private boolean applyingBatch()
+    {return mApplyingBatch.get() != null && mApplyingBatch.get();}
 
     /** {@inheritDoc} */
     @Override
@@ -166,34 +150,33 @@ public abstract class SQLiteProvider implements Provider {
 
     /** {@inheritDoc} */
     @Override
-    public final int update(@NonNull
-        Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public final int update(@NonNull Uri uri, ContentValues values, String sel, String[] args) {
         int result; boolean callerIsSyncAdapter = isCallerSyncAdapter(uri);
         boolean applyingBatch = applyingBatch();
         if (!applyingBatch) {
             mDb = mOpenHelper.getWritableDatabase();
             //mDb.beginTransaction();
             mDb.beginTransactionNonExclusive();
-            try {result = updateInTransaction(uri, values, selection, selectionArgs, callerIsSyncAdapter);
+            try {result = updateInTransaction(uri, values, sel, args, callerIsSyncAdapter);
                 mDb.setTransactionSuccessful();} finally {mDb.endTransaction();}
             onEndTransaction(callerIsSyncAdapter);
-        } else result = updateInTransaction(uri, values, selection, selectionArgs, callerIsSyncAdapter);
+        } else result = updateInTransaction(uri, values, sel, args, callerIsSyncAdapter);
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+    public final int delete(@NonNull Uri uri, String sel, String[] args) {
         int result; boolean callerIsSyncAdapter = isCallerSyncAdapter(uri);
         boolean applyingBatch = applyingBatch();
         if (!applyingBatch) {
             mDb = mOpenHelper.getWritableDatabase();
             //mDb.beginTransaction();
             mDb.beginTransactionNonExclusive();
-            try {result = deleteInTransaction(uri, selection, selectionArgs, callerIsSyncAdapter);
+            try {result = deleteInTransaction(uri, sel, args, callerIsSyncAdapter);
                 mDb.setTransactionSuccessful();} finally {mDb.endTransaction();}
             onEndTransaction(callerIsSyncAdapter);
-        } else result = deleteInTransaction(uri, selection, selectionArgs, callerIsSyncAdapter);
+        } else result = deleteInTransaction(uri, sel, args, callerIsSyncAdapter);
         return result;
     }
 
@@ -228,9 +211,7 @@ public abstract class SQLiteProvider implements Provider {
                     opCount = 0;
                     if (mDb.yieldIfContendedSafely(SLEEP_AFTER_YIELD_DELAY)) ypCount++;
                 }
-
                 results[i] = operation.apply(mock(), results, i);
-
             }
             mDb.setTransactionSuccessful();
             return results;
@@ -249,8 +230,8 @@ public abstract class SQLiteProvider implements Provider {
             mChangedUris.clear();
         }
         final ContentResolver resolver = context.getContentResolver();
-        for (Uri uri : changed)
-            resolver.notifyChange(uri, null, !callerIsSyncAdapter && syncToNetwork(uri));
+        for (Uri uri : changed)resolver.notifyChange
+            (uri, null, !callerIsSyncAdapter && syncToNetwork(uri));
     }
 
     /**

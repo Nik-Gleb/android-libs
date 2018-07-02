@@ -119,6 +119,8 @@ dependencies {
   implementation 'com.squareup.okio:okio:1.14.1'
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
+  implementation 'javax.inject:javax.inject:1'
+
   testImplementation 'android.arch.core:core-testing:' + archLifeVersion
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion

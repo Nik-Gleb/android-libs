@@ -114,6 +114,14 @@
 
 -keep public class extensions.** {public protected *;}
 -keep public interface extensions.** {public protected *;}
+-dontwarn extensions.Component
+-dontwarn extensions.Disposable
+-dontwarn extensions.Module
+-dontwarn extensions.Disposable_MembersInjector
+-dontwarn extensions.DaggerComponent$Builder
+-dontwarn extensions.Module_ModuleFactory
+-dontwarn extensions.Module_CloseablesFactory
+
 -keep class extensions.Executors$Task {*;}
 -keep class extensions.ThreadFactory {*;}
 

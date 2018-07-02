@@ -37,7 +37,7 @@ import android.support.annotation.StyleableRes;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.bumptech.glide.RequestBuilder;
+//import com.bumptech.glide.RequestBuilder;
 
 import java.io.Closeable;
 import java.util.Objects;
@@ -48,7 +48,7 @@ import java.util.function.Consumer;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 import widgets.TintableHelper;
-import widgets.glide.BitmapSimpleViewTarget;
+
 
 /**
  * @author Nikitenko Gleb
@@ -82,14 +82,14 @@ public class CollectionItemView extends View
   /** The tintable helper. */
   private final TintableHelper mTintableHelper;
 
-  /** Glide request builder. */
-  @Nullable private RequestBuilder<Bitmap> mGlideRequestBuilder;
+  /* Glide request builder. */
+  //@Nullable private RequestBuilder<Bitmap> mGlideRequestBuilder;
 
   /** Glide drawable factory. */
   @Nullable private BiFunction<View, Bitmap, Drawable> mDrawableFactory;
 
-  /** Glide simple view target. */
-  @Nullable private BitmapSimpleViewTarget mGlideTarget;
+  /* Glide simple view target. */
+  //@Nullable private BitmapSimpleViewTarget mGlideTarget;
 
   /** Current item value. */
   @NonNull private Item mItem = Item.EMPTY;
@@ -224,25 +224,25 @@ public class CollectionItemView extends View
     setMeasuredDimension(size, size);
   }
 
-  /** @param builder glide request builder */
-  public final void setGlideRequestBuilder
+  /* @param builder glide request builder */
+  /*public final void setGlideRequestBuilder
   (@Nullable RequestBuilder<Bitmap> builder) {
     if (Objects.equals(mGlideRequestBuilder, builder)) return;
     mGlideRequestBuilder = builder;
-  }
+  }*/
 
   /** @param factory glide drawable factory */
   public final void setDrawableFactory
       (@Nullable BiFunction<View, Bitmap, Drawable> factory) {
     if (Objects.equals(mDrawableFactory, factory)) return;
-    mDrawableFactory = factory; mGlideTarget = mDrawableFactory != null ?
-        new BitmapSimpleViewTarget(mInstance, mDrawableFactory) : null;
+    mDrawableFactory = factory; /*mGlideTarget = mDrawableFactory != null ?
+        new BitmapSimpleViewTarget(mInstance, mDrawableFactory) : null;*/
   }
 
   /** @param uri image resource */
   public final void load(@NonNull Uri uri) {
-    if (mGlideRequestBuilder == null || mGlideTarget == null) return;
-    mGlideRequestBuilder.load(uri).into(mGlideTarget);
+    /*if (mGlideRequestBuilder == null || mGlideTarget == null) return;
+    mGlideRequestBuilder.load(uri).into(mGlideTarget);*/
   }
 
   /** {@inheritDoc} */

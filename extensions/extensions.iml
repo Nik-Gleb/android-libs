@@ -28,13 +28,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="support-annotations-27.1.1" level="project" />
+    <orderEntry type="library" exported="" name="dagger-2.16" level="project" />
+    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" scope="PROVIDED" name=".android" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="common-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="core-testing-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="lifecycle-common-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="livedata-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="livedata-core-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="runtime-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="android-support-v4" level="project" />
+    <orderEntry type="library" exported="" name="livedata-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="livedata-core-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="lifecycle-common-1.1.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockito-junit-jupiter-2.18.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-jupiter-api-5.2.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-platform-commons-1.2.0" level="project" />
