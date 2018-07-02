@@ -369,13 +369,13 @@ public final class ContentProvider extends
   private void create(@NonNull Context context, @NonNull String authority,
       @NonNull String name, int version, @NonNull String[] tables,
       @NonNull Map<String, Provider> map) {
-    map.put(Provider.getTag(HttpsProvider.class),
+    map.put(/*Provider.getTag(HttpsProvider.class)*/"https",
             new HttpsProvider(context, authority, version));
-    map.put(Provider.getTag(FilesProvider.class),
+    map.put(/*Provider.getTag(FilesProvider.class)*/"files",
             new FilesProvider(context, authority, version));
-    map.put(Provider.getTag(AssetsProvider.class),
+    map.put(/*Provider.getTag(AssetsProvider.class)*/"assets",
             new AssetsProvider(context, authority, version));
-    map.put(Provider.getTag(TablesProvider.class),
+    map.put(/*Provider.getTag(TablesProvider.class)*/"tables",
             new TablesProvider(context, authority, name, version, tables));
     final Collection<Provider> providers = map.values();
     for (final Provider storage : providers) { storage.onCreate(); }

@@ -80,44 +80,49 @@ final class AssetsProvider implements Provider {
    * @param authority content authority
    * @param version   provider version
    */
-  @SuppressWarnings("unused")
-  AssetsProvider
+  @SuppressWarnings("unused") AssetsProvider
   (@NonNull Context context, @NonNull String authority, int version) {
     mAssets = context.getAssets();
   }
 
-  /**
-   * @param uri    uri resource
-   * @param assets assets manager
-   *
-   * @return asset file descriptor
-   */
-  @NonNull
-  private static AssetFileDescriptor openFile
-  (@NonNull Uri uri, @NonNull AssetManager assets,
-      @Nullable CancellationSignal signal) throws FileNotFoundException {
-    final String path = full(convert(uri)), type = getMimeType(path);
-    final Bundle extras = new Bundle();
-    extras.putString(TYPE, type);
-    try {
-      isCanceled(signal);
-      final AssetFileDescriptor afd = assets.openFd(path);
-      return new AssetFileDescriptor(afd.getParcelFileDescriptor(),
-                                     afd.getStartOffset(),
-                                     afd.getDeclaredLength(), extras);
-    } catch (IOException exception) {
-      try {
-        final ResponseBody response = new AssetRequest(assets.open(path), type);
-        return fromResponse(response, commonPool());
-      } catch (IOException e) {
-        if (!FileNotFoundException.class.isAssignableFrom(e.getClass()))
-          throw new OperationCanceledException(e.getMessage());
-        else throw (FileNotFoundException) e;
-      }
-    }
-  }
+  /** Asset File Request. */
+  private static final class AssetRequest extends ResponseBody {
 
-  /**
+    /** Buffered source. */
+    private final BufferedSource mSource;
+
+    /** Media type. */
+    private final MediaType mType;
+
+    /** Size of content. */
+    private final long mLength;
+
+    /**
+     * Constructs a new {@link AssetRequest}.
+     *
+     * @param stream input stream
+     * @param type   media type
+     */
+    AssetRequest(@NonNull InputStream stream, @NonNull String type)
+      throws IOException {
+      mSource = OkUtils.source(stream);
+      mType = MediaType.parse(type);
+      mLength = stream.available();
+    }
+
+    /** {@inheritDoc} */
+    @Nullable
+    @Override
+    public final MediaType contentType() {return mType;}
+
+    /** {@inheritDoc} */
+    @Override
+    public final long contentLength() {return mLength;}
+
+    /** {@inheritDoc} */
+    @Override
+    public final BufferedSource source() {return mSource;}
+  }  /**
    * @param uri content uri
    *
    * @return assets uri
@@ -125,9 +130,9 @@ final class AssetsProvider implements Provider {
   @NonNull
   private static Uri convert(@NonNull Uri uri) {
     return uri.buildUpon()
-              .scheme(ContentResolver.SCHEME_FILE)
-              .encodedAuthority(ASSETS_AUTHORITY)
-              .build();
+      .scheme(ContentResolver.SCHEME_FILE)
+      .encodedAuthority(ASSETS_AUTHORITY)
+      .build();
   }
 
   /**
@@ -138,7 +143,7 @@ final class AssetsProvider implements Provider {
   @NonNull
   private static String full(@NonNull Uri uri) {
     return uri.getPath()
-              .substring(1);
+      .substring(1);
   }
 
   /**
@@ -167,7 +172,7 @@ final class AssetsProvider implements Provider {
   @Override
   public final Cursor query
   (@NonNull Uri uri, @Nullable String[] proj, @Nullable String sel,
-      @Nullable String[] args, @Nullable String sort) {
+    @Nullable String[] args, @Nullable String sort) {
     return query(uri, proj, sel, args, sort, null);
   }
 
@@ -176,8 +181,8 @@ final class AssetsProvider implements Provider {
   @Override
   public final Cursor query
   (@NonNull Uri uri, @Nullable String[] proj, @Nullable String sel,
-      @Nullable String[] args, @Nullable String sort,
-      @Nullable CancellationSignal signal) {
+    @Nullable String[] args, @Nullable String sort,
+    @Nullable CancellationSignal signal) {
 
     isCanceled(signal);
     uri = convert(uri);
@@ -229,10 +234,10 @@ final class AssetsProvider implements Provider {
     if (files == null || files.length == 0) return null;
 
     final Set<String> set =
-        Arrays.stream(files)
-              .map(Provider::getMimeType)
-              .filter(type -> compareMimeTypes(type, filter))
-              .collect(Collectors.toSet());
+      Arrays.stream(files)
+        .map(Provider::getMimeType)
+        .filter(type -> compareMimeTypes(type, filter))
+        .collect(Collectors.toSet());
 
     return set.size() != 0 ? set.toArray(new String[set.size()]) : null;
   }
@@ -242,14 +247,14 @@ final class AssetsProvider implements Provider {
   @Override
   public final ParcelFileDescriptor
   openFile(@NonNull Uri uri, @NonNull String mode)
-      throws FileNotFoundException {return openFile(uri, mode, null);}
+    throws FileNotFoundException {return openFile(uri, mode, null);}
 
   /** {@inheritDoc} */
   @NonNull
   @Override
   public final ParcelFileDescriptor openFile
   (@NonNull Uri uri, @NonNull String mode, @Nullable CancellationSignal signal)
-      throws FileNotFoundException {
+    throws FileNotFoundException {
     return openAssetFile(uri, mode, signal).getParcelFileDescriptor();
   }
 
@@ -266,14 +271,14 @@ final class AssetsProvider implements Provider {
   @Override
   public final AssetFileDescriptor openAssetFile
   (@NonNull Uri uri, @NonNull String mode, @Nullable CancellationSignal signal)
-      throws FileNotFoundException {return openFile(uri, mAssets, signal);}
+    throws FileNotFoundException {return openFile(uri, mAssets, signal);}
 
   /** {@inheritDoc} */
   @NonNull
   @Override
   public final AssetFileDescriptor openTypedAssetFile
   (@NonNull Uri uri, @NonNull String filter, @Nullable Bundle opts)
-      throws FileNotFoundException {
+    throws FileNotFoundException {
     return openTypedAssetFile(uri, filter, opts, null);
   }
 
@@ -282,52 +287,48 @@ final class AssetsProvider implements Provider {
   @Override
   public final AssetFileDescriptor openTypedAssetFile
   (@NonNull Uri uri, @NonNull String filter, @Nullable Bundle opts,
-      @Nullable CancellationSignal signal) throws FileNotFoundException {
+    @Nullable CancellationSignal signal) throws FileNotFoundException {
     if ("*/*".equals(filter) || compareMimeTypes(getType(uri), filter))
       return openAssetFile(uri, READ_MODE, signal);
     else
       throw new FileNotFoundException
-          ("Can't open " + uri + " as type " + filter);
+        ("Can't open " + uri + " as type " + filter);
 
   }
 
-  /** Asset File Request. */
-  private static final class AssetRequest extends ResponseBody {
-
-    /** Buffered source. */
-    private final BufferedSource mSource;
-
-    /** Media type. */
-    private final MediaType mType;
-
-    /** Size of content. */
-    private final long mLength;
-
-    /**
-     * Constructs a new {@link AssetRequest}.
-     *
-     * @param stream input stream
-     * @param type   media type
-     */
-    AssetRequest(@NonNull InputStream stream, @NonNull String type)
-        throws IOException {
-      mSource = OkUtils.source(stream);
-      mType = MediaType.parse(type);
-      mLength = stream.available();
+  /**
+   * @param uri    uri resource
+   * @param assets assets manager
+   *
+   * @return asset file descriptor
+   */
+  @NonNull
+  private static AssetFileDescriptor openFile
+  (@NonNull Uri uri, @NonNull AssetManager assets,
+    @Nullable CancellationSignal signal) throws FileNotFoundException {
+    final String path = full(convert(uri)), type = getMimeType(path);
+    final Bundle extras = new Bundle();
+    extras.putString(TYPE, type);
+    try {
+      isCanceled(signal);
+      final AssetFileDescriptor afd = assets.openFd(path);
+      return new AssetFileDescriptor(
+        afd.getParcelFileDescriptor(),
+        afd.getStartOffset(),
+        afd.getDeclaredLength(),
+        extras
+      );
+    } catch (IOException exception) {
+      try {
+        final ResponseBody response = new AssetRequest(assets.open(path), type);
+        return fromResponse(response, commonPool());
+      } catch (IOException e) {
+        if (!FileNotFoundException.class.isAssignableFrom(e.getClass()))
+          throw new OperationCanceledException(e.getMessage());
+        else throw (FileNotFoundException) e;
+      }
     }
-
-    /** {@inheritDoc} */
-    @Nullable
-    @Override
-    public final MediaType contentType() {return mType;}
-
-    /** {@inheritDoc} */
-    @Override
-    public final long contentLength() {return mLength;}
-
-    /** {@inheritDoc} */
-    @Override
-    public final BufferedSource source() {return mSource;}
   }
+
 
 }
