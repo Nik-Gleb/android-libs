@@ -1,6 +1,6 @@
 /*
  * SSLCertTest.java
- * java-ssl-certs
+ * ssl-certs
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

@@ -1,8 +1,8 @@
 /*
- * Storage.java
- * prefs-tools
+ * Provider.java
+ * data
  *
- * Copyright (C) 2017, Gleb Nikitenko. All Rights Reserved.
+ * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -627,7 +627,7 @@ interface Provider {
    * @see #getType(Uri)
    */
   default @Nullable AssetFileDescriptor openAssetFile (@NonNull Uri uri, @NonNull String mode,
-  @NonNull CancellationSignal cancellationSignal) throws FileNotFoundException
+  @Nullable CancellationSignal cancellationSignal) throws FileNotFoundException
   {return openAssetFile(uri, mode);}
 
   /**

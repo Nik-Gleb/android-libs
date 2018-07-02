@@ -1,6 +1,6 @@
 /*
  * CameraAvailabilityManager.java
- * android-camera
+ * camera
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

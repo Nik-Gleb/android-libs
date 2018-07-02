@@ -1,6 +1,6 @@
 /*
  * Retain.java
- * android-arch
+ * extensions
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *

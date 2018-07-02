@@ -1,3 +1,28 @@
+/*
+ * DataSource.java
+ * data
+ *
+ * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package data;
 
 import android.annotation.SuppressLint;
@@ -80,13 +105,11 @@ import static java.util.Objects.requireNonNull;
   /**
    * Constructs a new {@link DataSource}
    *
-   * @param resolver content resolver
-   * @param authority content authority
+   * @param dependencies external dependencies
    */
-  @Inject public DataSource
-  (@NonNull ContentResolver resolver, @NonNull String authority)
-  {mClient = resolver.acquireContentProviderClient(authority);
-  mResolver = resolver;}
+  @Inject public DataSource(@NonNull Dependencies dependencies)
+  {mClient = (mResolver = dependencies.resolver())
+      .acquireContentProviderClient(dependencies.authority());}
 
   /** @param closeables for push */
   @Inject public final void inject
@@ -186,7 +209,8 @@ import static java.util.Objects.requireNonNull;
    */
   @WorkerThread @NonNull private AssetFileDescriptor openAssetFile
   (@NonNull Uri uri, @NonNull String mode) throws IOException {
-    checkState(); final CancellationSignal cancel; mCancels.add(cancel = new CancellationSignal());
+    checkState(); final CancellationSignal cancel;
+    mCancels.add(cancel = new CancellationSignal());
     try {return requireNonNull(mClient.openAssetFile(uri, mode, cancel));}
     catch (OperationCanceledException | RemoteException e)
     {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
@@ -298,7 +322,8 @@ import static java.util.Objects.requireNonNull;
   @NonNull private Cursor cursor(@NonNull Uri uri, @Nullable String[] projection) {
     Cursor cursor; try {cursor = mClient.query(uri, null, null, null, null);}
     catch (RemoteException exception) {cursor = null;}
-    return cursor == null ? new MatrixCursor(new String[]{ BaseColumns._ID, DATA}) : cursor;
+    return cursor == null ?
+        new MatrixCursor(new String[]{ BaseColumns._ID, DATA}) : cursor;
   }
 
   /**
@@ -430,7 +455,8 @@ import static java.util.Objects.requireNonNull;
         mClient.getType(requireNonNull(uri))).addFlags("w".equals(uri.getQueryParameter(MODE)) ?
         Intent.FLAG_GRANT_WRITE_URI_PERMISSION : Intent.FLAG_GRANT_READ_URI_PERMISSION)
         .putExtra(Intent.EXTRA_STREAM, uri).putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    } catch (RemoteException | NullPointerException exception) {throw new IOException(exception.getMessage());}
+    } catch (RemoteException | NullPointerException exception)
+    {throw new IOException(exception.getMessage());}
   }
 
   /**
@@ -443,6 +469,17 @@ import static java.util.Objects.requireNonNull;
 
   /** @return new created operations butch builder */
   @NonNull public final BatchOps applyBatch() {return new BatchOps(this);}
+
+  /** Data source dependencies. */
+  @Keep@KeepPublicProtectedClassMembers
+  public interface Dependencies {
+
+    /** @return content resolver */
+    @NonNull ContentResolver resolver();
+
+    /** Content authority */
+    @NonNull String authority();
+  }
 
   /** Observer record. */
   private static final class Observer extends ContentObserver {
@@ -458,7 +495,8 @@ import static java.util.Objects.requireNonNull;
      *
      * @param observer file mObserver
      */
-    Observer(@NonNull BiConsumer<Boolean, Uri> observer, @Nullable Handler handler, boolean selfNotify)
+    Observer(@NonNull BiConsumer<Boolean, Uri> observer,
+        @Nullable Handler handler, boolean selfNotify)
     {super(handler); this.mObserver = observer; mSelfNotify = selfNotify;}
 
     /** {@inheritDoc} */

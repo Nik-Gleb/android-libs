@@ -1,6 +1,6 @@
 /*
  * ColorFormat.java
- * bundle-opengl
+ * opengl
  *
  * Copyright (C) 2018, Gleb Nikitenko. All Rights Reserved.
  *
