@@ -24,9 +24,9 @@
 # hide the original source file tag.
 #-renamesourcefileattribute SourceFile
 
-#-dontobfuscate
-#-dontoptimize
-#-dontshrink
+-dontobfuscate
+-dontoptimize
+-dontshrink
 
 #-verbose
 -optimizationpasses 5
@@ -122,5 +122,5 @@
 -dontwarn java.lang.invoke.LambdaMetafactory
 
 -keep public class data.DataSource {
-    public void inject*;
+    public <methods>;
 }
