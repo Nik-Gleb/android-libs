@@ -25,7 +25,6 @@
 
 package data;
 
-import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,7 +37,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.CheckResult;
@@ -53,9 +51,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import proguard.annotation.Keep;
-import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static android.database.DatabaseUtils.dumpCursor;
 
@@ -334,8 +329,8 @@ final class TablesProvider extends SQLiteProvider {
         // that the provider stays alive long enough to deliver the
         // notification. This empty service is sufficient to "wedge" the
         // process until we stop it here.
-        try {context.stopService(new Intent(context, EmptyService.class));}
-        catch (UnsupportedOperationException ignore) {}
+        /*try {context.stopService(new Intent(context, EmptyService.class));}
+        catch (UnsupportedOperationException ignore) {}*/
 
         break;
     }
@@ -369,6 +364,7 @@ final class TablesProvider extends SQLiteProvider {
     postNotifyUri(data);
 
     // Are there any pending broadcast requests?
+    //noinspection StatementWithEmptyBody
     if (mHandler.hasMessages(UPDATE_BROADCAST_MSG))
       // Delete any pending requests, before requiring a fresh one
       mHandler.removeMessages(UPDATE_BROADCAST_MSG);
@@ -378,8 +374,8 @@ final class TablesProvider extends SQLiteProvider {
       // that the provider stays alive long enough to deliver the
       // notification. This empty service is sufficient to "wedge" the
       // process until we stop it here.
-      try {context.startService(new Intent(context, EmptyService.class));}
-      catch (UnsupportedOperationException ignore) {}
+      /*try {context.startService(new Intent(context, EmptyService.class));}
+      catch (UnsupportedOperationException ignore) {}*/
     }
     // We use a much longer delay for sync-related updates, to prevent any
     // receivers from slowing down the sync
@@ -534,15 +530,14 @@ final class TablesProvider extends SQLiteProvider {
     }
   }
 
-  /**
+  /*
    * Background {@link Service} that is used to keep our process alive long enough
    * for background threads to finish. Started and stopped directly by specific
    * background tasks when needed.
    */
-  @Keep@KeepPublicProtectedClassMembers
-  public static final class EmptyService extends Service
-  {/** {@inheritDoc} */ @Override
-  public final IBinder onBind(Intent intent) {return null;}}
+  //@Keep@KeepPublicProtectedClassMembers
+  //public static final class EmptyService extends Service
+  ///** {@inheritDoc} */ @Override public final IBinder onBind(Intent intent) {return null;}}
 
   /**
    * Prints the contents of a Cursor to a String. The position is restored
