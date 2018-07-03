@@ -144,6 +144,7 @@ public final class DataResource {
   /** @param authority content authority for static init */
   public static void init(@NonNull String authority, @NonNull String prefs) {
     if (isEmpty(AUTHORITY = authority)) throw new IllegalArgumentException();
+    if (isEmpty(sPrefsName = prefs)) throw new IllegalArgumentException();
   }
 
   @NonNull public final DataResource path(@NonNull String path)
