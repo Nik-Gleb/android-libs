@@ -136,9 +136,8 @@ public final class DataResource {
 
   /** @return prefs-resources */
   @NonNull public static DataResource prefs() {
-    return sPrefs != null ? sPrefs : (sPrefs =
-      new DataResource(TABLES, requireNonNull(AUTHORITY)))
-      .path(requireNonNull(sPrefsName));
+    return sPrefs != null ? sPrefs : (sPrefs = new DataResource(TABLES,
+      requireNonNull(AUTHORITY)).path(requireNonNull(sPrefsName)));
   }
 
   /** @param authority content authority for static init */
