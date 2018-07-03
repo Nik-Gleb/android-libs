@@ -76,13 +76,15 @@ import static java.util.Objects.requireNonNull;
 @Keep@KeepPublicProtectedClassMembers
 public final class DataResource {
 
-  /** Content authority */
+  /** Content authority. */
   @Nullable static String AUTHORITY = null;
+
+  /** Preferences name. */
+  @Nullable private static String sPrefsName = null;
 
   /** Data Resource Roots */
   @Nullable private static DataResource
-    sFiles = null, sHttps = null,
-    sAssets = null, sTables = null;
+    sFiles = null, sHttps = null, sAssets = null, sTables = null, sPrefs = null;
 
   /** Data resource uri. */
   @NonNull final Uri uri;
@@ -131,8 +133,15 @@ public final class DataResource {
       new DataResource(TABLES, requireNonNull(AUTHORITY)));
   }
 
+  /** @return prefs-resources */
+  @NonNull public static DataResource prefs() {
+    return sPrefs != null ? sPrefs : (sPrefs =
+      new DataResource(TABLES, requireNonNull(AUTHORITY)))
+      .path(requireNonNull(sPrefsName));
+  }
+
   /** @param authority content authority for static init */
-  public static void init(@NonNull String authority) {
+  public static void init(@NonNull String authority, @NonNull String prefs) {
     if (isEmpty(AUTHORITY = authority)) throw new IllegalArgumentException();
   }
 

@@ -31,7 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.Map;
+
+import data.DataResource;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,11 +64,15 @@ final class WidgetsTest {
   }
 
   @Test final void sum() {
-    when(mMap.size()).thenReturn(3);
+    //when(mMap.size()).thenReturn(3);
 
     //System.out.println("MyClassTest.sum " + mCalculator.sum(1, 2));
 
     //System.out.println("MyClassTest.sum " + mCalculator.getCode(new Bundle()));
 
+    final byte[] bytes = DataResource.toBytes(-
+      326);
+    System.out.println("WidgetsTest.sum " + Arrays.toString(bytes));
+    System.out.println("WidgetsTest.sum " + DataResource.fromBytes(bytes));
   }
 }

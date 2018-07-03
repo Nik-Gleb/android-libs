@@ -181,8 +181,8 @@ public final class BatchOps {
    * @return this builder, to allow for chaining.
    */
   @NonNull
-  public final BatchOps put(boolean update, @NonNull DataResource resource,
-      @NonNull String key, @NonNull byte[] value) {
+  public final BatchOps put(boolean update,
+    @NonNull DataResource resource, @NonNull String key, @NonNull byte[] value) {
     return update ? update(resource, key, value) : insert(resource, key, value);
   }
 
