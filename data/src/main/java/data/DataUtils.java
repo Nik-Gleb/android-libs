@@ -29,12 +29,17 @@ import android.support.annotation.NonNull;
 
 import java.nio.charset.StandardCharsets;
 
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
+
 /**
  * Common Tools
  *
  * @author Nikitenko Gleb
  * @since 1.0, 03/07/2018
  */
+@Keep
+@KeepPublicProtectedClassMembers
 public final class DataUtils {
 
   /**
