@@ -55,9 +55,9 @@ public class Live<T> {
 
   /** Constructs a new {@link Live}.*/
   private Live
-  (@NonNull T initial, @Nullable Listener<T> state, @Nullable Consumer<T> consumer)
+  (@NonNull T initial, @Nullable Listener<T> state, @Nullable Consumer<T>[] consumer)
   {this(state == null ? new MutableLiveData<>() : new MutableLiveData<T>() {
-    @Override protected final void onActive() {state.accept(consumer);}
+    @Override protected final void onActive() {state.accept(requireNonNull(consumer)[0]);}
     @Override protected final void onInactive() {state.accept(null);}
   }, initial);}
 
@@ -286,10 +286,11 @@ public class Live<T> {
    *
    * @return Live Mutable
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "MismatchedReadAndWriteOfArray" })
   @NonNull public static <T> Mutable<T> create(@NonNull T initial, @NonNull Listener<T> state) {
-    final Mutable<T>[] result = new Mutable[1];
-    return result[0] = new Mutable<>(initial, state, result[0]::set);
+    final Consumer<T>[] cons; final Mutable<T> mutable =
+      new Mutable<>(initial, state, cons = new Consumer[1]);
+    try {return mutable;} finally {cons[0] = mutable::set;}
   }
 
   /**
@@ -341,7 +342,7 @@ public class Live<T> {
      *  @param state state listener
      */
     private Mutable(@NonNull T initial, @Nullable Listener<T> state,
-      @Nullable Consumer<T> consumer) {super(initial, state, consumer);}
+      @Nullable Consumer<T>[] consumer) {super(initial, state, consumer);}
 
     /**
      * Constructs a new {@link Live}.
