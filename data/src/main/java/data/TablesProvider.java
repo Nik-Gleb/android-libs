@@ -231,7 +231,8 @@ final class TablesProvider extends SQLiteProvider {
         callerIsSyncAdapter);
 
     //noinspection UnnecessaryLocalVariable
-    final long result = table.insert(ContentUris.parseId(uri), values);
+    final long id = isItem ? ContentUris.parseId(uri) : -1;
+    final long result = table.insert(id, values);
     sendUpdateNotification(/*result*/table.contentUri, callerIsSyncAdapter);
 
     if (Log.isLoggable(TAG, Log.DEBUG))
