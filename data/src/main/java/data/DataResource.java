@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -230,6 +231,17 @@ public final class DataResource {
   @NonNull public final AssetFileDescriptor openFile
   (@NonNull DataSource source, @NonNull Bundle options) throws IOException
   {return source.openFile(uri, options);}
+
+  /**
+   * @param source        data source
+   *
+   * @return              stream of values
+   */
+  @WorkerThread
+  @NonNull public final <T> Optional<T> query
+  (@NonNull DataSource source, @NonNull Function<byte[], T> mapper)
+  {return source.query(uri, null, null, null, null,
+    cursor -> mapper.apply(cursor.getBlob(1))).findFirst();}
 
   /**
    * @param source        data source
