@@ -55,11 +55,11 @@ public class Live<T> {
 
   /** Constructs a new {@link Live}.*/
   private Live
-  (@NonNull T initial, @Nullable Listener state)
+  (@NonNull T initial, @Nullable Listener<T> state, @Nullable Consumer<T> consumer)
   {this(state == null ? new MutableLiveData<>() : new MutableLiveData<T>() {
-    @Override protected final void onActive() {state.accept(true);}
-    @Override protected final void onInactive() {state.accept(false);}
-  }, initial); }
+    @Override protected final void onActive() {state.accept(consumer);}
+    @Override protected final void onInactive() {state.accept(null);}
+  }, initial);}
 
   /**
    * Constructs a new {@link Live}.
@@ -276,7 +276,7 @@ public class Live<T> {
    */
   @SuppressWarnings("unchecked")
   @NonNull public static <T> Mutable<T> create(@NonNull T initial)
-  {return new Mutable<>(initial, null);}
+  {return new Mutable<>(initial, null, null);}
 
   /**
    * Create Live-Object.
@@ -287,8 +287,10 @@ public class Live<T> {
    * @return Live Mutable
    */
   @SuppressWarnings("unchecked")
-  @NonNull public static <T> Mutable<T> create(@NonNull T initial, @NonNull Listener state)
-  {return new Mutable<>(initial, state);}
+  @NonNull public static <T> Mutable<T> create(@NonNull T initial, @NonNull Listener<T> state) {
+    final Mutable<T>[] result = new Mutable[1];
+    return result[0] = new Mutable<>(initial, state, result[0]::set);
+  }
 
   /**
    * @author Nikitenko Gleb
@@ -299,11 +301,11 @@ public class Live<T> {
 
     /** {@inheritDoc} */
     @Override default void onChanged(@Nullable T value)
-    {onNonNullChanged(Objects.requireNonNull(value));}
+    {onNonNullChanged(requireNonNull(value));}
 
     /** {@inheritDoc} */
     @Override default void accept(@Nullable T value)
-    {onNonNullChanged(Objects.requireNonNull(value));}
+    {onNonNullChanged(requireNonNull(value));}
 
     /**
      * Called when the state is changed.
@@ -315,14 +317,14 @@ public class Live<T> {
 
   /** State changes listener. */
   @FunctionalInterface
-  public interface Listener {
+  public interface Listener<T> {
 
     /**
      * Calls when Live changed state
      *
-     * @param value true - activated, false - deactivated
+     * @param mutable nonNull - activated, Null - deactivated
      */
-    void accept(boolean value);
+    void accept(@Nullable Consumer<T> mutable);
   }
 
   /**
@@ -338,9 +340,8 @@ public class Live<T> {
      *  @param initial initial data
      *  @param state state listener
      */
-    private Mutable
-    (@NonNull T initial, @Nullable Listener state)
-    {super(initial, state);}
+    private Mutable(@NonNull T initial, @Nullable Listener<T> state,
+      @Nullable Consumer<T> consumer) {super(initial, state, consumer);}
 
     /**
      * Constructs a new {@link Live}.
