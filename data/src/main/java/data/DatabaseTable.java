@@ -25,7 +25,6 @@
 
 package data;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.CrossProcessCursorWrapper;
@@ -292,20 +291,19 @@ final class DatabaseTable {
   /**
    * Insert new item to table
    *
-   * @param uri    uri resource
+   * @param id     id of resource
    * @param values insert values
    *
    * @return id of inserted row
    */
-  @NonNull
-  public final Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-    if (values == null) return uri;
+  public final long insert(long id, @Nullable ContentValues values) {
+    if (values == null) throw new IllegalArgumentException("no values");
     mInsertStatement.clearBindings();
-    if (preferences) mInsertStatement.bindLong(1, values.getAsLong(_ID));
+    if (id != -1) mInsertStatement.bindLong(1, id);
     mInsertStatement.bindBlob(2, values.getAsByteArray(DATA_COLUMN));
     final long result = mInsertStatement.executeInsert();
-    if (result == -1) throw new RuntimeException("Error insertion " + uri);
-    return preferences ? uri : ContentUris.withAppendedId(uri, result);
+    if (result == -1) throw new RuntimeException("Error insertion");
+    return result;
   }
 
   /**
@@ -412,8 +410,8 @@ final class DatabaseTable {
 
   /** @param db database instance */
   private void create(@NonNull SQLiteDatabase db) {
-    db.execSQL(format(US, TABLE_CREATE_SCRIPT, tableName,
-                      preferences ? " " : " AUTOINCREMENT "));
+    db.execSQL(format(US, TABLE_CREATE_SCRIPT,
+      tableName, preferences ? " " : " AUTOINCREMENT "));
   }
 
   @NonNull

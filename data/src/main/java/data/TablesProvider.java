@@ -26,6 +26,7 @@
 package data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -230,13 +231,13 @@ final class TablesProvider extends SQLiteProvider {
         callerIsSyncAdapter);
 
     //noinspection UnnecessaryLocalVariable
-    final Uri result = table.insert(uri, values);
+    final long result = table.insert(ContentUris.parseId(uri), values);
     sendUpdateNotification(/*result*/table.contentUri, callerIsSyncAdapter);
 
     if (Log.isLoggable(TAG, Log.DEBUG))
       Log.println(Log.DEBUG, TAG, " <<< INSERT(RESULT): " + result);
 
-    return result;
+    return ContentUris.withAppendedId(uri, result);
   }
 
   /** The equivalent of the {@link #delete} method, but invoked within a transaction. */

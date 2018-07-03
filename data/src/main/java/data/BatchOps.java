@@ -40,10 +40,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 import static android.content.ContentProviderOperation.newDelete;
 import static android.content.ContentProviderOperation.newInsert;
 import static android.content.ContentProviderOperation.newUpdate;
-import static android.content.ContentUris.withAppendedId;
-import static android.provider.BaseColumns._ID;
 import static data.DataSource.DATA;
-import static data.DataSource.keyToId;
 
 /**
  * Batch of Content Operations.
@@ -97,26 +94,6 @@ public final class BatchOps {
 
   /**
    * @param resource data resource
-   * @param key      key of row
-   * @param value    raw data
-   *
-   * @return this builder, to allow for chaining.
-   */
-  @NonNull
-  public final BatchOps insert
-  (@NonNull DataResource resource, @NonNull String key, @NonNull byte[] value) {
-    mOperations.add(
-        newInsert(resource.uri)
-            .withValue(_ID, keyToId(key))
-            .withValue(DATA, value)
-            .withYieldAllowed(yield(mOperations.size()))
-            .build()
-    );
-    return this;
-  }
-
-  /**
-   * @param resource data resource
    * @param values   content values
    *
    * @return this builder, to allow for chaining.
@@ -135,7 +112,6 @@ public final class BatchOps {
 
   /**
    * @param resource data resource
-   * @param key      key of updatable
    * @param value    raw data
    *
    * @return this builder, to allow for chaining.
@@ -143,28 +119,9 @@ public final class BatchOps {
   @SuppressWarnings("WeakerAccess")
   @NonNull
   public final BatchOps update
-  (@NonNull DataResource resource, @NonNull String key, @NonNull byte[] value) {
+  (@NonNull DataResource resource, @NonNull byte[] value) {
     mOperations.add(
-        newUpdate(withAppendedId(resource.uri, keyToId(key)))
-            .withValue(DATA, value)
-            .withYieldAllowed(yield(mOperations.size()))
-            .build()
-    );
-    return this;
-  }
-
-  /**
-   * @param resource data resource
-   * @param id       id of updatable
-   * @param value    raw data
-   *
-   * @return this builder, to allow for chaining.
-   */
-  @NonNull
-  public final BatchOps update
-  (@NonNull DataResource resource, long id, @NonNull byte[] value) {
-    mOperations.add(
-        newUpdate(withAppendedId(resource.uri, id))
+        newUpdate(resource.uri)
             .withValue(DATA, value)
             .withYieldAllowed(yield(mOperations.size()))
             .build()
@@ -175,44 +132,25 @@ public final class BatchOps {
   /**
    * @param update   true for update, false for insert
    * @param resource data resource
-   * @param key      key of updatable
    * @param value    raw data
    *
    * @return this builder, to allow for chaining.
    */
   @NonNull
   public final BatchOps put(boolean update,
-    @NonNull DataResource resource, @NonNull String key, @NonNull byte[] value) {
-    return update ? update(resource, key, value) : insert(resource, key, value);
+    @NonNull DataResource resource, @NonNull byte[] value) {
+    return update ? update(resource, value) : insert(resource, value);
   }
 
   /**
    * @param resource data resource
-   * @param key      key of deletable
    *
    * @return this builder, to allow for chaining.
    */
   @NonNull
-  public final BatchOps delete
-  (@NonNull DataResource resource, @NonNull String key) {
+  public final BatchOps delete(@NonNull DataResource resource) {
     mOperations.add(
-        newDelete(withAppendedId(resource.uri, keyToId(key)))
-            .withYieldAllowed(yield(mOperations.size()))
-            .build()
-    );
-    return this;
-  }
-
-  /**
-   * @param resource data resource
-   * @param id       id of deletable
-   *
-   * @return this builder, to allow for chaining.
-   */
-  @NonNull
-  public final BatchOps delete(@NonNull DataResource resource, long id) {
-    mOperations.add(
-        newDelete(withAppendedId(resource.uri, id))
+        newDelete(resource.uri)
             .withYieldAllowed(yield(mOperations.size()))
             .build()
     );

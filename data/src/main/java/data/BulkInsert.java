@@ -34,9 +34,7 @@ import android.support.annotation.WorkerThread;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
-import static android.provider.BaseColumns._ID;
 import static data.DataSource.DATA;
-import static data.DataSource.keyToId;
 import static java.lang.System.arraycopy;
 
 /**
@@ -94,21 +92,6 @@ public final class BulkInsert {
   @NonNull
   public final BulkInsert put(@NonNull byte[] value) {
     final ContentValues values = new ContentValues(1);
-    values.put(DATA, value);
-    mContentValues = addValue(mContentValues, values);
-    return this;
-  }
-
-  /**
-   * @param key   key of raw
-   * @param value raw data
-   *
-   * @return this builder, to allow for chaining.
-   */
-  @NonNull
-  public final BulkInsert put(@NonNull String key, @NonNull byte[] value) {
-    final ContentValues values = new ContentValues(2);
-    values.put(_ID, keyToId(key));
     values.put(DATA, value);
     mContentValues = addValue(mContentValues, values);
     return this;
