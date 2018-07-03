@@ -75,6 +75,7 @@ import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static android.text.TextUtils.isEmpty;
+import static data.DataResource.AUTHORITY;
 import static java.util.Collections.newSetFromMap;
 import static java.util.Objects.requireNonNull;
 
@@ -102,14 +103,23 @@ import static java.util.Objects.requireNonNull;
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
 
+
   /**
    * Constructs a new {@link DataSource}
    *
-   * @param dependencies external dependencies
+   * @param resolver system content resolver
    */
-  @Inject public DataSource(@NonNull Dependencies dependencies)
-  {mClient = (mResolver = dependencies.resolver())
-      .acquireContentProviderClient(dependencies.authority());}
+  @Inject public DataSource(@NonNull ContentResolver resolver)
+  {this(resolver, requireNonNull(AUTHORITY));}
+
+  /**
+   * Constructs a new {@link DataSource}
+   *
+   * @param resolver system content resolver
+   * @param authority content authority
+   */
+  public DataSource(@NonNull ContentResolver resolver, @NonNull String authority)
+  {mClient = (mResolver = resolver).acquireContentProviderClient(authority);}
 
   /** @param closeables for push */
   @SuppressWarnings("unchecked")
@@ -470,17 +480,6 @@ import static java.util.Objects.requireNonNull;
 
   /** @return new created operations butch builder */
   @NonNull public final BatchOps applyBatch() {return new BatchOps(this);}
-
-  /** Data source dependencies. */
-  @Keep@KeepPublicProtectedClassMembers
-  public interface Dependencies {
-
-    /** @return content resolver */
-    @NonNull ContentResolver resolver();
-
-    /** Content authority */
-    @NonNull String authority();
-  }
 
   /** Observer record. */
   private static final class Observer extends ContentObserver {

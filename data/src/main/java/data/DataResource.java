@@ -55,9 +55,16 @@ import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static android.content.ContentUris.withAppendedId;
+import static android.text.TextUtils.isEmpty;
 import static data.DataResource.Access.READ;
 import static data.DataResource.Access.WRITE;
+import static data.DataResource.Name.ASSETS;
+import static data.DataResource.Name.CONTENT;
+import static data.DataResource.Name.FILES;
+import static data.DataResource.Name.HTTPS;
+import static data.DataResource.Name.TABLES;
 import static data.DataSource.MODE;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Data Resource Description
@@ -68,6 +75,14 @@ import static data.DataSource.MODE;
 @SuppressWarnings({ "WeakerAccess", "unused" })
 @Keep@KeepPublicProtectedClassMembers
 public final class DataResource {
+
+  /** Content authority */
+  @Nullable static String AUTHORITY = null;
+
+  /** Data Resource Roots */
+  @Nullable private static DataResource
+    sFiles = null, sHttps = null,
+    sAssets = null, sTables = null;
 
   /** Data resource uri. */
   @NonNull final Uri uri;
@@ -90,40 +105,36 @@ public final class DataResource {
    * @return content-resources
    */
   @NonNull public static DataResource content(@NonNull String auth)
-  {return new DataResource(Name.CONTENT, auth);}
+  {return new DataResource(CONTENT, auth);}
 
-  /**
-   * @param auth authority
-   *
-   * @return files-resources
-   */
-  @NonNull public static DataResource files(@NonNull String auth)
-  {return new DataResource(Name.FILES, auth);}
+  /** @return files-resources */
+  @NonNull public static DataResource files() {
+    return sFiles != null ? sFiles : (sFiles =
+      new DataResource(FILES, requireNonNull(AUTHORITY)));
+  }
 
-  /**
-   * @param auth authority
-   *
-   * @return https-resources
-   */
-  @NonNull public static DataResource https(@NonNull String auth)
-  {return new DataResource(Name.HTTPS, auth);}
+  /** @return https-resources */
+  @NonNull public static DataResource https() {
+    return sHttps != null ? sHttps : (sHttps =
+      new DataResource(HTTPS, requireNonNull(AUTHORITY)));
+  }
 
-  /**
-   * @param auth authority
-   *
-   * @return assets-resources
-   */
-  @NonNull public static DataResource assets(@NonNull String auth)
-  {return new DataResource(Name.ASSETS, auth);}
+  /** @return assets-resources */
+  @NonNull public static DataResource assets() {
+    return sAssets != null ? sAssets : (sAssets =
+      new DataResource(ASSETS, requireNonNull(AUTHORITY)));
+  }
 
-  /**
-   * @param auth authority
-   *
-   * @return tables-resources
-   */
-  @NonNull public static DataResource tables(@NonNull String auth)
-  {return new DataResource(Name.TABLES, auth);}
+  /** @return tables-resources */
+  @NonNull public static DataResource tables() {
+    return sTables != null ? sTables : (sTables =
+      new DataResource(TABLES, requireNonNull(AUTHORITY)));
+  }
 
+  /** @param authority content authority for static init */
+  public static void init(@NonNull String authority) {
+    if (isEmpty(AUTHORITY = authority)) throw new IllegalArgumentException();
+  }
 
   @NonNull public final DataResource path(@NonNull String path)
   {return new DataResource(uri.buildUpon().appendEncodedPath(path).build());}
@@ -353,7 +364,7 @@ public final class DataResource {
    * @author Nikitenko Gleb
    * @since 1.0, 06/10/2016
    */
-  @StringDef({Name.CONTENT, Name.HTTPS, Name.FILES, Name.ASSETS, Name.TABLES})
+  @StringDef({ CONTENT, HTTPS, FILES, ASSETS, TABLES})
   @Retention(RetentionPolicy.SOURCE) @interface Name
   {String CONTENT = ContentResolver.SCHEME_CONTENT,
       HTTPS = "https", FILES = "files",
