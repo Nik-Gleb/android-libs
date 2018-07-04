@@ -27,8 +27,6 @@ package extensions;
 
 import android.support.annotation.NonNull;
 
-import java.util.Set;
-
 /**
  * @author Nikitenko Gleb
  * @since 1.0, 21/06/2018
@@ -44,9 +42,6 @@ public interface Selector<T> {
 
   /** @param id identifier of item for unSelect */
   void unSelect(int id);
-
-  /** @param ids to unSelect multiple */
-  void unSelectAll(@NonNull Set<Integer> ids);
 
   /** Clear all selections */
   void reset();
