@@ -315,7 +315,7 @@ public final class Executors {
 
     /** {@inheritDoc} */
     @Override @NonNull public final T get() {
-      if (mValue == null)
+      if (mValue == null && !mClosed)
         synchronized (mLock) {
           while (mValue == null) {
             try {mLock.wait();}
