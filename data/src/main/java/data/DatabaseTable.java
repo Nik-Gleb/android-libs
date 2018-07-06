@@ -30,7 +30,6 @@ import android.content.UriMatcher;
 import android.database.CrossProcessCursorWrapper;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
@@ -385,13 +384,12 @@ final class DatabaseTable {
       @NonNull SQLiteDatabase writableSQLiteDatabase) {
     mReadableDatabase = readableSQLiteDatabase;
     mWritableDatabase = writableSQLiteDatabase;
+
     mDeleteStatement = writableSQLiteDatabase.compileStatement
         ("DELETE FROM " + tableName + " " + ID_SELECTION_WHERE + ";");
-    try {
-      mGetDataStatement = writableSQLiteDatabase.compileStatement
+    mGetDataStatement = writableSQLiteDatabase.compileStatement
           ("SELECT " + DATA_COLUMN + " FROM " + tableName + " "
                + ID_SELECTION_WHERE + " LIMIT 1;");
-    } catch (SQLException ignored) {}
     mInsertStatement = writableSQLiteDatabase.compileStatement
         (script(INSERT_SCRIPT));
   }
@@ -410,6 +408,8 @@ final class DatabaseTable {
 
   /** @param db database instance */
   private void create(@NonNull SQLiteDatabase db) {
+
+
     db.execSQL(format(US, TABLE_CREATE_SCRIPT,
       tableName, preferences ? " " : " AUTOINCREMENT "));
   }

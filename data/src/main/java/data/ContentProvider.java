@@ -46,6 +46,7 @@ import android.support.annotation.Nullable;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -145,9 +146,7 @@ public final class ContentProvider extends
   @Override
   public final boolean onCreate() {
     final Context context = Objects.requireNonNull(getContext());
-
-    //SQLiteStudioService.instance().start(context);
-
+    startDebug(context);
     final ProviderInfo info = getProviderInfo(context);
     final Bundle meta = info.metaData == null ? Bundle.EMPTY : info.metaData;
     final String name = getDatabaseName(meta);
@@ -354,7 +353,6 @@ public final class ContentProvider extends
   public final void shutdown() {
     final Collection<Provider> providers = mProviders.values();
     for (final Provider storage : providers) { storage.shutdown(); }
-    //SQLiteStudioService.instance().stop();
   }
 
   /** {@inheritDoc} */
@@ -363,6 +361,7 @@ public final class ContentProvider extends
       @NonNull PrintWriter writer, @Nullable String[] args) {
     final Collection<Provider> providers = mProviders.values();
     for (final Provider storage : providers) { storage.dump(fd, writer, args); }
+    stopDebug();
   }
 
   /** Create child providers. */
@@ -409,4 +408,29 @@ public final class ContentProvider extends
     }
     return builder.build();
   }
+
+  /** Remote debug connection */
+  @Nullable private Object mDebugConnection = null;
+
+  /** @param context application context */
+  @SuppressWarnings("unchecked")
+  private void startDebug(@NonNull Context context) {
+    //SQLiteStudioService.instance().start(context);
+    try {final Class clazz = Class.forName
+      ("pl.com.salsoft.sqlitestudioremote.SQLiteStudioService");
+      mDebugConnection = clazz.getMethod("instance").invoke(null);
+      clazz.getMethod("start", Context.class).invoke(mDebugConnection, context);
+    } catch (ClassNotFoundException | IllegalAccessException |
+      InvocationTargetException | NoSuchMethodException ignore) {}
+  }
+
+  /** Stop debug connection. */
+  private void stopDebug() {
+    if (mDebugConnection == null) return;
+    try {mDebugConnection.getClass().getMethod("stop").invoke(mDebugConnection);}
+    catch (IllegalAccessException | InvocationTargetException |
+      NoSuchMethodException ignore) {} finally {mDebugConnection = null;}
+    //SQLiteStudioService.instance().stop();
+  }
+
 }

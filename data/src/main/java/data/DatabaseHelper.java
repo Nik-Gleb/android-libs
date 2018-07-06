@@ -167,10 +167,15 @@ final class DatabaseHelper extends SQLiteOpenHelper {
       table.onPrepare(db, oldVersion);
   }
 
+  @Override public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    super.onDowngrade(db, oldVersion, newVersion);
+  }
+
   /** {@inheritDoc} */
   @Override
   public final void onOpen(@NonNull SQLiteDatabase db) {
     super.onOpen(db);
+    System.out.println("DatabaseHelper.onOpen");
     db.enableWriteAheadLogging();
     //db.execSQL("PRAGMA temp_store MEMORY");
     db.rawQuery("PRAGMA synchronous = OFF;", null);

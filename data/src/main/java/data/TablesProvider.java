@@ -170,9 +170,8 @@ final class TablesProvider extends SQLiteProvider {
   public final boolean onCreate() {
     final boolean result = super.onCreate();
     final SQLiteOpenHelper sqLiteOpenHelper = getDatabaseHelper(context);
-    final SQLiteDatabase readableDatabase = sqLiteOpenHelper.getReadableDatabase();
     final SQLiteDatabase writableDatabase = sqLiteOpenHelper.getWritableDatabase();
-
+    final SQLiteDatabase readableDatabase = sqLiteOpenHelper.getReadableDatabase();
     for (final DatabaseTable table : mTables)
       table.onCreate(writableDatabase, readableDatabase);
 
