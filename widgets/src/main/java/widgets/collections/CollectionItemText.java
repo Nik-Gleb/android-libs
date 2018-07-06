@@ -66,6 +66,8 @@ public class CollectionItemText extends AppCompatTextView
   /** This instance. */
   private final CollectionItemText mInstance = this;
 
+  public float count = 4.0f;
+
   /** Current item value. */
   @NonNull private Item mItem = Item.EMPTY;
 
