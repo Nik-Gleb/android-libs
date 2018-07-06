@@ -131,7 +131,6 @@ public class CollectionItemText extends AppCompatTextView
   @SuppressWarnings({ "ConstantConditions", "NumericOverflow" })
   @Override protected final void onMeasure(int widthSpec, int heightSpec) {
     final boolean horizontal = true;
-    final float count = 4.0f;
     final int widthMode, heightMode;
     if (horizontal) {
       widthSpec = Math.round((float)((RecyclerView)getParent()).getWidth() / count);
