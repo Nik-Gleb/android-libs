@@ -25,6 +25,7 @@
 
 package widgets.collections;
 
+import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.util.AdapterListUpdateCallback;
@@ -57,9 +58,8 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Keep
 @KeepPublicProtectedClassMembers
-public final class CollectionAdapter<T extends CollectionAdapter.Item,
-    U extends View & Consumer<T> & BooleanSupplier>
-    extends RecyclerView.Adapter<CollectionAdapter.ViewHolder<T, U>> {
+public final class CollectionAdapter<T extends CollectionAdapter.Item, U extends View & Consumer<T> & BooleanSupplier>
+  extends RecyclerView.Adapter<CollectionAdapter.ViewHolder<T, U>> implements Observer<T[]> {
 
   /** The log-cat tag. */
   private static final String TAG = "CollectionAdapter";
@@ -137,12 +137,6 @@ public final class CollectionAdapter<T extends CollectionAdapter.Item,
   @Override public final long getItemId(int position)
   {return mItems[position].hashCode();}
 
-  /** @param newItems new items */
-  public final void setItems(@NonNull T[] newItems) {
-    final T[] oldItems = mItems; mItems = newItems;
-    CollectionDiffs.calc(oldItems, newItems).dispatch(mCallback);
-  }
-
   /** {@inheritDoc} */
   @Override public final void onAttachedToRecyclerView(@NonNull
       RecyclerView recyclerView)
@@ -174,6 +168,15 @@ public final class CollectionAdapter<T extends CollectionAdapter.Item,
           ((CollectionLayoutManagerLinear)manager).skipPredictions();
     }
   }
+  /**
+   * Called when the data is changed.
+   *
+   * @param newItems the new data
+   */
+  @Override public final void onChanged(@Nullable T[] newItems) {
+    final T[] oldItems = mItems; mItems = Objects.requireNonNull(newItems);
+    CollectionDiffs.calc(oldItems, newItems).dispatch(mCallback);
+  }
 
   /** The view holder of this adapter. */
   @Keep
@@ -188,9 +191,7 @@ public final class CollectionAdapter<T extends CollectionAdapter.Item,
    * @author Nikitenko Gleb
    * @since 1.0, 29/04/2018
    */
-  @Keep
-  @KeepPublicProtectedClassMembers
-  public static abstract class Item {
+  static abstract class Item {
 
     /** ID of item. */
     public final int id;

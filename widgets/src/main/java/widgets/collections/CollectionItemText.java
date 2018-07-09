@@ -114,10 +114,7 @@ public class CollectionItemText extends AppCompatTextView
   {try {close();} finally {super.finalize();}}
 
   /** {@inheritDoc} */
-  @Override public final boolean getAsBoolean() {
-    System.out.println("CollectionItemView.getAsBoolean");
-    return false;
-  }
+  @Override public final boolean getAsBoolean() {return false;}
 
   /** {@inheritDoc} */
   @Override public final void accept(@Nullable Item item) {
@@ -149,9 +146,15 @@ public class CollectionItemText extends AppCompatTextView
   @KeepPublicProtectedClassMembers
   public static final class Item extends CollectionAdapter.Item {
 
+    /** Default buffer. */
+    public static final BufferType NORMAL = BufferType.NORMAL;
+
+    /** Empty text. */
+    public static final CharSequence NO_TEXT = "";
+
     /** Empty item. */
-    private static final Item EMPTY =
-        new Item(-1, -1, "", BufferType.NORMAL, false);
+    public static final Item EMPTY =
+        new Item(-1, -1, NO_TEXT, NORMAL, false);
 
     /** Char sequence */
     final CharSequence chars;

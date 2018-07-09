@@ -224,7 +224,8 @@ public class CollectionItemView extends View
   @Nullable @Override public final Drawable getSuper()
   {return super.getBackground();}
 
-  public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  /** {@inheritDoc} */
+  public final void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     int size = Math.min(getMeasuredWidth(), getMeasuredHeight());
     setMeasuredDimension(size, size);
@@ -252,10 +253,7 @@ public class CollectionItemView extends View
   }
 
   /** {@inheritDoc} */
-  @Override public final boolean getAsBoolean() {
-    System.out.println("CollectionItemView.getAsBoolean");
-    return false;
-  }
+  @Override public final boolean getAsBoolean() {return false;}
 
   /** {@inheritDoc} */
   @Override public final void accept(@Nullable Item item) {
@@ -273,15 +271,16 @@ public class CollectionItemView extends View
   @KeepPublicProtectedClassMembers
   public static final class Item extends CollectionAdapter.Item {
 
+    /** No drawable. */
+    public static final Drawable NO_DRAWABLE =
+      new ColorDrawable(Color.TRANSPARENT);
+
     /** Empty item. */
-    private static final Item EMPTY =
-        new Item(-1, -1, new ColorDrawable(Color.TRANSPARENT), null, false);
+    public static final Item EMPTY =
+        new Item(-1, -1, NO_DRAWABLE, false);
 
     /** Drawable resource */
     final Drawable drawable;
-
-    /** Resource uri */
-    final Uri uri;
 
     /** Selected state. */
     boolean selected;
@@ -296,30 +295,8 @@ public class CollectionItemView extends View
      * @param selected selected flag
      *
      */
-    protected Item(int id, int type, @Nullable Drawable drawable, @Nullable Uri uri, boolean selected)
-    {super(id, type); this.drawable = drawable; this.uri = uri; this.selected = selected;}
-
-    /**
-     * Constructs a new {@link Item}.
-     *
-     * @param id   id of view
-     * @param type type of view
-     * @param drawable icon resource
-     * @param selected selected flag
-     */
-    @NonNull public static Item create(int id, int type, @Nullable Drawable drawable, boolean selected)
-    {final Uri uri = null; return new Item(id, type, drawable, uri, selected);}
-
-    /**
-     * Constructs a new {@link Item}.
-     *
-     * @param id   id of view
-     * @param type type of view
-     * @param uri icon address
-     * @param selected selected flag
-     */
-    @NonNull public static Item create(int id, int type, @Nullable Uri uri, boolean selected)
-    {final Drawable drawable = null; return new Item(id, type, drawable, uri, selected);}
+    public Item(int id, int type, @Nullable Drawable drawable, boolean selected)
+    {super(id, type); this.drawable = drawable; this.selected = selected;}
 
     /** {@inheritDoc} */
     @Override public final boolean equals(Object obj) {
@@ -330,11 +307,8 @@ public class CollectionItemView extends View
           Objects.equals(drawable, item.drawable);
     }
 
-    @Override
-    public String toString() {
-      return "Item{" + "id=" + id
-          + '}';
-    }
+    /** {@inheritDoc} */
+    @Override public final String toString() {return "Item{" + "id=" + id + '}';}
   }
 
 
