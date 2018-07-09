@@ -116,8 +116,8 @@ public class Live<T> {
    * @param owner    The LifecycleOwner which controls the observer
    * @param observer The observer that will receive the events
    */
-  @MainThread public final void observe
-  (@NonNull LifecycleOwner owner, @NonNull Observer<T> observer)
+  @MainThread public final <U extends android.arch.lifecycle.Observer<T>> void observe
+  (@NonNull LifecycleOwner owner, @NonNull U observer)
   {mDelegate.observe(owner, observer);}
 
   /**
