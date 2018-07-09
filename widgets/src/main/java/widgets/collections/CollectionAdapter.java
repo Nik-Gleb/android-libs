@@ -191,7 +191,9 @@ public final class CollectionAdapter<T extends CollectionAdapter.Item, U extends
    * @author Nikitenko Gleb
    * @since 1.0, 29/04/2018
    */
-  static abstract class Item {
+  @Keep
+  @KeepPublicProtectedClassMembers
+  public static abstract class Item {
 
     /** ID of item. */
     public final int id;
