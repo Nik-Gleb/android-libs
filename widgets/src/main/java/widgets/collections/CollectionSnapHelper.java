@@ -25,12 +25,18 @@
 
 package widgets.collections;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.RecyclerView;
 
 import java.io.Closeable;
+import java.util.function.Supplier;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Collection Snap Helper.
@@ -46,9 +52,20 @@ public final class CollectionSnapHelper
   /** The log-cat tag. */
   private static final String TAG = "CollectionSnapHelper";
 
-
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
+
+  /** Attached {@link RecyclerView} */
+  @Nullable private RecyclerView mRecyclerView = null;
+
+  /**
+   * Constructs a new {@link CollectionSnapHelper}.
+   *
+   * @param scroller smooth scroller
+   */
+  public CollectionSnapHelper
+  (@NonNull Supplier<RecyclerView.SmoothScroller>[] scroller)
+  {scroller[0] = () -> requireNonNull(createScroller(requireNonNull(mRecyclerView).getLayoutManager()));}
 
   /** {@inheritDoc} */
   @Override public final void close()
@@ -57,4 +74,14 @@ public final class CollectionSnapHelper
   /** {@inheritDoc} */
   @Override protected final void finalize() throws Throwable
   {try {close();} finally {super.finalize();}}
+
+  /** {@inheritDoc} */
+  @Override public final void attachToRecyclerView
+    (@Nullable RecyclerView recyclerView) throws IllegalStateException {
+    super.attachToRecyclerView(recyclerView);
+    if (mRecyclerView == recyclerView) return;
+    if (mRecyclerView != null) mRecyclerView = null;
+    mRecyclerView = recyclerView;
+    if (mRecyclerView != null) mRecyclerView = mRecyclerView;
+  }
 }

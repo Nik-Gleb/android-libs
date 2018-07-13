@@ -37,8 +37,11 @@ import android.support.annotation.StyleRes;
 import android.support.annotation.StyleableRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
+import android.view.View;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
@@ -77,6 +80,9 @@ public class CollectionRecyclerView extends RecyclerView implements Closeable {
       DEFAULT_ORIENTATION = RecyclerView.HORIZONTAL,
       DEFAULT_SIDE = 3,
       DEFAULT_SPAN = 2;
+
+  /** Item touch helpers. */
+  private final ArrayList<CollectionTouchHelper> mOnItemTouchListeners = new ArrayList<>();
 
   /** The current values. */
   @SuppressWarnings("FieldCanBeLocal")
@@ -172,5 +178,61 @@ public class CollectionRecyclerView extends RecyclerView implements Closeable {
     super.onMeasure
         (MeasureSpec.makeMeasureSpec(widthSpec, widthMode),
         MeasureSpec.makeMeasureSpec(heightSpec, heightMode));
+  }
+
+  /** {@inheritDoc} */
+  @Override public final void addOnItemTouchListener(@NonNull OnItemTouchListener listener) {
+    super.addOnItemTouchListener(listener);
+    if (listener instanceof CollectionTouchHelper)
+      mOnItemTouchListeners.add((CollectionTouchHelper) listener);
+  }
+
+  /** {@inheritDoc} */
+  @Override public void removeOnItemTouchListener(@NonNull OnItemTouchListener listener) {
+    if (listener instanceof CollectionTouchHelper) mOnItemTouchListeners.remove(listener);
+    super.removeOnItemTouchListener(listener);
+  }
+
+  /** {@inheritDoc} */
+  @Override public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+    try {return super.dispatchKeyEvent(event);}
+    finally {
+      if (event.getAction() == KeyEvent.ACTION_UP) {
+        final View childView = getFocusedChild();
+        if (childView != null && childView.isEnabled()) {
+          final int position = getChildAdapterPosition(childView);
+          if (position != RecyclerView.NO_POSITION && onKeyUp(event.getKeyCode(), event, childView))
+            for(final CollectionTouchHelper helper : mOnItemTouchListeners)
+              helper.listener.accept(this, position);
+        }
+      }
+    }
+  }
+
+  /**
+   * @param keyCode pressed key code
+   * @param event key event
+   * @param view target view
+   *
+   * @return true if necessary handle it
+   */
+  private static boolean onKeyUp(int keyCode, @NonNull KeyEvent event, @NonNull View view) {
+    return isConfirmKey(keyCode) && view.isEnabled() && view.isClickable();
+  }
+
+  /**
+   * @param keyCode key code of pressed key
+   * @return Whether key will, by default, trigger a click on the focused view.
+   */
+  private static boolean isConfirmKey(int keyCode) {
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_DPAD_CENTER:
+      case KeyEvent.KEYCODE_ENTER:
+      case KeyEvent.KEYCODE_SPACE:
+      case KeyEvent.KEYCODE_NUMPAD_ENTER:
+        return true;
+      default:
+        return false;
+    }
   }
 }

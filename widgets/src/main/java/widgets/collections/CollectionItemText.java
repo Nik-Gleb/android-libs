@@ -41,6 +41,7 @@ import java.util.function.Consumer;
 
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
+import widgets.collections.CollectionAdapter.Item;
 
 /**
  * @author Nikitenko Gleb
@@ -50,7 +51,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 @Keep
 @KeepPublicProtectedClassMembers
 public class CollectionItemText extends AppCompatTextView
-    implements Closeable, Consumer<CollectionItemText.Item>, BooleanSupplier {
+    implements Closeable, Consumer<Item>, BooleanSupplier {
 
   /** The log cat tag. */
   private static final String TAG = "CollectionItemText";
@@ -121,7 +122,6 @@ public class CollectionItemText extends AppCompatTextView
     item = item == null ? Item.EMPTY : item;
     if (Objects.equals(mItem, item)) return;
     setText(item.chars, item.buffer);
-    setSelected(item.selected);
     mItem = item;
   }
 
@@ -139,55 +139,6 @@ public class CollectionItemText extends AppCompatTextView
     super.onMeasure
         (MeasureSpec.makeMeasureSpec(widthSpec, widthMode),
             MeasureSpec.makeMeasureSpec(heightSpec, heightMode));
-  }
-
-  /** Item data */
-  @Keep
-  @KeepPublicProtectedClassMembers
-  public static final class Item extends CollectionAdapter.Item {
-
-    /** Default buffer. */
-    public static final BufferType NORMAL = BufferType.NORMAL;
-
-    /** Empty text. */
-    public static final CharSequence NO_TEXT = "";
-
-    /** Empty item. */
-    public static final Item EMPTY =
-        new Item(-1, -1, NO_TEXT, NORMAL, false);
-
-    /** Char sequence */
-    final CharSequence chars;
-
-    /** Buffer type */
-    final BufferType buffer;
-
-    /** Selected state. */
-    boolean selected;
-
-    /**
-     * Constructs a new {@link Item}.
-     *
-     * @param id   id of view
-     * @param type type of view
-     * @param selected selected flag
-     *
-     */
-    public Item
-    (int id, int type,@NonNull CharSequence chars, @NonNull BufferType buffer, boolean selected)
-    {super(id, type); this.chars = chars; this.buffer = buffer; this.selected = selected;}
-
-
-    /** {@inheritDoc} */
-    @Override public final boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (!(obj instanceof Item)) return false;
-      final Item item = (Item) obj;
-      return selected == item.selected &&
-          Objects.equals(chars, item.chars) &&
-          Objects.equals(buffer, item.buffer);
-    }
-
   }
 
 

@@ -27,8 +27,10 @@ package widgets.collections;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.SmoothScroller;
 import android.util.AttributeSet;
 
 import proguard.annotation.Keep;
@@ -42,7 +44,11 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 @KeepPublicProtectedClassMembers
 public final class CollectionLayoutManagerLinear extends LinearLayoutManager {
 
+  /** Without predictions class. */
   private boolean mWithoutPredictions = false;
+
+  /** Post-Layout task. */
+  @Nullable private SmoothScroller mScroller = null;
 
   /**
    * Creates a vertical LinearLayoutManager
@@ -50,7 +56,7 @@ public final class CollectionLayoutManagerLinear extends LinearLayoutManager {
    * @param context Current context, will be used to access resources.
    */
   public CollectionLayoutManagerLinear(@NonNull Context context)
-  {super(context);}
+  {super(context); setItemPrefetchEnabled(false);}
 
   /**
    * @param context       Current context, will be used to access resources.
@@ -60,7 +66,7 @@ public final class CollectionLayoutManagerLinear extends LinearLayoutManager {
    */
   public CollectionLayoutManagerLinear
   (@NonNull Context context, int orientation, boolean reverseLayout)
-  {super(context, orientation, reverseLayout);}
+  {super(context, orientation, reverseLayout); setItemPrefetchEnabled(false);}
 
   /**
    * Constructor used when layout manager is set in XML by RecyclerView attribute
@@ -68,17 +74,23 @@ public final class CollectionLayoutManagerLinear extends LinearLayoutManager {
    */
   public CollectionLayoutManagerLinear
   (@NonNull Context context, @NonNull AttributeSet attrs, int defStyleAttr, int defStyleRes)
-  {super(context, attrs, defStyleAttr, defStyleRes);}
+  {super(context, attrs, defStyleAttr, defStyleRes); setItemPrefetchEnabled(false);}
 
   /** Skip layout predictions */
   public final void skipPredictions() {mWithoutPredictions = true;}
+
+  /** @param scroller for post-layout execute */
+  public final void postScroller(@NonNull SmoothScroller scroller)
+  {mScroller = scroller;}
 
   /** {@inheritDoc} */
   @Override public final boolean supportsPredictiveItemAnimations()
   {return !mWithoutPredictions && super.supportsPredictiveItemAnimations();}
 
   /** {@inheritDoc} */
-  @Override public final void onLayoutCompleted(RecyclerView.State state)
-  {super.onLayoutCompleted(state); mWithoutPredictions = false;}
+  @Override public final void onLayoutCompleted(RecyclerView.State state) {
+    super.onLayoutCompleted(state); mWithoutPredictions = false;
+    if (mScroller == null) return; startSmoothScroll(mScroller); mScroller = null;
+  }
 
 }

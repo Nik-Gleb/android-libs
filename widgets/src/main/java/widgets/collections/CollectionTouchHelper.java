@@ -27,9 +27,7 @@ package widgets.collections;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
@@ -56,11 +54,14 @@ final class CollectionTouchHelper
   /** The log-cat tag. */
   private static final String TAG = "CollectionTouchHelper";
 
+  /** Selection listener. */
+  @NonNull final BiConsumer<RecyclerView, Integer> listener;
+
   /** The internal callback. */
   private final Callback mCallback;
 
   /** The gesture detector compat. */
-  private final GestureDetectorCompat mGestureDetectorCompat;
+  private final CollectionGestureDetector mGestureDetectorCompat;
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
@@ -71,7 +72,7 @@ final class CollectionTouchHelper
    * @param context an application context
    */
   CollectionTouchHelper(@NonNull Context context, @NonNull BiConsumer<RecyclerView, Integer> listener)
-  {mGestureDetectorCompat = new GestureDetectorCompat(context, mCallback = new Callback(listener));}
+  {mGestureDetectorCompat = new CollectionGestureDetector(context, mCallback = new Callback(this.listener = listener));}
 
   /** {@inheritDoc} */
   @Override public final void close()
@@ -91,7 +92,10 @@ final class CollectionTouchHelper
   {super.onRequestDisallowInterceptTouchEvent(disallowIntercept);}
 
   /** Internal callback. */
-  private static final class Callback extends GestureDetector.SimpleOnGestureListener {
+  private static final class Callback extends CollectionGestureDetector.SimpleOnGestureListener {
+
+    /** Handle near tap. */
+    private boolean mHandle = false;
 
     /** Select listener. */
     private final BiConsumer<RecyclerView, Integer> mListener;
@@ -108,7 +112,8 @@ final class CollectionTouchHelper
     {mListener = listener;}
 
     /** {@inheritDoc} */
-    @Override public final boolean onSingleTapUp(MotionEvent e) {
+    @Override public final boolean onSingleTapUp(@NonNull MotionEvent e) {
+      if (!mHandle) return false; mHandle = false;
       final RecyclerView recyclerView = this.recyclerView; this.recyclerView = null;
       final View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
       if (childView == null || !childView.isEnabled()) return false;
@@ -119,6 +124,11 @@ final class CollectionTouchHelper
       mListener.accept(recyclerView, position);
       return true;
     }
+
+    /** {@inheritDoc} */
+    @Override public final void onShowPress(@NonNull MotionEvent event)
+    {mHandle = true; super.onShowPress(event);}
+
   }
 
 }

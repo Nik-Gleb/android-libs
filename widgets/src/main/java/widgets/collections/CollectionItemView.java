@@ -25,13 +25,12 @@
 
 package widgets.collections;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.libs.widgets.R;
 import android.net.Uri;
@@ -41,9 +40,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.annotation.StyleableRes;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
-
-//import com.bumptech.glide.RequestBuilder;
 
 import java.io.Closeable;
 import java.util.Objects;
@@ -54,7 +52,13 @@ import java.util.function.Consumer;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 import widgets.TintableHelper;
+import widgets.TintableHelper.Callback;
+import widgets.collections.CollectionAdapter.Item;
 
+import static android.view.ViewConfiguration.getTapTimeout;
+import static widgets.collections.CollectionGestureDetector.TAP_TIMEOUT;
+
+//import com.bumptech.glide.RequestBuilder;
 
 /**
  * @author Nikitenko Gleb
@@ -63,9 +67,8 @@ import widgets.TintableHelper;
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Keep
 @KeepPublicProtectedClassMembers
-public class CollectionItemView extends View
-    implements TintableHelper.Callback, Closeable,
-    Consumer<CollectionItemView.Item>, BooleanSupplier {
+public class CollectionItemView extends View implements Callback,
+  Closeable, Consumer<Item>, BooleanSupplier {
 
   /** The log cat tag. */
   private static final String TAG = "CollectionItemView";
@@ -87,6 +90,9 @@ public class CollectionItemView extends View
 
   /** The tintable helper. */
   private final TintableHelper mTintableHelper;
+
+  /** Quick tap mode. */
+  private boolean mQuickTap = false;
 
   /* Glide request builder. */
   //@Nullable private RequestBuilder<Bitmap> mGlideRequestBuilder;
@@ -216,6 +222,28 @@ public class CollectionItemView extends View
     }
   }
 
+  /** {@inheritDoc} */
+  @Override public final boolean postDelayed(@NonNull Runnable action, long delay) {
+    if (delay == getTapTimeout()) delay = TAP_TIMEOUT;
+    return super.postDelayed(action, delay);
+  }
+
+  /** Skip pressed state flag. */
+  private boolean mSkipPressed = false;
+
+  @SuppressLint("ClickableViewAccessibility")
+  @Override public final boolean onTouchEvent(@NonNull MotionEvent event) {
+    mSkipPressed = event.getAction() == MotionEvent.ACTION_MOVE;
+    return super.onTouchEvent(event);
+  }
+
+  /**{@inheritDoc}*/
+  @Override public final void setPressed(boolean pressed)
+  {if (mSkipPressed) return; super.setPressed(pressed);}
+
+  /**{@inheritDoc}*/
+  @Override public final void drawableHotspotChanged(float x, float y)
+  {if (mSkipPressed) return; super.drawableHotspotChanged(x, y);}
   /** @param drawable new drawable for super-call. */
   @Override public final void setSuper(@Nullable Drawable drawable)
   {super.setBackground(drawable);}
@@ -258,57 +286,13 @@ public class CollectionItemView extends View
   /** {@inheritDoc} */
   @Override public final void accept(@Nullable Item item) {
     item = item == null ? Item.EMPTY : item;
+    System.out.println("CollectionItemView.accept " + this + " " + item.id);
+
     if (Objects.equals(mItem, item)) return;
-    if (isSelected() != item.selected) setSelected(item.selected);
+
     /*if (!Objects.equals(mItem.uri, item.uri) && item.uri != null) load(item.uri);*/
     if (!Objects.equals(getBackground(), item.drawable)) setBackground(item.drawable);
     mItem = item;
-  }
-
-
-  /** Item data */
-  @Keep
-  @KeepPublicProtectedClassMembers
-  public static final class Item extends CollectionAdapter.Item {
-
-    /** No drawable. */
-    public static final Drawable NO_DRAWABLE =
-      new ColorDrawable(Color.TRANSPARENT);
-
-    /** Empty item. */
-    public static final Item EMPTY =
-        new Item(-1, -1, NO_DRAWABLE, false);
-
-    /** Drawable resource */
-    final Drawable drawable;
-
-    /** Selected state. */
-    boolean selected;
-
-    /**
-     * Constructs a new {@link Item}.
-     *
-     * @param id   id of view
-     * @param type type of view
-     * @param drawable icon resource
-     * @param uri icon address
-     * @param selected selected flag
-     *
-     */
-    public Item(int id, int type, @Nullable Drawable drawable, boolean selected)
-    {super(id, type); this.drawable = drawable; this.selected = selected;}
-
-    /** {@inheritDoc} */
-    @Override public final boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (!(obj instanceof Item)) return false;
-      final Item item = (Item) obj;
-      return selected == item.selected &&
-          Objects.equals(drawable, item.drawable);
-    }
-
-    /** {@inheritDoc} */
-    @Override public final String toString() {return "Item{" + "id=" + id + '}';}
   }
 
 
