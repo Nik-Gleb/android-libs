@@ -310,23 +310,18 @@ public final class CollectionAdapter<T extends View & Consumer<CollectionAdapter
 
     /** @return new created item */
     @NonNull public static <T> Item create
-    (@NonNull T item, @NonNull Drawable icon)
-    {return new Item(item.hashCode(), 0, NORMAL, NO_TEXT, icon);}
-
-    /** @return new created item */
-    @NonNull public static <T> Item create
     (@NonNull T item, int type, @NonNull Drawable icon)
     {return new Item(item.hashCode(), type, NORMAL, NO_TEXT, icon);}
 
     /** @return new created item */
     @NonNull public static <T> Item create
-    (@NonNull T item, @NonNull CharSequence chars)
-    {return create(item.hashCode(), NORMAL, chars);}
+    (@NonNull T item, int type, @NonNull CharSequence chars)
+    {return new Item(item.hashCode(), type, NORMAL, chars, null);}
 
     /** @return new created item*/
     @NonNull public static <T> Item create
-    (@NonNull T item, @NonNull BufferType buffer, @NonNull CharSequence chars)
-    {return new Item(item.hashCode(), 0, buffer, chars, null);}
+    (@NonNull T item, int type, @NonNull BufferType buffer, @NonNull CharSequence chars)
+    {return new Item(item.hashCode(), type, buffer, chars, null);}
 
     /** @return new created item*/
     @NonNull static Item create(int id)
