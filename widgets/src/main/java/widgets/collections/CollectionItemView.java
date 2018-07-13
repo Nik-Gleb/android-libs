@@ -244,6 +244,7 @@ public class CollectionItemView extends View implements Callback,
   /**{@inheritDoc}*/
   @Override public final void drawableHotspotChanged(float x, float y)
   {if (mSkipPressed) return; super.drawableHotspotChanged(x, y);}
+
   /** @param drawable new drawable for super-call. */
   @Override public final void setSuper(@Nullable Drawable drawable)
   {super.setBackground(drawable);}
@@ -286,10 +287,7 @@ public class CollectionItemView extends View implements Callback,
   /** {@inheritDoc} */
   @Override public final void accept(@Nullable Item item) {
     item = item == null ? Item.EMPTY : item;
-    System.out.println("CollectionItemView.accept " + this + " " + item.id);
-
     if (Objects.equals(mItem, item)) return;
-
     /*if (!Objects.equals(mItem.uri, item.uri) && item.uri != null) load(item.uri);*/
     if (!Objects.equals(getBackground(), item.drawable)) setBackground(item.drawable);
     mItem = item;

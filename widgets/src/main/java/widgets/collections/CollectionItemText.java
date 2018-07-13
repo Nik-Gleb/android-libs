@@ -25,6 +25,7 @@
 
 package widgets.collections;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -33,6 +34,7 @@ import android.support.annotation.StyleRes;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import java.io.Closeable;
 import java.util.Objects;
@@ -42,6 +44,9 @@ import java.util.function.Consumer;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 import widgets.collections.CollectionAdapter.Item;
+
+import static android.view.ViewConfiguration.getTapTimeout;
+import static widgets.collections.CollectionGestureDetector.TAP_TIMEOUT;
 
 /**
  * @author Nikitenko Gleb
@@ -113,6 +118,29 @@ public class CollectionItemText extends AppCompatTextView
   /** {@inheritDoc} */
   @Override protected final void finalize() throws Throwable
   {try {close();} finally {super.finalize();}}
+
+  /** {@inheritDoc} */
+  @Override public final boolean postDelayed(@NonNull Runnable action, long delay) {
+    if (delay == getTapTimeout()) delay = TAP_TIMEOUT;
+    return super.postDelayed(action, delay);
+  }
+
+  /** Skip pressed state flag. */
+  private boolean mSkipPressed = false;
+
+  @SuppressLint("ClickableViewAccessibility")
+  @Override public final boolean onTouchEvent(@NonNull MotionEvent event) {
+    mSkipPressed = event.getAction() == MotionEvent.ACTION_MOVE;
+    return super.onTouchEvent(event);
+  }
+
+  /**{@inheritDoc}*/
+  @Override public final void setPressed(boolean pressed)
+  {if (mSkipPressed) return; super.setPressed(pressed);}
+
+  /**{@inheritDoc}*/
+  @Override public final void drawableHotspotChanged(float x, float y)
+  {if (mSkipPressed) return; super.drawableHotspotChanged(x, y);}
 
   /** {@inheritDoc} */
   @Override public final boolean getAsBoolean() {return false;}
