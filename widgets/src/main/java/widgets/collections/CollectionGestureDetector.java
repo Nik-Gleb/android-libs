@@ -198,7 +198,7 @@ class CollectionGestureDetector {
   private int mMaximumFlingVelocity;
 
   private static final int LONGPRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout();
-  public static final int TAP_TIMEOUT = /*ViewConfiguration.getTapTimeout()*/32;
+  public static final int TAP_TIMEOUT = Math.round(ViewConfiguration.getTapTimeout() * 0.32f);
   private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
 
   // constants for Message.what used by GestureHandler below
