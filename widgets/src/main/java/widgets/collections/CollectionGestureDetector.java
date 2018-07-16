@@ -3,6 +3,7 @@ package widgets.collections;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -349,14 +350,13 @@ class CollectionGestureDetector {
     mIsLongpressEnabled = true;
 
     // Fallback to support pre-donuts releases
-    int touchSlop;
+    int touchSlop = Math.round(ViewConfiguration.getTouchSlop() * 1.5f);
     if (context == null) {
-      touchSlop = 4;//ViewConfiguration.getTouchSlop();
       mMinimumFlingVelocity = ViewConfiguration.getMinimumFlingVelocity();
       mMaximumFlingVelocity = ViewConfiguration.getMaximumFlingVelocity();
     } else {
       final ViewConfiguration configuration = ViewConfiguration.get(context);
-      touchSlop = 4;//configuration.getScaledTouchSlop();
+      touchSlop = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, touchSlop, context.getResources().getDisplayMetrics()));
       mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
       mMaximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
     }

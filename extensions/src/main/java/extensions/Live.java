@@ -116,9 +116,9 @@ public class Live<T> {
    * @param owner    The LifecycleOwner which controls the observer
    * @param observer The observer that will receive the events
    */
-  @MainThread public final <U extends android.arch.lifecycle.Observer<T>> void observe
-  (@NonNull LifecycleOwner owner, @NonNull U observer)
-  {mDelegate.observe(owner, observer);}
+  @MainThread public final <U extends android.arch.lifecycle.Observer<T>> Live<T>
+  observe(@NonNull LifecycleOwner owner, @NonNull U observer)
+  {mDelegate.observe(owner, observer); return this;}
 
   /**
    * Adds the given observer to the observers list. This call is similar to
@@ -133,16 +133,16 @@ public class Live<T> {
    *
    * @param observer The observer that will receive the events
    */
-  @AnyThread public final void observe(@NonNull Observer<T> observer)
-  {runAndWait(() -> mDelegate.observeForever(observer));}
+  @AnyThread public final Live<T> observe(@NonNull Observer<T> observer)
+  {runAndWait(() -> mDelegate.observeForever(observer)); return this;}
 
   /**
    * Removes the given observer from the observers list.
    *
    * @param observer The Observer to receive events.
    */
-  @AnyThread public final void unObserve(@NonNull Observer<T> observer)
-  {runAndWait(() -> mDelegate.removeObserver(observer));}
+  @AnyThread public final Live<T> unObserve(@NonNull Observer<T> observer)
+  {runAndWait(() -> mDelegate.removeObserver(observer)); return this;}
 
   /**
    * Add source.
