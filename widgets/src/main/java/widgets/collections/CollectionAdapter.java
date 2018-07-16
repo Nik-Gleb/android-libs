@@ -54,12 +54,6 @@ import java.util.function.Supplier;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
-import static java.util.Arrays.asList;
-import static java.util.Arrays.sort;
-import static java.util.Collections.binarySearch;
-import static java.util.Comparator.comparingInt;
-import static widgets.collections.CollectionAdapter.Item.create;
-
 /**
  * @author Nikitenko Gleb
  * @since 1.0, 29/04/2018
@@ -190,7 +184,7 @@ public final class CollectionAdapter<T extends View & Consumer<CollectionAdapter
    * @param newItems the new data
    */
   public final void onChanged(@NonNull Item[] newItems) {
-    sort(newItems, comparingInt(o -> o.id));
+    //sort(newItems, comparingInt(o -> o.id));
     final Item[] oldItems = mItems; mItems = Objects.requireNonNull(newItems);
     CollectionDiffs.calc(oldItems, newItems).dispatch(mCallback);
   }
@@ -231,8 +225,12 @@ public final class CollectionAdapter<T extends View & Consumer<CollectionAdapter
    * @return index position
    */
   @SuppressWarnings("SuspiciousArrayMethodCall")
-  public final int getPositionById(int id)
-  {return binarySearch(asList(mItems), create(id), comparingInt(o -> o.id));}
+  public final int getPositionById(int id) {
+    for (int i = 0; i < mItems.length; i++)
+      if (mItems[i].id == id) return i;
+    return -1;
+    //return binarySearch(asList(mItems), create(id), comparingInt(o -> o.id));
+  }
 
   /** The view holder of this adapter. */
   @Keep@KeepPublicProtectedClassMembers
