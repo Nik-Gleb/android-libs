@@ -27,10 +27,14 @@ package widgets.collections;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.libs.widgets.R;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.annotation.StyleableRes;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -67,12 +71,18 @@ public class CollectionItemText extends AppCompatTextView
   @StyleRes private static final int EMPTY_STYLE = 0;
 
   /** The default attr resource. */
-  @AttrRes private static final int DEFAULT_ATTRS = android.R.attr.textViewStyle;
+  @AttrRes private static final int DEFAULT_ATTRS = R.attr.collectionItemText;
+  /** The empty style resource. */
+  @StyleRes private static final int DEFAULT_STYLE = R.style.CollectionItemText;
+  /** Default styleable attributes */
+  @StyleableRes private static final int[] DEFAULT_STYLEABLE = R.styleable.CollectionItemText;
+
 
   /** This instance. */
   private final CollectionItemText mInstance = this;
 
-  public float count = 4.0f;
+  /** Count width. */
+  private final float mCount;
 
   /** Current item value. */
   @NonNull private Item mItem = Item.EMPTY;
@@ -108,8 +118,18 @@ public class CollectionItemText extends AppCompatTextView
    * @param defStyleAttr default Style
    */
   public CollectionItemText
-  (@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr)
-  {super(context, attrs, defStyleAttr); accept(mItem);}
+  (@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+    final Resources.Theme theme = context.getTheme();
+    final TypedArray typedArray = theme.obtainStyledAttributes(attrs,
+      DEFAULT_STYLEABLE, defStyleAttr, DEFAULT_STYLE);
+
+    //noinspection EmptyTryBlock
+    try {
+      mCount = typedArray.getFloat(R.styleable.CollectionItemText_count, 4.0f);
+    } finally {typedArray.recycle();}
+    accept(mItem);
+  }
 
   /** {@inheritDoc} */
   @Override public final void close()
@@ -118,6 +138,7 @@ public class CollectionItemText extends AppCompatTextView
   /** {@inheritDoc} */
   @Override protected final void finalize() throws Throwable
   {try {close();} finally {super.finalize();}}
+
 
   /** {@inheritDoc} */
   @Override public final boolean postDelayed(@NonNull Runnable action, long delay) {
@@ -158,10 +179,10 @@ public class CollectionItemText extends AppCompatTextView
     final boolean horizontal = true;
     final int widthMode, heightMode;
     if (horizontal) {
-      widthSpec = Math.round((float)((RecyclerView)getParent()).getWidth() / count);
+      widthSpec = Math.round((float)((RecyclerView)getParent()).getWidth() / mCount);
       heightMode = MeasureSpec.getMode(heightSpec); widthMode = MeasureSpec.EXACTLY;
     } else {
-      heightSpec = Math.round((float)((RecyclerView)getParent()).getMeasuredHeight() / count);
+      heightSpec = Math.round((float)((RecyclerView)getParent()).getMeasuredHeight() / mCount);
       widthMode = MeasureSpec.getMode(widthSpec); heightMode = MeasureSpec.EXACTLY;
     }
     super.onMeasure

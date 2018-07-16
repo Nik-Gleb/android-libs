@@ -32,6 +32,7 @@
   <declare-styleable name="Theme">
     <attr name="collectionRecyclerView" format="reference"/>
     <attr name="collectionItemView" format="reference"/>
+    <attr name="collectionItemText" format="reference"/>
   </declare-styleable>
 
   <!--  Collection Container Attributes  -->
@@ -42,4 +43,9 @@
   </declare-styleable>
 
 
+  <!--  Collection Container Attributes  -->
+  <declare-styleable name="CollectionItemText">
+    <!--  Defines the count of columns/rows of side.  -->
+    <attr name="count" format="float"/>
+  </declare-styleable>
 </resources>

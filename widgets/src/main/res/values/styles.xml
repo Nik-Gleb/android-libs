@@ -49,4 +49,9 @@
     <item name="android:gravity">center_vertical|center_horizontal</item>
 
   </style>
+
+  <style name="CollectionItemText" parent="android:Widget.Material.Light.TextView">
+    <item name="count">4.0</item>
+  </style>
+
 </resources>
