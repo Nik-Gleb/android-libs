@@ -83,7 +83,7 @@ public class CollectionItemView extends View implements Callback,
   /** The empty style resource. */
   @StyleRes private static final int DEFAULT_STYLE = R.style.CollectionItemView;
   /** Default styleable attributes */
-  @StyleableRes private static final int[] DEFAULT_STYLEABLE = R.styleable.View;
+  @StyleableRes private static final int[] DEFAULT_STYLEABLE = R.styleable.CollectionItemView;
 
   /** This instance. */
   private final CollectionItemView mInstance = this;
@@ -105,6 +105,9 @@ public class CollectionItemView extends View implements Callback,
 
   /** Current item value. */
   @NonNull private Item mItem = Item.EMPTY;
+
+  /** Square mode. */
+  private boolean mSquare = false;
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed;
@@ -158,10 +161,9 @@ public class CollectionItemView extends View implements Callback,
             defStyleRes : DEFAULT_STYLE);
 
     //noinspection EmptyTryBlock
-    try {
-
-    } finally {typedArray.recycle();}
-
+    try {mSquare = typedArray.getBoolean
+      (R.styleable.CollectionItemView_square, false);}
+    finally {typedArray.recycle();}
 
 
     final CollectionItemView me = this;
@@ -256,8 +258,10 @@ public class CollectionItemView extends View implements Callback,
   /** {@inheritDoc} */
   public final void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    int size = Math.min(getMeasuredWidth(), getMeasuredHeight());
-    setMeasuredDimension(size, size);
+    if (mSquare) {
+      int size = Math.min(getMeasuredWidth(), getMeasuredHeight());
+      setMeasuredDimension(size, size);
+    }
   }
 
   /* @param builder glide request builder */

@@ -48,4 +48,10 @@
     <!--  Defines the count of columns/rows of side.  -->
     <attr name="count" format="float"/>
   </declare-styleable>
+
+  <!--  Collection Container Attributes  -->
+  <declare-styleable name="CollectionItemView">
+    <!--  Defines the count of columns/rows of side.  -->
+    <attr name="square" format="boolean"/>
+  </declare-styleable>
 </resources>
