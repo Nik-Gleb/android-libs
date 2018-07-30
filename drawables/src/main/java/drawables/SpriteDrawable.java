@@ -77,6 +77,8 @@ public final class SpriteDrawable extends BitmapDrawable {
   private final float mScale;
   /** Step level. */
   private final int mLevel;
+  /** Vertical offset. */
+  private float mOffset = 0f;
 
   /**
    * Constructs a new {@link SpriteDrawable}.
@@ -89,12 +91,12 @@ public final class SpriteDrawable extends BitmapDrawable {
   (@NonNull Resources resources, @NonNull Bitmap bitmap, int rounded) {
     super(resources, bitmap);
     final DisplayMetrics metrics =
-        resources.getDisplayMetrics();
+      resources.getDisplayMetrics();
     mRounded = calcRound(metrics, rounded);
     mScale = calcScale(metrics, bitmap);
     mLevel = calcLevel(metrics, bitmap);
     getPaint().setShader
-        (new BitmapShader(bitmap, CLAMP, CLAMP));
+      (new BitmapShader(bitmap, CLAMP, CLAMP));
     setAntiAlias(true); setDither(false);
   }
 
@@ -134,10 +136,12 @@ public final class SpriteDrawable extends BitmapDrawable {
   /** {@inheritDoc} */
   @Override protected final void onBoundsChange(@NonNull Rect bounds) {
     if (mRounded == CIRCLE) mRoundPoint.set
-        (bounds.width() * 0.5f, bounds.height() * 0.5f);
+      (bounds.width() * 0.5f, bounds.height() * 0.5f);
     else if (mRounded == SQUARE) mRoundPoint.set(0, 0);
     else mRoundPoint.set(mRounded, mRounded);
-    mDrawRect.set(bounds); invalidate();
+    mDrawRect.set(bounds);
+    mOffset = bounds.top - ((mLevel - bounds.height()) * 0.5f);
+    invalidate();
   }
 
   /** {@inheritDoc} */
@@ -149,7 +153,7 @@ public final class SpriteDrawable extends BitmapDrawable {
     final Rect bounds = getBounds();
     final int offset = bounds.left - mLevel * getLevel();
     mMatrix.reset(); mMatrix.setScale(mScale, mScale);
-    mMatrix.postTranslate(offset, bounds.top);
+    mMatrix.postTranslate(offset, mOffset);
     getPaint().getShader().setLocalMatrix(mMatrix);
     invalidateSelf();
   }
@@ -194,7 +198,7 @@ public final class SpriteDrawable extends BitmapDrawable {
     if (!(obj instanceof SpriteDrawable)) return false;
     final SpriteDrawable that = (SpriteDrawable) obj;
     return Objects.equals(getBitmap(), that.getBitmap())
-        && getLevel() == that.getLevel();
+      && getLevel() == that.getLevel();
   }
 
   /**
@@ -209,7 +213,7 @@ public final class SpriteDrawable extends BitmapDrawable {
    * @return instance of drawable
    */
   @NonNull public static SpriteDrawable create(@NonNull Resources resources,
-      @NonNull Bitmap bitmap, int rounded, int level, @Nullable ColorFilter color) {
+    @NonNull Bitmap bitmap, int rounded, int level, @Nullable ColorFilter color) {
     final SpriteDrawable result = new SpriteDrawable(resources, bitmap, rounded);
     result.setLevel(level); result.setColorFilter(color); return result;
   }
