@@ -201,7 +201,8 @@ public final class OpenGL {
    *
    * @return bitmap instance
    */
-  @NonNull public Bitmap getBitmap(@NonNull EGLView view, @NonNull ColorFormat format) {
+  @NonNull
+  public static Bitmap getBitmap(@NonNull EGLView view, @NonNull ColorFormat format) {
     if (!view.isCurrent()) EGLCore.error("Expected EGL context/surface is not current");
     final int w = view.width, h = view.height, bpp = format.bytesPerPixel,
       f = format.glPixelFormat; final String message = "Can't read pixels";
