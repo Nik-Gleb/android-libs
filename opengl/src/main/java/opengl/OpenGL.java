@@ -180,7 +180,7 @@ public final class OpenGL {
    * @return the frame bytes
    */
   @NonNull
-  static byte[] getRGBA888(@NonNull EGLView view, @NonNull ColorFormat format) {
+  public static byte[] getRGBA888(@NonNull EGLView view, @NonNull ColorFormat format) {
     if (!view.isCurrent()) EGLCore.error("Expected EGL context/surface is not current");
     final int w = view.width, h = view.height, bpp = format.bytesPerPixel,
         f = format.glPixelFormat; final String message = "Can't read pixels";
