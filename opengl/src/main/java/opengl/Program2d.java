@@ -88,8 +88,8 @@ public final class Program2d {
   /** Triangle vertices. */
   private static final FloatBuffer TRIANGLE_VERTICES = createVertices();
 
-  /** The mvp-matrix. */
-  private static final float[] MVP_MATRIX = createIdentityMatrix();
+  /* The mvp-matrix. */
+  //private static final float[] MVP_MATRIX = createIdentityMatrix();
 
   /** Const booleans. */
   private static final boolean NORMALIZE = false, TRANSPOSE = false;
@@ -179,7 +179,8 @@ public final class Program2d {
    * @param stMatrix transform matrix
    * @param unit     current unit
    */
-  public static void draw(@NonNull int[] attrs, @NonNull float[] stMatrix, int unit) {
+  public static void draw
+  (@NonNull int[] attrs, @NonNull float[] stMatrix,  @NonNull float[] mvpMatrix, int unit) {
 
     saveProgram(attrs);
 
@@ -194,7 +195,7 @@ public final class Program2d {
         NORMALIZE, VERTICES_STRIDE_BYTES, TRIANGLE_VERTICES);
 
     attrs[9] --;
-    GLES20.glUniformMatrix4fv(attrs[5], attrs[9], TRANSPOSE, MVP_MATRIX, OFFSET);
+    GLES20.glUniformMatrix4fv(attrs[5], attrs[9], TRANSPOSE, mvpMatrix, OFFSET);
     GLES20.glUniformMatrix4fv(attrs[6], attrs[9], TRANSPOSE, stMatrix, OFFSET);
     GLES20.glUniform1i(attrs[7], unit);
 

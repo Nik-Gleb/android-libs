@@ -25,6 +25,7 @@
 
 package opengl;
 
+import android.graphics.Bitmap;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.os.Build;
@@ -180,7 +181,7 @@ public final class OpenGL {
    * @return the frame bytes
    */
   @NonNull
-  public static byte[] getRGBA888(@NonNull EGLView view, @NonNull ColorFormat format) {
+  static byte[] getRGBA888(@NonNull EGLView view, @NonNull ColorFormat format) {
     if (!view.isCurrent()) EGLCore.error("Expected EGL context/surface is not current");
     final int w = view.width, h = view.height, bpp = format.bytesPerPixel,
         f = format.glPixelFormat; final String message = "Can't read pixels";
@@ -192,6 +193,25 @@ public final class OpenGL {
     byteBuffer.rewind(); final byte[] result = new byte[byteBuffer.limit()];
     byteBuffer.get(result, byteBuffer.position(), result.length);
     byteBuffer.clear(); return result;
+  }
+
+  /**
+   * @param view egl view
+   * @param format color format
+   *
+   * @return bitmap instance
+   */
+  @NonNull public Bitmap getBitmap(@NonNull EGLView view, @NonNull ColorFormat format) {
+    if (!view.isCurrent()) EGLCore.error("Expected EGL context/surface is not current");
+    final int w = view.width, h = view.height, bpp = format.bytesPerPixel,
+      f = format.glPixelFormat; final String message = "Can't read pixels";
+    final int type = format.glPixelType, x = 0, y = 0;
+    final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(w * h * bpp);
+    byteBuffer.order(ByteOrder.LITTLE_ENDIAN); view.makeCurrent();
+    GLES20.glReadPixels(x, y, w, h, f, type, byteBuffer);
+    if (EGL14.eglGetError() != EGL14.EGL_SUCCESS) EGLCore.error(message);
+    byteBuffer.rewind(); final Bitmap result = Bitmap.createBitmap(w, h, format.bmpConfig);
+    result.copyPixelsFromBuffer(byteBuffer); byteBuffer.clear(); return result;
   }
 
 

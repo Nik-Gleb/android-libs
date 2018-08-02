@@ -55,7 +55,10 @@ public final class TextureRenderer implements Closeable {
   private final boolean[] mTargets = {true};
 
   /** Texture matrix. */
-  private final float[] mSTMatrix = Program2d.createIdentityMatrix();
+  @SuppressWarnings("WeakerAccess")
+  public final float[]
+    stMatrix = Program2d.createIdentityMatrix(),
+    mvpMatrix = Program2d.createIdentityMatrix();
 
   /** Internal attributes. */
   private final int[] mTemp = new int[3],
@@ -79,13 +82,10 @@ public final class TextureRenderer implements Closeable {
 
   /** Draw current frame. */
   public final void draw()
-  {Program2d.draw(mProgram, mSTMatrix, INDEX);}
+  {Program2d.draw(mProgram, stMatrix, mvpMatrix, INDEX);}
 
   /** @return render texture id */
   public final int getTextureId() {return mTextures[INDEX];}
-
-  /** @return transform matrix */
-  public final float[] getSTMatrix() {return mSTMatrix;}
 
   /**
    * Clean scene.
