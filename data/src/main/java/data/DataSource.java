@@ -134,7 +134,7 @@ import static java.util.Objects.requireNonNull;
     {final CancellationSignal signal = it.next(); it.remove(); signal.cancel();}
     mClient.close();
     try {throw new RuntimeException();}
-    catch (RuntimeException e) {e.printStackTrace();}
+    catch (RuntimeException e) {e.printStackTrace();}//
   }
 
   /** {@inheritDoc} */
