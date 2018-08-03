@@ -100,6 +100,10 @@ import static java.util.Objects.requireNonNull;
   private final Set<CancellationSignal> mCancels = newSetFromMap
       (new ConcurrentHashMap<CancellationSignal, Boolean>());
 
+  /** Content observers. */
+  private final Set<ContentObserver> mObservers = newSetFromMap
+    (new ConcurrentHashMap<ContentObserver, Boolean>());
+
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed = false;
 
@@ -132,9 +136,9 @@ import static java.util.Objects.requireNonNull;
     if (mClosed) return; mClosed = true;
     for (final Iterator<CancellationSignal> it = mCancels.iterator(); it.hasNext();)
     {final CancellationSignal signal = it.next(); it.remove(); signal.cancel();}
-    mClient.close();
-    try {throw new RuntimeException();}
-    catch (RuntimeException e) {e.printStackTrace();}//
+    for (final Iterator<ContentObserver> it = mObservers.iterator(); it.hasNext();)
+    {final ContentObserver observer = it.next(); it.remove(); unregister(observer);}
+    mCancels.clear(); mObservers.clear(); mClient.close();
   }
 
   /** {@inheritDoc} */
@@ -143,7 +147,7 @@ import static java.util.Objects.requireNonNull;
 
   /** Check not-closed state. */
   @WorkerThread private void checkState()
-  {if (mClosed) throw new IllegalStateException("Already closed");}
+  {if (mClosed) throw new IllegalStateException("Already closed " + this);}
 
   /**
    * @param uri       uri of resource
@@ -447,14 +451,15 @@ import static java.util.Objects.requireNonNull;
   @NonNull final ContentObserver register
   (@NonNull Uri uri, @NonNull BiConsumer<Boolean, Uri> observer,
       @Nullable Handler handler, boolean selfNotify, boolean descedants) {
-    final ContentObserver result = new Observer(observer, handler, selfNotify);
+    final ContentObserver result;
+    mObservers.add(result = new Observer(observer, handler, selfNotify));
     mResolver.registerContentObserver(uri, descedants, result);
     try {return result;} finally {mResolver.notifyChange(uri, result);}
   }
 
   /** {@inheritDoc} */
   final void unregister(@NonNull ContentObserver observer)
-  {mResolver.unregisterContentObserver(observer);}
+  {mResolver.unregisterContentObserver(observer); mObservers.remove(observer);}
 
   /**
    * @param uri uri resource
