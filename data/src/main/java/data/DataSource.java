@@ -101,7 +101,7 @@ import static java.util.Objects.requireNonNull;
       (new ConcurrentHashMap<CancellationSignal, Boolean>());
 
   /** "CLOSE" flag-state. */
-  private volatile boolean mClosed;
+  private volatile boolean mClosed = false;
 
 
   /**
@@ -133,6 +133,8 @@ import static java.util.Objects.requireNonNull;
     for (final Iterator<CancellationSignal> it = mCancels.iterator(); it.hasNext();)
     {final CancellationSignal signal = it.next(); it.remove(); signal.cancel();}
     mClient.close();
+    try {throw new RuntimeException();}
+    catch (RuntimeException e) {e.printStackTrace();}
   }
 
   /** {@inheritDoc} */
