@@ -27,8 +27,14 @@ package widgets.collections;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.LayoutManager;
+import android.support.v7.widget.RecyclerView.SmoothScroller.ScrollVectorProvider;
+import android.support.v7.widget.RecyclerView.State;
+import android.util.DisplayMetrics;
+import android.view.View;
 
 import java.io.Closeable;
 import java.util.function.Supplier;
@@ -58,14 +64,20 @@ public final class CollectionSnapHelper
   /** Attached {@link RecyclerView} */
   @Nullable private RecyclerView mRecyclerView = null;
 
+  /** Scroll speed. */
+  private final float mSpeed;
+
   /**
    * Constructs a new {@link CollectionSnapHelper}.
    *
    * @param scroller smooth scroller
    */
   public CollectionSnapHelper
-  (@NonNull Supplier<RecyclerView.SmoothScroller>[] scroller)
-  {scroller[0] = () -> requireNonNull(createScroller(requireNonNull(mRecyclerView).getLayoutManager()));}
+  (@NonNull Supplier<RecyclerView.SmoothScroller>[] scroller, float speed) {
+    scroller[0] = () -> requireNonNull(createScroller
+      (requireNonNull(mRecyclerView).getLayoutManager()));
+    mSpeed = speed;
+  }
 
   /** {@inheritDoc} */
   @Override public final void close()
@@ -83,5 +95,25 @@ public final class CollectionSnapHelper
     if (mRecyclerView != null) mRecyclerView = null;
     mRecyclerView = recyclerView;
     if (mRecyclerView != null) mRecyclerView = mRecyclerView;
+  }
+
+  /** {@inheritDoc} */
+  @NonNull protected final LinearSmoothScroller
+  createSnapScroller(@NonNull LayoutManager layoutManager) {
+    if (!(layoutManager instanceof ScrollVectorProvider)) return null;
+
+    return new LinearSmoothScroller(requireNonNull(mRecyclerView).getContext()) {
+      @Override protected final void onTargetFound(View targetView, State state, Action action) {
+        final int[] snapDistances = requireNonNull
+          (calculateDistanceToFinalSnap(mRecyclerView.getLayoutManager(), targetView));
+        final int dx = snapDistances[0]; final int dy = snapDistances[1];
+        final int time = calculateTimeForDeceleration(Math.max(Math.abs(dx), Math.abs(dy)));
+        if (time > 0) action.update(dx, dy, time, mDecelerateInterpolator);
+      }
+      /** {@inheritDoc} */
+      @Override protected final float
+      calculateSpeedPerPixel(@NonNull DisplayMetrics displayMetrics)
+      {return mSpeed / (float) displayMetrics.densityDpi;}
+    };
   }
 }

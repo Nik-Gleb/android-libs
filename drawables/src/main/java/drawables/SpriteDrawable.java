@@ -98,6 +98,7 @@ public final class SpriteDrawable extends BitmapDrawable {
     getPaint().setShader
       (new BitmapShader(bitmap, CLAMP, CLAMP));
     setAntiAlias(true); setDither(false);
+    bitmap.prepareToDraw();
   }
 
   /**
