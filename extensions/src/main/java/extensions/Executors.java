@@ -158,7 +158,7 @@ public final class Executors {
   public static void runAndWait(@NonNull Runnable task) {
     if (Thread.currentThread() == Looper.getMainLooper().getThread()) task.run();
     else
-      try {CompletableFuture.runAsync(FrontTask.create(task), MAIN).get();}
+      try {CompletableFuture.runAsync(/*FrontTask.create(*/task/*)*/, MAIN).get();}
       catch (InterruptedException e) {currentThread().interrupt();}
       catch (ExecutionException e) {throw new RuntimeException(e.getCause());}
   }

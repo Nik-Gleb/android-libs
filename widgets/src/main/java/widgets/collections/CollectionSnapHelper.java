@@ -74,9 +74,9 @@ public final class CollectionSnapHelper
    */
   public CollectionSnapHelper
   (@NonNull Supplier<RecyclerView.SmoothScroller>[] scroller, float speed) {
+    mSpeed = speed;
     scroller[0] = () -> requireNonNull(createScroller
       (requireNonNull(mRecyclerView).getLayoutManager()));
-    mSpeed = speed;
   }
 
   /** {@inheritDoc} */
