@@ -11,8 +11,7 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -43,9 +42,9 @@ import static java.lang.System.arraycopy;
  * @author Nikitenko Gleb
  * @since 1.0, 01/07/2018
  */
-@SuppressWarnings("unused")
 @Keep
 @KeepPublicProtectedClassMembers
+@SuppressWarnings("unused")
 public final class BulkInsert {
 
   /** Data source. */
@@ -75,8 +74,7 @@ public final class BulkInsert {
    *
    * @return result array of values
    */
-  @NonNull
-  private static ContentValues[] addValue
+  @NonNull private static ContentValues[] addValue
   (@NonNull ContentValues[] values, @NonNull ContentValues value) {
     final ContentValues[] result = new ContentValues[values.length + 1];
     arraycopy(values, 0, result, 0, values.length);
@@ -89,8 +87,7 @@ public final class BulkInsert {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  public final BulkInsert put(@NonNull byte[] value) {
+  @NonNull public final BulkInsert put(@NonNull byte[] value) {
     final ContentValues values = new ContentValues(1);
     values.put(DATA, value);
     mContentValues = addValue(mContentValues, values);
@@ -102,15 +99,14 @@ public final class BulkInsert {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  final BulkInsert put(@NonNull ContentValues values) {
+  @NonNull final BulkInsert put(@NonNull ContentValues values) {
     mContentValues = addValue(mContentValues, values);
     return this;
   }
 
   /** @return count of rows */
   @WorkerThread
-  public final int execute() {
-    return mDataSource.bulkInsert(mContentUri, mContentValues);
-  }
+  public final int execute()
+  {return mDataSource.bulkInsert(mContentUri, mContentValues);}
+
 }

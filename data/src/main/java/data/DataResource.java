@@ -161,7 +161,7 @@ public final class DataResource {
 
   @NonNull public final DataResource read()
   {return new DataResource(uri.buildUpon()
-      .appendQueryParameter(MODE, READ).build());}
+    .appendQueryParameter(MODE, READ).build());}
 
   @NonNull public final DataResource write()
   {return new DataResource(uri.buildUpon()

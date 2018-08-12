@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package widgets;
+package data;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +31,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Map;
 
-import data.DataResource;
-
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Nikitenko Gleb
@@ -70,9 +66,5 @@ final class WidgetsTest {
 
     //System.out.println("MyClassTest.sum " + mCalculator.getCode(new Bundle()));
 
-    final byte[] bytes = DataResource.toBytes(-
-      326);
-    System.out.println("WidgetsTest.sum " + Arrays.toString(bytes));
-    System.out.println("WidgetsTest.sum " + DataResource.fromBytes(bytes));
   }
 }

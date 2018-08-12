@@ -11,8 +11,7 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -134,8 +133,8 @@ public final class ContentProvider extends
    *
    * @return query value
    */
-  @SuppressWarnings("SameParameterValue")
   @Nullable
+  @SuppressWarnings("SameParameterValue")
   private static String cutQuery
   (@NonNull Uri uri, @NonNull Set<String> keys, @NonNull String key) {
     if (!keys.contains(key)) return null;
@@ -230,9 +229,9 @@ public final class ContentProvider extends
   }
 
   /** {@inheritDoc} */
-  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   @NonNull
   @Override
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   public final ContentProviderResult[] applyBatch
   (@NonNull ArrayList<ContentProviderOperation> operations)
       throws OperationApplicationException {
@@ -368,14 +367,10 @@ public final class ContentProvider extends
   private void create(@NonNull Context context, @NonNull String authority,
       @NonNull String name, int version, @NonNull String[] tables,
       @NonNull Map<String, Provider> map) {
-    map.put(/*Provider.getTag(HttpsProvider.class)*/"https",
-            new HttpsProvider(context, authority, version));
-    map.put(/*Provider.getTag(FilesProvider.class)*/"files",
-            new FilesProvider(context, authority, version));
-    map.put(/*Provider.getTag(AssetsProvider.class)*/"assets",
-            new AssetsProvider(context, authority, version));
-    map.put(/*Provider.getTag(TablesProvider.class)*/"tables",
-            new TablesProvider(context, authority, name, version, tables));
+    map.put("https", new HttpsProvider(context, authority, version));
+    map.put("files", new FilesProvider(context, authority, version));
+    map.put("assets", new AssetsProvider(context, authority, version));
+    map.put("tables", new TablesProvider(context, authority, name, version, tables));
     final Collection<Provider> providers = map.values();
     for (final Provider storage : providers) { storage.onCreate(); }
   }
@@ -385,7 +380,8 @@ public final class ContentProvider extends
   @Override
   public final Uri canonicalize(@NonNull Uri uri) {
     uri = uncanonicalize(uri);
-    if (SCHEME_CONTENT.equals(uri.getScheme())) return super.canonicalize(uri);
+    if (SCHEME_CONTENT.equals(uri.getScheme()))
+      return super.canonicalize(uri);
     return uri.buildUpon()
               .appendQueryParameter("from", uri.getScheme())
               .scheme(SCHEME_CONTENT)
@@ -396,7 +392,7 @@ public final class ContentProvider extends
   @SuppressWarnings("ConstantConditions")
   @NonNull
   @Override
-  public Uri uncanonicalize(@NonNull Uri uri) {
+  public final Uri uncanonicalize(@NonNull Uri uri) {
     if (!SCHEME_CONTENT.equals(uri.getScheme()))
       return super.uncanonicalize(uri);
     final Set<String> keys = new HashSet<>(uri.getQueryParameterNames());

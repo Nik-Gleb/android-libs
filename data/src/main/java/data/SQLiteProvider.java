@@ -244,6 +244,7 @@ abstract class SQLiteProvider implements Provider {
      * @param uri resource uri
      * @return need sync flag
      */
+    @SuppressWarnings("SameReturnValue")
     protected boolean syncToNetwork(Uri uri) {return false;}
 
     /** {@inheritDoc} */

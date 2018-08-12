@@ -40,6 +40,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
  */
 @Keep
 @KeepPublicProtectedClassMembers
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public final class DataUtils {
 
   /**
@@ -47,7 +48,6 @@ public final class DataUtils {
    * Also, this prevents even the native class from calling this constructor.
    **/
   private DataUtils() {throw new AssertionError();}
-
 
   /**
    * @param value primitive value
@@ -82,17 +82,15 @@ public final class DataUtils {
    *
    * @return byte array
    */
-  @NonNull public static byte[] bytes(@NonNull String value) {
-    return value.getBytes(StandardCharsets.UTF_8);
-  }
+  @NonNull public static byte[] bytes(@NonNull String value)
+  {return value.getBytes(StandardCharsets.UTF_8);}
 
   /**
    * @param bytes byte array
    *
    * @return string
    */
-  @NonNull public static String toStr(@NonNull byte[] bytes) {
-    return new String(bytes, StandardCharsets.UTF_8);
-  }
+  @NonNull public static String toStr(@NonNull byte[] bytes)
+  {return new String(bytes, StandardCharsets.UTF_8);}
 
 }

@@ -266,7 +266,7 @@ final class OkUtils {
   /** Sink Consumer. */
   @FunctionalInterface interface SinkConsumer {
     /** Writes the content of this request to sink. */
-    void writeTo(@NonNull BufferedSink sink) throws IOException;
+    @SuppressWarnings("RedundantThrows") void writeTo(@NonNull BufferedSink sink) throws IOException;
   }
 
 

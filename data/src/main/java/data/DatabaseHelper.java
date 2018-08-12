@@ -41,7 +41,7 @@ import java.util.Locale;
  * @author Nikitenko Gleb
  * @since 1.0, 19/08/2016
  */
-@SuppressWarnings("WeakerAccess, unused")
+@SuppressWarnings({ "WeakerAccess, unused", "EmptyMethod" })
 final class DatabaseHelper extends SQLiteOpenHelper {
 
   /** The log-cat tag */
@@ -175,7 +175,6 @@ final class DatabaseHelper extends SQLiteOpenHelper {
   @Override
   public final void onOpen(@NonNull SQLiteDatabase db) {
     super.onOpen(db);
-    System.out.println("DatabaseHelper.onOpen");
     db.enableWriteAheadLogging();
     //db.execSQL("PRAGMA temp_store MEMORY");
     db.rawQuery("PRAGMA synchronous = OFF;", null);

@@ -11,8 +11,7 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -48,9 +47,9 @@ import static data.DataSource.DATA;
  * @author Nikitenko Gleb
  * @since 1.0, 01/07/2018
  */
-@SuppressWarnings("unused")
 @Keep
 @KeepPublicProtectedClassMembers
+@SuppressWarnings("unused")
 public final class BatchOps {
 
   /** Content provider operations. */
@@ -80,8 +79,7 @@ public final class BatchOps {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  public final BatchOps insert
+  @NonNull public final BatchOps insert
   (@NonNull DataResource resource, @NonNull byte[] value) {
     mOperations.add(
         newInsert(resource.uri)
@@ -98,8 +96,7 @@ public final class BatchOps {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  final BatchOps insert
+  @NonNull final BatchOps insert
   (@NonNull DataResource resource, @NonNull ContentValues values) {
     mOperations.add(
         newInsert(resource.uri)
@@ -117,8 +114,7 @@ public final class BatchOps {
    * @return this builder, to allow for chaining.
    */
   @SuppressWarnings("WeakerAccess")
-  @NonNull
-  public final BatchOps update
+  @NonNull public final BatchOps update
   (@NonNull DataResource resource, @NonNull byte[] value) {
     mOperations.add(
         newUpdate(resource.uri)
@@ -136,8 +132,7 @@ public final class BatchOps {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  public final BatchOps put(boolean update,
+  @NonNull public final BatchOps put(boolean update,
     @NonNull DataResource resource, @NonNull byte[] value) {
     return update ? update(resource, value) : insert(resource, value);
   }
@@ -147,8 +142,7 @@ public final class BatchOps {
    *
    * @return this builder, to allow for chaining.
    */
-  @NonNull
-  public final BatchOps delete(@NonNull DataResource resource) {
+  @NonNull public final BatchOps delete(@NonNull DataResource resource) {
     mOperations.add(
         newDelete(resource.uri)
             .withYieldAllowed(yield(mOperations.size()))
@@ -158,9 +152,7 @@ public final class BatchOps {
   }
 
   /** @return count of rows */
-  @WorkerThread
-  @NonNull
-  public final ContentProviderResult[] execute() {
-    return mDataSource.applyBatch(mOperations);
-  }
+  @WorkerThread @NonNull public final ContentProviderResult[] execute()
+  {return mDataSource.applyBatch(mOperations);}
+
 }

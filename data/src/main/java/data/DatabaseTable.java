@@ -186,30 +186,27 @@ final class DatabaseTable {
    *
    * @return is item-resource
    */
-  public final boolean isItem(@NonNull Uri uri) {
-    return getCode(uri) == DatabaseTable.TYPE_ITEM;
-  }
+  public final boolean isItem(@NonNull Uri uri)
+  {return getCode(uri) == DatabaseTable.TYPE_ITEM;}
 
   /**
    * @param uri source uri
    *
    * @return code by uri
    */
-  public final int getCode(@NonNull Uri uri) {return mUriMatcher.match(uri);}
+  public final int getCode(@NonNull Uri uri)
+  {return mUriMatcher.match(uri);}
 
   /** @return Allowed query parameters */
-  @NonNull
-  public final HashSet<String> getAllowedQueryParams() {
-    return mAllowedQueryParameters;
-  }
+  @NonNull public final HashSet<String> getAllowedQueryParams()
+  {return mAllowedQueryParameters;}
 
   /**
    * @param match match code
    *
    * @return the mime type of resource
    */
-  @Nullable
-  public final String getType(int match) {
+  @Nullable public final String getType(int match) {
     switch (match) {
       case TYPE_DIR:
         return mContentType;
@@ -229,9 +226,9 @@ final class DatabaseTable {
    *
    * @return database cursor
    */
-  @NonNull
-  public final Cursor query(@NonNull String id, @Nullable String[] columns,
-      @Nullable CancellationSignal signal) {
+  @NonNull public final Cursor query
+  (@NonNull String id, @Nullable String[] columns,
+    @Nullable CancellationSignal signal) {
     if (signal != null) signal.throwIfCanceled();
     String sql = "SELECT ";
     sql = columns != null && columns.length != 0 ?
@@ -250,9 +247,8 @@ final class DatabaseTable {
    * @return Database Cursor
    */
   private Cursor rawQueryCompat
-  (String sql, String[] args, CancellationSignal signal) {
-    return mReadableDatabase.rawQuery(sql, args, signal);
-  }
+  (String sql, String[] args, CancellationSignal signal)
+  {return mReadableDatabase.rawQuery(sql, args, signal);}
 
   /**
    * Query any items by selection with sorting.
@@ -265,8 +261,7 @@ final class DatabaseTable {
    *
    * @return database cursor
    */
-  @NonNull
-  public final Cursor query
+  @NonNull public final Cursor query
   (@Nullable String sel, @Nullable String[] args, @Nullable String sort,
       @Nullable String[] cols, @Nullable CancellationSignal signal) {
     if (signal != null) signal.throwIfCanceled();
@@ -278,8 +273,7 @@ final class DatabaseTable {
   }
 
   /** Common compatibility. */
-  @NonNull
-  private Cursor queryCompat(@NonNull SQLiteQueryBuilder builder,
+  @NonNull private Cursor queryCompat(@NonNull SQLiteQueryBuilder builder,
       @NonNull SQLiteDatabase db, @Nullable String[] cols, @Nullable String sel,
       @Nullable String[] args, @Nullable String group, @Nullable String having,
       @Nullable String sort, String lim, @Nullable CancellationSignal sig) {
@@ -326,9 +320,8 @@ final class DatabaseTable {
    *
    * @return count of deleted
    */
-  public final int delete(@Nullable String sel, @Nullable String[] args) {
-    return getWritableDatabase().delete(tableName, sel, args);
-  }
+  public final int delete(@Nullable String sel, @Nullable String[] args)
+  {return getWritableDatabase().delete(tableName, sel, args);}
 
   /**
    * Update item from table.
@@ -337,10 +330,9 @@ final class DatabaseTable {
    *
    * @return count of deleted
    */
-  public final int update(@NonNull String id, @NonNull ContentValues values) {
-    return getWritableDatabase().update
-        (tableName, values, ID_SELECTION, new String[] { id });
-  }
+  public final int update(@NonNull String id, @NonNull ContentValues values)
+  {return getWritableDatabase().update
+        (tableName, values, ID_SELECTION, new String[] { id });}
 
   /**
    * Delete any items from table.
@@ -350,10 +342,9 @@ final class DatabaseTable {
    *
    * @return count of deleted
    */
-  public int update(@Nullable String select, @Nullable String[] selArg, @NonNull
-      ContentValues values) {
-    return getWritableDatabase().update(tableName, values, select, selArg);
-  }
+  public int update
+  (@Nullable String select, @Nullable String[] selArg, @NonNull ContentValues values)
+  {return getWritableDatabase().update(tableName, values, select, selArg);}
 
   /**
    * @param id the row id
@@ -366,14 +357,12 @@ final class DatabaseTable {
   }
 
   /** @return stream types */
-  @NonNull
-  public final String[] getStreamTypes(int match, String mimeTypeFilter) {
-    return new String[0];
-  }
+  @NonNull public final String[] getStreamTypes(int match, String mimeTypeFilter)
+  {return new String[0]; }
 
   /** @return Supported query parameters */
-  @NonNull
-  protected final String[] getSupportedQueryParams() {return new String[0];}
+  @NonNull protected final String[] getSupportedQueryParams()
+  {return new String[0];}
 
   /**
    * @param readableSQLiteDatabase readable database instance
@@ -408,16 +397,12 @@ final class DatabaseTable {
 
   /** @param db database instance */
   private void create(@NonNull SQLiteDatabase db) {
-
-
     db.execSQL(format(US, TABLE_CREATE_SCRIPT,
       tableName, preferences ? " " : " AUTOINCREMENT "));
   }
 
-  @NonNull
-  private String script(@NonNull String pattern) {
-    return format(US, pattern, tableName);
-  }
+  @NonNull private String script(@NonNull String pattern)
+  {return format(US, pattern, tableName);}
 
   /** @return readable database */
   public final SQLiteDatabase getReadableDatabase() {return mReadableDatabase;}
@@ -441,8 +426,8 @@ final class DatabaseTable {
    *
    * @return result
    */
-  @NonNull
-  Bundle call(@Nullable String arg, @Nullable Bundle extras) {
+  @SuppressWarnings("SameReturnValue")
+  @NonNull Bundle call(@Nullable String arg, @Nullable Bundle extras) {
       /*final String query = "SELECT EXISTS(SELECT 1 FROM " + tableName + " WHERE _id = ? LIMIT 1);";
       final Bundle result = new Bundle();
       result.putBoolean("result", DatabaseUtils.longForQuery(mReadableDatabase, query, new String[]{arg}) == 1);*/
@@ -456,13 +441,13 @@ final class DatabaseTable {
     /** {@inheritDoc} */
     @Override
     public final Cursor newCursor(SQLiteDatabase db,
-        SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query) {
-      return new OpenableSQLiteCursor(masterQuery, editTable, query);
-    }
+        SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query)
+    {return new OpenableSQLiteCursor(masterQuery, editTable, query); }
 
     /** The openable cursor. */
-    private static final class OpenableSQLiteCursor extends
-        CrossProcessCursorWrapper {
+    @SuppressWarnings("EmptyMethod")
+    private static final class OpenableSQLiteCursor
+      extends CrossProcessCursorWrapper {
 
       /**
        * Creates an {@link #OpenableSQLiteCursor(SQLiteCursorDriver, String, SQLiteQuery)}.
@@ -471,16 +456,13 @@ final class DatabaseTable {
        * @param query     the {@link SQLiteQuery} object associated with this cursor object.
        */
       @SuppressWarnings("JavaDoc")
-      OpenableSQLiteCursor(SQLiteCursorDriver driver, String editTable,
-          SQLiteQuery query) {
-        super(new SQLiteCursor(driver, editTable, query));
-      }
+      OpenableSQLiteCursor
+      (SQLiteCursorDriver driver, String editTable, SQLiteQuery query)
+      {super(new SQLiteCursor(driver, editTable, query));}
 
       /** {@inheritDoc} */
-      @Override
-      public final String getString(int columnIndex) {
-        return super.getString(columnIndex);
-      }
+      @Override public final String getString(int columnIndex)
+      {return super.getString(columnIndex);}
     }
   }
 

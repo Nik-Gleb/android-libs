@@ -101,7 +101,7 @@ final class TablesProvider extends SQLiteProvider {
 
 
   /** Main handler */
-  private Handler mHandler = new Handler(Looper.getMainLooper(), mCallback);
+  private final Handler mHandler = new Handler(Looper.getMainLooper(), mCallback);
 
   /** The Content Resolver. */
   @Nullable private ContentResolver mContentResolver = null;
@@ -320,6 +320,7 @@ final class TablesProvider extends SQLiteProvider {
   }
 
   /** Handle messages */
+  @SuppressWarnings("SameReturnValue")
   private boolean handleMessage(Message msg) {
     switch (msg.what) {
       case UPDATE_BROADCAST_MSG:
