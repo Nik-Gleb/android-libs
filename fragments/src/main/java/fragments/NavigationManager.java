@@ -312,7 +312,7 @@ public class NavigationManager implements Closeable {
    */
   private void renderStackState
   (@StringRes int titleShort, @StringRes int titleLong) {
-    if (mActivity instanceof View && titleShort != 0 && titleLong != 0) {
+    if (mActivity instanceof View) {
       final View view = (View) mActivity;
       view.onBackStackChanged(titleShort, titleLong);
     }
