@@ -116,8 +116,9 @@ public final class ContextProvider {
    * @return context instance
    */
   @NonNull public static Context get
-  (@NonNull Instrumentation instrumentation, @NonNull Class<? extends Application> clazz) {
-    final Context context = instrumentation.getContext(); try {final Application result =
+  (@NonNull Instrumentation instrumentation, @NonNull Class<? extends Application> clazz, boolean target) {
+    final Context context = target ? instrumentation.getTargetContext() : instrumentation.getContext();
+    try {final Application result =
       instrumentation.newApplication(context.getClassLoader(), clazz.getName(), context);
       instrumentation.callApplicationOnCreate(result); return result;}
       catch (InstantiationException | IllegalAccessException | ClassNotFoundException exception)
