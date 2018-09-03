@@ -50,6 +50,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import proguard.annotation.Keep;
@@ -396,6 +397,14 @@ public final class DataResource {
    */
   @Nullable public static DataResource unpack(@NonNull String key, @NonNull Bundle bundle)
   {final Uri uri = bundle.getParcelable(key); return uri != null ? new DataResource(uri) : null;}
+
+  /**
+   * @param descriptor asset-file descriptor
+   *
+   * @return media type
+   */
+  @Nullable public static MediaType type(@NonNull AssetFileDescriptor descriptor)
+  {return OkUtils.mediaType(descriptor.getExtras());}
 
   /**
    * Predefined source names.

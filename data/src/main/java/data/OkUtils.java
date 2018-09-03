@@ -218,7 +218,7 @@ final class OkUtils {
     return extras;
   }
 
-  @Nullable private static MediaType mediaType(@Nullable Bundle type) {
+  @Nullable static MediaType mediaType(@Nullable Bundle type) {
     return type == Bundle.EMPTY || type == null ? null :
         parse(requireNonNull(type.getString(TYPE)));
   }
