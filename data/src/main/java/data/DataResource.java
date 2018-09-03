@@ -380,6 +380,24 @@ public final class DataResource {
   }
 
   /**
+   * @param key bundle key
+   * @param bundle bundle batch
+   *
+   * @return bundle batch
+   */
+  @NonNull public final Bundle pack(@NonNull String key, @NonNull Bundle bundle)
+  {bundle.putParcelable(key, uri); return bundle;}
+
+  /**
+   * @param key bundle key
+   * @param bundle bundle batch
+   *
+   * @return unpacked data resource or null
+   */
+  @Nullable public final DataResource unpack(@NonNull String key, @NonNull Bundle bundle)
+  {final Uri uri = bundle.getParcelable(key); return uri != null ? new DataResource(uri) : null;}
+
+  /**
    * Predefined source names.
    *
    * @author Nikitenko Gleb
