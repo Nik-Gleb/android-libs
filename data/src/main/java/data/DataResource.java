@@ -394,7 +394,7 @@ public final class DataResource {
    *
    * @return unpacked data resource or null
    */
-  @Nullable public final DataResource unpack(@NonNull String key, @NonNull Bundle bundle)
+  @Nullable public static DataResource unpack(@NonNull String key, @NonNull Bundle bundle)
   {final Uri uri = bundle.getParcelable(key); return uri != null ? new DataResource(uri) : null;}
 
   /**
