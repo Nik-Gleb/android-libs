@@ -25,6 +25,8 @@
 
 package extensions;
 
+import android.app.Application;
+import android.app.Instrumentation;
 import android.content.ComponentCallbacks2;
 import android.content.ContentProvider;
 import android.content.Context;
@@ -105,6 +107,21 @@ public final class ContextProvider {
     return caller instanceof ContextWrapper ? get((ContextWrapper) caller) :
         caller instanceof ContentProvider ? get(requireNonNull
             (((ContentProvider) caller).getContext())) : get(new RuntimeException());
+  }
+
+  /**
+   * @param instrumentation instrumentation instance
+   * @param clazz application clazz
+   *
+   * @return context instance
+   */
+  @NonNull public static Context get
+  (@NonNull Instrumentation instrumentation, @NonNull Class<? extends Application> clazz) {
+    final Context context = instrumentation.getContext(); try {final Application result =
+      instrumentation.newApplication(context.getClassLoader(), clazz.getName(), context);
+      instrumentation.callApplicationOnCreate(result); return result;}
+      catch (InstantiationException | IllegalAccessException | ClassNotFoundException exception)
+    {throw new RuntimeException(exception);}
   }
 
   /**

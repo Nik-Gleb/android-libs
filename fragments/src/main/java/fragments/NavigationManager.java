@@ -318,6 +318,16 @@ public class NavigationManager implements Closeable {
     }
   }
 
+  /**
+   * Render current back stack state.
+   */
+  private void renderStackState() {
+    if (mActivity instanceof View) {
+      final View view = (View) mActivity;
+      view.onBackStackReset();
+    }
+  }
+
   /** Get Root Screen */
   private static Boolean rootIsMain(@NonNull FragmentManager mgr,
       @NonNull String mainScreenName, @NonNull String introScreenName) {
@@ -366,6 +376,9 @@ public class NavigationManager implements Closeable {
     void onBackStackChanged
     (@StringRes int titleShort,
         @StringRes int titleLong);
+
+    /** Calls when back stack is empty. */
+    void onBackStackReset();
   }
 
 }
