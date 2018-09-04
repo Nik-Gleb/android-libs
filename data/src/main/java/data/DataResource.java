@@ -438,6 +438,7 @@ public final class DataResource {
   {String READ = "r", WRITE = "w";}
 
   /** Data Values Builder. */
+  @Keep@KeepPublicProtectedClassMembers
   public static final class DataValues {
 
     /** Data source. */
