@@ -461,24 +461,23 @@ public final class DataResource {
     {mSource = source; mResource = resource;}
 
     /** @return this builder, to allow for chaining. */
-    @NonNull DataValues value(@NonNull String key)
+    @NonNull public final DataValues value(@NonNull String key)
     {try {return this;} finally {mValues.putNull(key);}}
 
     /** @return this builder, to allow for chaining. */
-    @NonNull DataValues value(@NonNull String key, @NonNull String value)
+    @NonNull public final DataValues value(@NonNull String key, @NonNull String value)
     {try {return this;} finally {mValues.put(key, value);}}
 
     /** @return this builder, to allow for chaining. */
-    @NonNull DataValues value(@NonNull String key, long value)
+    @NonNull public final DataValues value(@NonNull String key, long value)
     {try {return this;} finally {mValues.put(key, value);}}
 
     /** @return this builder, to allow for chaining. */
-    @NonNull DataValues value(@NonNull String key, double value)
+    @NonNull public final DataValues value(@NonNull String key, double value)
     {try {return this;} finally {mValues.put(key, value);}}
 
-
     /** @return this builder, to allow for chaining. */
-    @NonNull DataValues value(@NonNull String key, @NonNull byte[] value)
+    @NonNull public final DataValues value(@NonNull String key, @NonNull byte[] value)
     {try {return this;} finally {mValues.put(key, value);}}
 
 
