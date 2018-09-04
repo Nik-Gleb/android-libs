@@ -26,9 +26,15 @@
 package data;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import okio.BufferedSink;
 import proguard.annotation.Keep;
 import proguard.annotation.KeepPublicProtectedClassMembers;
 
@@ -93,4 +99,19 @@ public final class DataUtils {
   @NonNull public static String toStr(@NonNull byte[] bytes)
   {return new String(bytes, StandardCharsets.UTF_8);}
 
+  /**
+   * @param response source response
+   * @return result request
+   */
+  @NonNull public static RequestBody
+  responseToRequest(@NonNull ResponseBody response) {
+    return new RequestBody() {
+      @Nullable @Override public final MediaType contentType()
+      {return response.contentType();}
+      @Override public final long contentLength()
+      {return response.contentLength();}
+      @Override public void writeTo(@NonNull BufferedSink sink) throws IOException
+      {sink.writeAll(response.source());}
+    };
+  }
 }
