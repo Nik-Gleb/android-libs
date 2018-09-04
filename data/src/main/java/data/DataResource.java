@@ -34,6 +34,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
@@ -277,6 +278,14 @@ public final class DataResource {
 
   /**
    * @param source data source
+   * @return data values-builder
+   */
+  @AnyThread
+  @NonNull public final DataValues put(@NonNull DataSource source)
+  {return new DataValues(source, this);}
+
+  /**
+   * @param source data source
    *
    * @return type of resource
    */
@@ -427,4 +436,62 @@ public final class DataResource {
   @StringDef({ READ, WRITE})
   @Retention(RetentionPolicy.SOURCE) @interface Access
   {String READ = "r", WRITE = "w";}
+
+  /** Data Values Builder. */
+  public static final class DataValues {
+
+    /** Data source. */
+    private final DataSource mSource;
+
+    /** Data resource. */
+    private final DataResource mResource;
+
+    /** Content values. */
+    private final ContentValues mValues = new ContentValues();
+
+    /**
+     * Constructs a new {@link DataValues}.
+     *
+     * @param source    data source
+     * @param resource  data resource
+     */
+    DataValues
+    (@NonNull DataSource source, @NonNull DataResource resource)
+    {mSource = source; mResource = resource;}
+
+    /** @return this builder, to allow for chaining. */
+    @NonNull DataValues value(@NonNull String key)
+    {try {return this;} finally {mValues.putNull(key);}}
+
+    /** @return this builder, to allow for chaining. */
+    @NonNull DataValues value(@NonNull String key, @NonNull String value)
+    {try {return this;} finally {mValues.put(key, value);}}
+
+    /** @return this builder, to allow for chaining. */
+    @NonNull DataValues value(@NonNull String key, long value)
+    {try {return this;} finally {mValues.put(key, value);}}
+
+    /** @return this builder, to allow for chaining. */
+    @NonNull DataValues value(@NonNull String key, double value)
+    {try {return this;} finally {mValues.put(key, value);}}
+
+
+    /** @return this builder, to allow for chaining. */
+    @NonNull DataValues value(@NonNull String key, @NonNull byte[] value)
+    {try {return this;} finally {mValues.put(key, value);}}
+
+
+    /** @return inserted uri-resource. */
+    @NonNull public final Uri insert()
+    {return mResource.insert(mSource, mValues);}
+
+    /** @return count of updated. */
+    public final int update()
+    {return mResource.update(mSource, mValues, null, null);}
+
+    /** @return count of updated. */
+    public final int update(@NonNull String selection, @Nullable String... args)
+    {return mResource.update(mSource, mValues, selection, args);}
+
+  }
 }
