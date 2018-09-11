@@ -52,6 +52,9 @@ final class CameraDeviceCallback
   /** Camera Device Manager Factory. */
   private final Function<CameraDevice, Closeable> mFactory;
 
+  /** Closeable reference. */
+  private final Closeable[] mCloseable;
+
   /** Camera Device Instance. */
   @Nullable private CameraDevice mCamera = null;
 
@@ -66,8 +69,9 @@ final class CameraDeviceCallback
   @SuppressLint("MissingPermission")
   @RequiresPermission(android.Manifest.permission.CAMERA)
   CameraDeviceCallback(@NonNull CameraManager manger, @NonNull String cameraId,
-      @NonNull Function<CameraDevice, Closeable> factory, @NonNull Handler handler) {
-    mFactory = factory;
+    @NonNull Function<CameraDevice, Closeable> factory, @NonNull Handler handler,
+    Closeable[] closeable) {
+    mFactory = factory; mCloseable = closeable;
     final CameraDeviceCallback instance = this;
     try {manger.openCamera(cameraId, instance, handler);}
     catch (CameraAccessException exception)
@@ -92,7 +96,8 @@ final class CameraDeviceCallback
 
   /** {@inheritDoc} */
   @Override public final void onClosed
-  (@NonNull CameraDevice camera) {mCamera = null;}
+  (@NonNull CameraDevice camera)
+  {mCamera = null; mCloseable[0] = null;}
 
   /** {@inheritDoc} */
   @SuppressLint("WrongConstant")

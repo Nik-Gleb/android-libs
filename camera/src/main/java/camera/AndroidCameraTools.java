@@ -47,6 +47,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Camera Tools Helper.
@@ -209,10 +210,12 @@ public final class AndroidCameraTools {
      */
     @SuppressLint("MissingPermission")
     @RequiresPermission(android.Manifest.permission.CAMERA)
-    @NonNull public static Closeable create(@NonNull CameraManager manger,
-        @NonNull String cameraId, @NonNull CameraDeviceBuilder builder)
-    {return new CameraDeviceCallback
-        (manger, cameraId, builder::build, builder.handler);}
+    @NonNull public static Supplier<Closeable> create(@NonNull CameraManager manger,
+        @NonNull String cameraId, @NonNull CameraDeviceBuilder builder) {
+      final Closeable[] result = new Closeable[1];
+      try {return () -> result[0];} finally {result[0] = new CameraDeviceCallback
+        (manger, cameraId, builder::build, builder.handler, result);}
+    }
 
     /**
      * @param handler main handler
