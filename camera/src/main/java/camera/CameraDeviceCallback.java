@@ -55,6 +55,9 @@ final class CameraDeviceCallback
   /** Closeable reference. */
   private final Closeable[] mCloseable;
 
+  /** Camera id. */
+  private final String mCameraId;
+
   /** Camera Device Instance. */
   @Nullable private CameraDevice mCamera = null;
 
@@ -70,7 +73,7 @@ final class CameraDeviceCallback
   @RequiresPermission(android.Manifest.permission.CAMERA)
   CameraDeviceCallback(@NonNull CameraManager manger, @NonNull String cameraId,
     @NonNull Function<CameraDevice, Closeable> factory, @NonNull Handler handler,
-    Closeable[] closeable) {
+    Closeable[] closeable) {mCameraId = cameraId;
     mFactory = factory; mCloseable = closeable;
     final CameraDeviceCallback instance = this;
     try {manger.openCamera(cameraId, instance, handler);}
@@ -119,5 +122,8 @@ final class CameraDeviceCallback
     throw new RuntimeException(String.format(Locale.US, msg, error));
   }
 
-
+  /** {@inheritDoc} */
+  @Override @NonNull
+  public final String toString()
+  {return mCameraId;}
 }
