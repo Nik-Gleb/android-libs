@@ -298,8 +298,7 @@ final class CaptureRequestManager
      * @param type capture mCurrent type
      */
     RequestCallback
-    (@NonNull CaptureRequestManager manager,
-        int type)
+    (@NonNull CaptureRequestManager manager, int type)
     {mManager = manager; mType = type;}
 
     /** {@inheritDoc} */

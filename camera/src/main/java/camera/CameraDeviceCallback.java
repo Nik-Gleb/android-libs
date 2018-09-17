@@ -119,7 +119,8 @@ final class CameraDeviceCallback
     }
     camera.close(); if (error == NO_CAMERA_ERRORS) return;
     final String msg = "Camera device has encountered a serious error: %d";
-    throw new RuntimeException(String.format(Locale.US, msg, error));
+    //throw new RuntimeException(String.format(Locale.US, msg, error));
+    System.err.println(String.format(Locale.US, msg, error));
   }
 
   /** {@inheritDoc} */
