@@ -43,6 +43,7 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
   libraryjars "${System.getProperty('java.home')}/lib/jce.jar"
   libraryjars "../.android.jar"
+  libraryjars "libs/android-support-v4.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -78,7 +79,7 @@ dependencies {
 
   compileOnly files('../.android.jar')
   implementation 'com.android.support:support-annotations:' + supportVersion
-
+  implementation files('libs/android-support-v4.jar')
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion
   testRuntime 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
