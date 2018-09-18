@@ -52,6 +52,7 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "libs/runtime-1.1.1.jar"
   libraryjars "libs/android-support-v4.jar"
   libraryjars "libs/support-fragment.jar"
+  libraryjars "libs/viewmodel-1.1.1.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -90,7 +91,7 @@ dependencies {
   implementation files('libs/lifecycle-common-1.1.1.jar')
   //implementation files('libs/runtime-1.1.1.jar')
   //implementation files('libs/common-1.1.1.jar')
-  implementation 'android.arch.lifecycle:extensions:1.1.1'
+  implementation files('libs/viewmodel-1.1.1.jar')
   implementation 'com.android.support:support-annotations:' + supportVersion
   implementation 'javax.inject:javax.inject:1'
   implementation 'com.google.dagger:dagger:2.16'

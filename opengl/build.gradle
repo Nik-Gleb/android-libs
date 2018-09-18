@@ -77,7 +77,7 @@ dependencies {
   compileOnly files('../.android.jar')
   implementation 'com.android.support:support-annotations:' + supportVersion
   implementation 'com.android.support:support-core-utils:' + supportVersion
-  implementation 'com.android.support:support-fragment:' + supportVersion
+  //implementation 'com.android.support:support-fragment:' + supportVersion
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion
