@@ -88,7 +88,7 @@ final class CaptureRequestManager
   /** Main handler. */
   private final Handler mHandler;
 
-  /** Camera capture session. */
+  /** CameraInstance capture session. */
   private final CameraCaptureSession mSession;
 
 

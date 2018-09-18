@@ -49,7 +49,7 @@ final class CaptureSessionCallback extends StateCallback implements Closeable {
   /** {@link Callback}'s factory. */
   private final Function<CameraCaptureSession, Callback> mFactory;
 
-  /** Camera Capture Session. */
+  /** CameraInstance Capture Session. */
   @Nullable private CameraCaptureSession mSession, mTerminated = null;
 
   /** Capture Request Manager. */

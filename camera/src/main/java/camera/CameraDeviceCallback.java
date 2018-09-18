@@ -49,19 +49,19 @@ final class CameraDeviceCallback
     extends CameraDevice.StateCallback
     implements Closeable {
 
-  /** Camera Device Manager Factory. */
+  /** CameraInstance Device Manager Factory. */
   private final Function<CameraDevice, Closeable> mFactory;
 
   /** Closeable reference. */
   private final Closeable[] mCloseable;
 
-  /** Camera id. */
+  /** CameraInstance id. */
   private final String mCameraId;
 
-  /** Camera Device Instance. */
+  /** CameraInstance Device Instance. */
   @Nullable private CameraDevice mCamera = null;
 
-  /** Camera Device Manager. */
+  /** CameraInstance Device Manager. */
   @Nullable private Closeable mManager = null;
 
   /**
@@ -118,7 +118,7 @@ final class CameraDeviceCallback
       mManager = null;
     }
     camera.close(); if (error == NO_CAMERA_ERRORS) return;
-    final String msg = "Camera device has encountered a serious error: %d";
+    final String msg = "CameraInstance device has encountered a serious error: %d";
     //throw new RuntimeException(String.format(Locale.US, msg, error));
     System.err.println(String.format(Locale.US, msg, error));
   }

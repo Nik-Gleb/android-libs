@@ -50,7 +50,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Camera Tools Helper.
+ * CameraInstance Tools Helper.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 28/03/2018
@@ -102,7 +102,7 @@ public final class AndroidCameraTools {
      *
      * <p>
      * Может возникать при сбое в работе камеры из-за того, что камера уже
-     * используется клиентом Camera API с более высоким приоритетом.
+     * используется клиентом CameraInstance API с более высоким приоритетом.
      * </p>
      */
     @SuppressWarnings("WeakerAccess")

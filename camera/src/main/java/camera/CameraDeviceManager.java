@@ -46,7 +46,7 @@ import camera.AndroidCameraTools.CaptureRequestBuilder;
  */
 final class CameraDeviceManager implements Closeable {
 
-  /** Camera Device. */
+  /** CameraInstance Device. */
   private final CameraDevice mDevice;
   /** Main handler. */
   private final Handler mHandler;
@@ -121,7 +121,7 @@ final class CameraDeviceManager implements Closeable {
     /** Surfaces surfaces. */
     final Consumer<Consumer<List<Surface>>> surfaces;
 
-    /** Camera Device Manager. */
+    /** CameraInstance Device Manager. */
     private final CameraDeviceManager mManager;
 
     /** Closed state flag. */

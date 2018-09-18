@@ -34,7 +34,7 @@ import java.io.Closeable;
 import java.util.function.BiConsumer;
 
 /**
- * Camera Availability CaptureCallback.
+ * CameraInstance Availability CaptureCallback.
  *
  * @author Nikitenko Gleb
  * @since 1.0, 26/03/2018
@@ -46,7 +46,7 @@ final class CameraAvailabilityManager extends AvailabilityCallback
   private static final boolean
   AVAILABLE = true, UNAVAILABLE = false;
 
-  /** Camera manager */
+  /** CameraInstance manager */
   private final CameraManager mManager;
 
   /** The captureCallback. */

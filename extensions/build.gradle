@@ -51,6 +51,7 @@ task obfuscate(type: ProGuardTask, dependsOn: 'assemble') {
   libraryjars "libs/livedata-core-1.1.1.jar"
   libraryjars "libs/runtime-1.1.1.jar"
   libraryjars "libs/android-support-v4.jar"
+  libraryjars "libs/support-fragment.jar"
   injars "$buildDir/libs/${archivesBaseName}.jar"
   outjars "$buildDir/libs/${archivesBaseName}-release.jar"
 }
@@ -82,6 +83,7 @@ dependencies {
   test { useJUnitPlatform(); jvmArgs '-noverify' }
   compileOnly files('../.android.jar')
   //compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+  implementation files('libs/support-fragment.jar')
   implementation files('libs/android-support-v4.jar')
   implementation files('libs/livedata-1.1.1.jar')
   implementation files('libs/livedata-core-1.1.1.jar')
