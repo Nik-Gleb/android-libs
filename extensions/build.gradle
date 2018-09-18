@@ -90,6 +90,7 @@ dependencies {
   implementation files('libs/lifecycle-common-1.1.1.jar')
   //implementation files('libs/runtime-1.1.1.jar')
   //implementation files('libs/common-1.1.1.jar')
+  implementation 'android.arch.lifecycle:extensions:1.1.1'
   implementation 'com.android.support:support-annotations:' + supportVersion
   implementation 'javax.inject:javax.inject:1'
   implementation 'com.google.dagger:dagger:2.16'
