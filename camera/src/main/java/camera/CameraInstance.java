@@ -94,7 +94,7 @@ public abstract class CameraInstance {
 
   /** {@inheritDoc} */
   @Override @NonNull public final String toString()
-  {return profile.toString();}
+  {return isEmpty() ? "CameraProfile {empty}" : profile.toString();}
 
   /** Get next profile. */
   public abstract void next();
