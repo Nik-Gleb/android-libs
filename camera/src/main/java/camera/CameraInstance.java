@@ -25,6 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 import camera.AndroidCameraTools.CameraDeviceBuilder;
@@ -156,7 +157,7 @@ public abstract class CameraInstance {
     @Nullable private BiConsumer<Integer, CaptureRequestBuilder> mConfigurator = null;
 
     /** State listener. */
-    @Nullable private Consumer<Integer> mListener = null;
+    @Nullable private IntConsumer mListener = null;
 
     /** Main handler. */
     @Nullable private Handler mHandler = null;
@@ -220,7 +221,7 @@ public abstract class CameraInstance {
      * @return this builder, to allow for chaining.
      */
     @NonNull public final Builder listener
-    (@NonNull Consumer<Integer> value)
+    (@NonNull IntConsumer value)
     {mListener = value; return this;}
 
     /**
@@ -325,7 +326,7 @@ public abstract class CameraInstance {
         @NonNull Function<Consumer<CameraInstance>, Runnable> source,
         @Nullable Consumer<Consumer<Boolean>> controller,
         @Nullable BiConsumer<Integer, CaptureRequestBuilder> configurator,
-        @Nullable Consumer<Integer> listener, @NonNull Consumer<CameraInstance> sink) {
+        @Nullable IntConsumer listener, @NonNull Consumer<CameraInstance> sink) {
 
       final BiFunction<Consumer<List<Surface>>, CameraInstance, CameraInstance>
         factory = (consumer, model) ->
@@ -356,9 +357,9 @@ public abstract class CameraInstance {
               CameraDeviceBuilder.create
               (handler, surfaces -> sink.accept(factory.apply(surfaces, model)));
 
-            if (controller != null)   builder.controller = null;
-            if (configurator != null) builder.configurator = null;
-            if (listener != null)     builder.listener = null;
+            if (controller != null)   builder.controller = controller;
+            if (configurator != null) builder.configurator = configurator;
+            if (listener != null)     builder.listener = listener;
 
             device[0] =
               CameraDeviceBuilder.create

@@ -47,6 +47,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -175,7 +176,7 @@ public final class AndroidCameraTools {
     /** Capture configurator. */
     @Nullable public BiConsumer<Integer, CaptureRequestBuilder> configurator = null;
     /** State listener. */
-    @Nullable public Consumer<Integer> listener = null;
+    @Nullable public IntConsumer listener = null;
     /** Disposable captures callback. */
     @Nullable public CaptureCallbackOptions options = null;
 

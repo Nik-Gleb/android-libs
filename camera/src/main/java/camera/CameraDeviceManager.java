@@ -35,6 +35,7 @@ import java.io.Closeable;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import camera.AndroidCameraTools.CameraDeviceBuilder;
 import camera.AndroidCameraTools.CaptureCallbackOptions;
@@ -56,7 +57,7 @@ final class CameraDeviceManager implements Closeable {
   /** Capture configurator. */
   private final BiConsumer<Integer, CaptureRequestBuilder> mConfigurator;
   /** State listener. */
-  private final Consumer<Integer> mListener;
+  private final IntConsumer mListener;
   /** Disposable captures callback. */
   private final CaptureCallbackOptions mOptions;
   /** Snapshot allowed. */

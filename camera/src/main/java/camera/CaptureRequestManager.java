@@ -41,6 +41,7 @@ import android.view.Surface;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import camera.AndroidCameraTools.CaptureCallbackOptions;
 import camera.AndroidCameraTools.CaptureRequestBuilder;
@@ -82,7 +83,7 @@ final class CaptureRequestManager
   /** Capture configurator. */
   private final BiConsumer<Integer, CaptureRequestBuilder> mConfigurator;
   /** State listener. */
-  private final Consumer<Integer> mListener;
+  private final IntConsumer mListener;
   /** Disposable captures callback. */
   private final CaptureCallbackOptions mOptions;
   /** Main handler. */
@@ -371,7 +372,7 @@ final class CaptureRequestManager
     /** Capture configurator. */
     @Nullable BiConsumer<Integer, CaptureRequestBuilder> configurator = null;
     /** State listener. */
-    @Nullable Consumer<Integer> listener = null;
+    @Nullable IntConsumer listener = null;
     /** Capture callback options. */
     @Nullable CaptureCallbackOptions options = null;
 
