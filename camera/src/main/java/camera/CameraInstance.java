@@ -59,20 +59,26 @@ public abstract class CameraInstance {
   /** CameraProfile data. */
   @NonNull public final CameraProfile profile;
 
+  /** Surfaces consumer. */
+  @Nullable private final Consumer<List<Surface>> mSurfaces;
+
   /**
    * Constructs a new {@link CameraInstance}.
    *
    * @param profile profile data
+   * @param surfaces surfaces consumer
    */
-  private CameraInstance(@NonNull CameraProfile profile)
-  {this.profile = profile;}
+  private CameraInstance(@NonNull CameraProfile profile,
+    @Nullable Consumer<List<Surface>> surfaces)
+  {this.profile = profile; mSurfaces = surfaces;}
 
   /** {@inheritDoc} */
   @Override public final boolean equals(Object obj) {
     if (this == obj) return true;
     if (!(obj instanceof CameraInstance)) return false;
     final CameraInstance that = (CameraInstance) obj;
-    return Objects.equals(profile, that.profile);
+    return Objects.equals(profile, that.profile) &&
+      Objects.equals(mSurfaces, that.mSurfaces);
   }
 
   /** {@inheritDoc} */
@@ -90,8 +96,13 @@ public abstract class CameraInstance {
   public abstract void prev();
 
   /** @param surfaces outputs. */
-  public abstract void set
-  (@Nullable List<Surface> surfaces);
+  public final void set
+  (@Nullable List<Surface> surfaces)
+  {if (mSurfaces != null) mSurfaces.accept(surfaces);}
+
+  /** @return true if instance is empty */
+  public boolean isEmpty()
+  {return mSurfaces == null || profile.isEmpty();}
 
   /**
    * @param manager {@link CameraManager} instance
@@ -265,15 +276,12 @@ public abstract class CameraInstance {
         currents[0] = current;
         final CameraProfile profile = current != null ?
           current.profile : CameraProfile.EMPTY;
-
         if (closed.get()) return;
-        sink.accept(new CameraInstance(profile) {
+        sink.accept(new CameraInstance(profile, null) {
           @Override public final void next()
           {moves.accept(true);}
           @Override public final void prev()
           {moves.accept(false);}
-          @Override public final void set
-            (@Nullable List<Surface> surfaces) {}
         });
       };
 
@@ -321,21 +329,18 @@ public abstract class CameraInstance {
 
       final BiFunction<Consumer<List<Surface>>, CameraInstance, CameraInstance>
         factory = (consumer, model) ->
-        consumer == null || model == null || model.profile.isEmpty() ? null :
-          new CameraInstance(model.profile) {
+          new CameraInstance(model.profile, consumer) {
             @Override public void next()
             {model.next();}
             @Override public void prev()
             {model.prev();}
-            @Override public void set
-              (@Nullable List<Surface> surfaces)
-            {consumer.accept(surfaces);}
           };
 
       final Supplier<Closeable>[] device = new Supplier[1];
 
       @SuppressLint("MissingPermission")
       final Consumer<CameraInstance> consumer = model -> {
+
         if (device[0] != null) {
           final Closeable camera = device[0].get();
           if (camera != null) {
@@ -349,8 +354,7 @@ public abstract class CameraInstance {
           try {
             final CameraDeviceBuilder builder =
               CameraDeviceBuilder.create
-              (handler, surfaces -> sink.accept
-                (factory.apply(surfaces, model)));
+              (handler, surfaces -> sink.accept(factory.apply(surfaces, model)));
 
             if (controller != null)   builder.controller = null;
             if (configurator != null) builder.configurator = null;
@@ -363,6 +367,12 @@ public abstract class CameraInstance {
             if (exception.getCause() instanceof
               CameraAccessException) device[0] = null;
           }
+        else
+          sink.accept(
+            new CameraInstance(CameraProfile.EMPTY, null)
+            {@Override public void next() {}
+            @Override public void prev() {}}
+          );
       };
 
       final Runnable dispose = source.apply(consumer);
