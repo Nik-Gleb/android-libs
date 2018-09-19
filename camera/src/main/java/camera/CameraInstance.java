@@ -57,6 +57,12 @@ import static camera.CameraProfile.Rotation.ROTATION_000;
 @SuppressWarnings("unused")
 public abstract class CameraInstance {
 
+  /** Empty instance. */
+  public static final CameraInstance EMPTY =
+    new CameraInstance(CameraProfile.EMPTY, null)
+    {@Override public void next() {}
+    @Override public void prev() {}};
+
   /** CameraProfile data. */
   @NonNull public final CameraProfile profile;
 
@@ -369,11 +375,7 @@ public abstract class CameraInstance {
               CameraAccessException) device[0] = null;
           }
         else
-          sink.accept(
-            new CameraInstance(CameraProfile.EMPTY, null)
-            {@Override public void next() {}
-            @Override public void prev() {}}
-          );
+          sink.accept(CameraInstance.EMPTY);
       };
 
       final Runnable dispose = source.apply(consumer);
