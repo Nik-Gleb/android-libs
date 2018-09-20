@@ -54,7 +54,7 @@ import static camera.CameraProfile.Rotation.ROTATION_000;
  * @author Nikitenko Gleb
  * @since 1.0, 10/09/2018
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "WeakerAccess" })
 public abstract class CameraInstance {
 
   /** Empty instance. */
@@ -108,7 +108,7 @@ public abstract class CameraInstance {
   {if (mSurfaces != null) mSurfaces.accept(surfaces);}
 
   /** @return true if instance is empty */
-  public boolean isEmpty()
+  public final boolean isEmpty()
   {return mSurfaces == null || profile.isEmpty();}
 
   /**
@@ -150,11 +150,19 @@ public abstract class CameraInstance {
 
     /** Selector function. */
     @Nullable private BiFunction<ArraySet<CameraProfile>,
-      Integer, Selected> mSelector = null;
+      Integer, Selected> mSelector = (descriptions, index) ->
+      wrap(SelectedInternal.create(descriptions, index));
 
     /** Updater function. */
     @Nullable private  BiFunction<ArraySet<CameraProfile>,
-      Selected, Selected> mUpdater = null;
+      Selected, Selected> mUpdater =
+      (descriptions, selected) -> {
+        final SelectedInternal<CameraProfile>
+          selection = wrap(selected);
+        return wrap(selection == null ?
+          SelectedInternal.create(descriptions) :
+          selection.items(descriptions));
+      };
 
     /** Capture controller. */
     @Nullable private Consumer<Consumer<Boolean>> mController = null;
@@ -178,24 +186,6 @@ public abstract class CameraInstance {
      */
     private Builder(@NonNull CameraManager manager, boolean front)
     {mManager = manager; mFront = front;}
-
-    /**
-     * @param value selector function
-     *
-     * @return this builder, to allow for chaining.
-     */
-    @NonNull public final Builder selector
-    (@NonNull BiFunction<ArraySet<CameraProfile>, Integer, Selected> value)
-    {mSelector = value; return this;}
-
-    /**
-     * @param value updater function
-     *
-     * @return this builder, to allow for chaining.
-     */
-    @NonNull public final Builder updater
-    (@NonNull BiFunction<ArraySet<CameraProfile>, Selected, Selected> value)
-    {mUpdater = value; return this;}
 
     /**
      * @param value main handler
@@ -366,6 +356,7 @@ public abstract class CameraInstance {
             if (controller != null)   builder.controller = controller;
             if (configurator != null) builder.configurator = configurator;
             if (listener != null)     builder.listener = listener;
+            builder.snapshot = model.profile.level != CameraProfile.Level.LEGACY;
 
             device[0] =
               CameraDeviceBuilder.create
@@ -468,10 +459,24 @@ public abstract class CameraInstance {
     @NonNull private static ArraySet<CameraProfile> toArraySet(@NonNull Set<CameraProfile> set)
     {final ArraySet<CameraProfile> result = new ArraySet<>(set.size()); result.addAll(set); return result;}
 
+    /**
+     * @param selected base selection
+     * @return camera selection
+     */
+    @Nullable private static CameraInstance.Selected wrap(@Nullable SelectedInternal<CameraProfile> selected)
+    {return selected == null ? null : new CameraInstance.Selected(selected.index, selected.item);}
+
+    /**
+     * @param selected camera selection
+     * @return base selection
+     */
+    @Nullable private static SelectedInternal<CameraProfile> wrap(@Nullable CameraInstance.Selected selected)
+    {return selected == null ? null : SelectedInternal.create(selected.profile, selected.index);}
+
   }
 
   /**
-   * Selected CameraInstance CameraProfile.
+   * SelectedInternal CameraInstance CameraProfile.
    *
    * @author Nikitenko Gleb
    * @since 1.0, 09/09/2018
