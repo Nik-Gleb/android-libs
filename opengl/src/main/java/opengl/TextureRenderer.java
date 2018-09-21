@@ -100,7 +100,7 @@ public final class TextureRenderer implements Closeable {
     GLES20.glViewport(iZero, iZero, width, height);
     GLES20.glScissor(iZero, iZero, width, height);
     GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-    GLES20.glClear(CLEAR_MASK);
+    //GLES20.glClear(CLEAR_MASK);
   }
 
   /**

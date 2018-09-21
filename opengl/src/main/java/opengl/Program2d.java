@@ -145,7 +145,7 @@ public final class Program2d {
     result[5] = GLES20.glGetUniformLocation(result[0], V_MVP_MATRIX);
     result[6] = GLES20.glGetUniformLocation(result[0], V_ST_MATRIX);
     result[7] = GLES20.glGetUniformLocation(result[0], F_TEXTURE);
-    restoreProgram(result);
+    //restoreProgram(result);
     // 
     return result;
   }
@@ -182,7 +182,7 @@ public final class Program2d {
   public static void draw
   (@NonNull int[] attrs, @NonNull float[] stMatrix,  @NonNull float[] mvpMatrix, int unit) {
 
-    saveProgram(attrs);
+    //saveProgram(attrs);
 
     attrs[9] = 3;
     TRIANGLE_VERTICES.position(VERTICES_POS_OFFSET);
@@ -202,11 +202,11 @@ public final class Program2d {
     GLES20.glEnableVertexAttribArray(attrs[3]);
     GLES20.glEnableVertexAttribArray(attrs[4]);
     GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, OFFSET, VERTICES_NUMBER);
-    GLES20.glFinish();
+    /*GLES20.glFinish();
     GLES20.glDisableVertexAttribArray(attrs[3]);
-    GLES20.glDisableVertexAttribArray(attrs[4]);
+    GLES20.glDisableVertexAttribArray(attrs[4]);*/
 
-    restoreProgram(attrs);
+    //restoreProgram(attrs);
   }
 
   /**

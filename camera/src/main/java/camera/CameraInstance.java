@@ -294,8 +294,8 @@ public abstract class CameraInstance {
             stream(mManager.getCameraIdList())
               .map(id -> createProfile(mManager, id, mFront))
               .collect(toCollection(ArraySet::new));
-          if (!looper.getQueue().isIdle()) notifier.accept(msg.getTarget());
-          else setCurrent[0].accept(mUpdater.apply(profiles[0] =
+          /*if (!looper.getQueue().isIdle()) notifier.accept(msg.getTarget());
+          else */setCurrent[0].accept(mUpdater.apply(profiles[0] =
             toArraySet(profileSet), currents[0]));
         } catch (CameraAccessException ignored) {}
         return true;
