@@ -134,6 +134,7 @@ final class FilesProvider implements Provider {
   {return getMimeType(file(mFiles, uri).getPath());}
 
   /** {@inheritDoc} */
+  @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
   @Nullable @Override public String[] getStreamTypes
   (@NonNull Uri uri, @NonNull String filter) {
     File file = file(mFiles, uri);

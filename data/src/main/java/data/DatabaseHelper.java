@@ -177,8 +177,8 @@ final class DatabaseHelper extends SQLiteOpenHelper {
     super.onOpen(db);
     db.enableWriteAheadLogging();
     //db.execSQL("PRAGMA temp_store MEMORY");
-    db.rawQuery("PRAGMA synchronous = OFF;", null);
-    db.rawQuery("PRAGMA journal_mode = WAL;", null);
+    db.rawQuery("PRAGMA synchronous = OFF;", null).close();
+    db.rawQuery("PRAGMA journal_mode = WAL;", null).close();
   }
 
   /** {@inheritDoc} */

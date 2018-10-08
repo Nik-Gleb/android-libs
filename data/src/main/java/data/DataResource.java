@@ -40,12 +40,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.annotation.WorkerThread;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -187,22 +185,19 @@ public final class DataResource {
   /**
    * @param source    data source
    * @param request   request body
-   * @param executor  request executor
    *
    * @return  response of request
    */
-  @WorkerThread
-  @NonNull public final ResponseBody call(@NonNull DataSource source,
-      @NonNull RequestBody request, @NonNull Executor executor) throws IOException
-  {return source.call(uri,request, executor);}
+  @WorkerThread @NonNull public final ResponseBody call
+  (@NonNull DataSource source, @NonNull RequestBody request)
+  {return source.call(uri,request);}
 
   /**
    * @param source data source
    *
    * @return response of request
    */
-  @WorkerThread
-  @NonNull public final ResponseBody read(@NonNull DataSource source) throws IOException
+  @WorkerThread @NonNull public final ResponseBody read(@NonNull DataSource source)
   {return source.read(uri.buildUpon().appendQueryParameter(MODE, READ).build());}
 
   /**
@@ -210,7 +205,7 @@ public final class DataResource {
    * @param request request body
    */
   @WorkerThread public final void write
-  (@NonNull DataSource source, @NonNull RequestBody request) throws IOException
+  (@NonNull DataSource source, @NonNull RequestBody request)
   {source.write(uri.buildUpon().appendQueryParameter(MODE, WRITE).build(), request);}
 
 
@@ -221,8 +216,7 @@ public final class DataResource {
    */
   @WorkerThread
   @NonNull public final AssetFileDescriptor openFile
-  (@NonNull DataSource source) throws IOException
-  {return source.openFile(uri, null);}
+  (@NonNull DataSource source) {return source.openFile(uri, null);}
 
   /**
    * @param source data source
@@ -231,7 +225,7 @@ public final class DataResource {
    */
   @WorkerThread
   @NonNull public final AssetFileDescriptor openFile
-  (@NonNull DataSource source, @NonNull Bundle options) throws IOException
+  (@NonNull DataSource source, @NonNull Bundle options)
   {return source.openFile(uri, options);}
 
   /**
@@ -356,7 +350,7 @@ public final class DataResource {
    */
   @WorkerThread @NonNull public final Bundle call
   (@NonNull DataSource source, @Nullable String arg, @Nullable Bundle extras)
-  {return source.call(uri.getScheme(), arg, extras);}
+  {return source.call(Objects.requireNonNull(uri.getScheme()), arg, extras);}
 
 
   /** {@inheritDoc} */
@@ -382,7 +376,7 @@ public final class DataResource {
    */
   @WorkerThread
   @NonNull public final Intent getIntent
-  (@NonNull DataSource source, @NonNull String action) throws IOException {
+  (@NonNull DataSource source, @NonNull String action) {
     final Intent result = source.getIntent(uri).setAction(action);
     if (action.startsWith("android.media.action"))
       result.setDataAndType(null, null);

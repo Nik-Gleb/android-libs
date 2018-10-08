@@ -64,6 +64,9 @@ import static camera.CaptureRequestCallback.repeating;
 final class CaptureRequestManager
     implements CaptureSessionCallback.Callback {
 
+  /** Play camera sounds. */
+  private static final boolean SOUNDS = false;
+
   /** Media Action Sound. */
   private final MediaActionSound mSound = new MediaActionSound()
   {{load(START_VIDEO_RECORDING); load(STOP_VIDEO_RECORDING); load(SHUTTER_CLICK);}};
@@ -171,7 +174,7 @@ final class CaptureRequestManager
   /** Repeatable clicked. */
   private void onRepeatableClicked() {
     if (mClosed) return; mRecording = !mRecording;
-    if (!mRecording) mSound.play(STOP_VIDEO_RECORDING);
+    if (SOUNDS && !mRecording) mSound.play(STOP_VIDEO_RECORDING);
     try {mSession.stopRepeating();}
     catch (CameraAccessException e)
     {throw new RuntimeException(e);}
@@ -185,7 +188,7 @@ final class CaptureRequestManager
     final CaptureRequestCallback.Callback callback =
         snapshot ? mSnapshotCallback : mCaptureCallback;
     apply(disposable(mSession, request), mOptions, callback, mHandler).build();
-    mSound.play(SHUTTER_CLICK);
+    if (SOUNDS) mSound.play(SHUTTER_CLICK);
   }
 
   /**
@@ -219,7 +222,7 @@ final class CaptureRequestManager
       apply(repeating(mSession, request), mOptions, callback, mHandler).build();
     } else {
       if (mListener != null) mListener.accept(mRecording ? RECORD : PREVIEW);
-      if (mRecording) mSound.play(START_VIDEO_RECORDING);
+      if (SOUNDS && mRecording) mSound.play(START_VIDEO_RECORDING);
     }
   }
 

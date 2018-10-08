@@ -122,9 +122,19 @@ public final class ContentProvider extends
    */
   @NonNull
   private static String[] getDatabaseTables(@NonNull Bundle meta) {
-    return meta.getString("database.tables", "")
-               .split(";");
+    return meta.getString("database.tables", "").split(";");
   }
+
+  /**
+   * @param meta content provider meta-data
+   *
+   * @return data-base tables
+   */
+  @NonNull
+  private static String getHttpsHost(@NonNull Bundle meta) {
+    return meta.getString("https.host", "");
+  }
+
 
   /**
    * @param uri  uri resource
@@ -138,7 +148,8 @@ public final class ContentProvider extends
   private static String cutQuery
   (@NonNull Uri uri, @NonNull Set<String> keys, @NonNull String key) {
     if (!keys.contains(key)) return null;
-    else try {return uri.getQueryParameter(key);} finally {keys.remove(key);}
+    else try {return uri.getQueryParameter(key);}
+    finally {keys.remove(key);}
   }
 
   /** {@inheritDoc} */
@@ -152,7 +163,8 @@ public final class ContentProvider extends
     final int version = getDatabaseVersion(meta);
     final String[] tables = getDatabaseTables(meta);
     final String authority = info.authority;
-    create(context, authority, name, version, tables, mProviders);
+    final String host = getHttpsHost(meta);
+    create(context, authority, name, version, tables, host, mProviders);
     return true;
   }
 
@@ -231,7 +243,8 @@ public final class ContentProvider extends
   /** {@inheritDoc} */
   @NonNull
   @Override
-  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+  @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection",
+    "ToArrayCallWithZeroLengthArrayArgument" })
   public final ContentProviderResult[] applyBatch
   (@NonNull ArrayList<ContentProviderOperation> operations)
       throws OperationApplicationException {
@@ -366,8 +379,8 @@ public final class ContentProvider extends
   /** Create child providers. */
   private void create(@NonNull Context context, @NonNull String authority,
       @NonNull String name, int version, @NonNull String[] tables,
-      @NonNull Map<String, Provider> map) {
-    map.put("https", new HttpsProvider(context, authority, version));
+      @NonNull String host, @NonNull Map<String, Provider> map) {
+    map.put("https", new HttpsProvider(context, host));
     map.put("files", new FilesProvider(context, authority, version));
     map.put("assets", new AssetsProvider(context, authority, version));
     map.put("tables", new TablesProvider(context, authority, name, version, tables));

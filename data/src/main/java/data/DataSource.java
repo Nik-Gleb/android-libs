@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -87,6 +88,9 @@ import static java.util.Objects.requireNonNull;
 @Keep @KeepPublicProtectedClassMembers
 @Singleton public final class DataSource implements Closeable {
 
+  /** IO Thread Pool Executor. */
+  public static final Executor IO = OkUtils.EXECUTOR;
+
   /** Access mode, mime type. */
   static final String MODE = "mode", TYPE = "type", DATA = "data";
 
@@ -98,11 +102,11 @@ import static java.util.Objects.requireNonNull;
 
   /** Cancellation signals. */
   private final Set<CancellationSignal> mCancels =
-    newSetFromMap(new ConcurrentHashMap<CancellationSignal, Boolean>());
+    newSetFromMap(new ConcurrentHashMap<>());
 
   /** Content observers. */
   private final Set<ContentObserver> mObservers =
-    newSetFromMap(new ConcurrentHashMap<ContentObserver, Boolean>());
+    newSetFromMap(new ConcurrentHashMap<>());
 
   /** "CLOSE" flag-state. */
   private volatile boolean mClosed = false;
@@ -162,13 +166,12 @@ import static java.util.Objects.requireNonNull;
   /**
    * @param uri      uri of resource
    * @param request  request body
-   * @param executor request executor
    *
    * @return response of request
    */
   @WorkerThread @NonNull final ResponseBody call
-  (@NonNull Uri uri, @NonNull RequestBody request, @NonNull Executor executor)
-    throws IOException {return call(uri, OkUtils.fromRequest(request, executor));}
+  (@NonNull Uri uri, @NonNull RequestBody request)
+    {return call(uri, OkUtils.fromRequest(request));}
 
   /**
    * @param uri  uri of resource
@@ -177,7 +180,7 @@ import static java.util.Objects.requireNonNull;
    * @return response of request
    */
   @WorkerThread @NonNull private ResponseBody call
-  (@NonNull Uri uri, @Nullable AssetFileDescriptor args) throws IOException {
+  (@NonNull Uri uri, @Nullable AssetFileDescriptor args) {
     final Bundle options = args == null ? Bundle.EMPTY : new Bundle();
     if (options != Bundle.EMPTY) options.putParcelable(OkUtils.REQUEST, args);
     return OkUtils.toResponse(openFile(uri, options));
@@ -190,7 +193,7 @@ import static java.util.Objects.requireNonNull;
    * @return resource descriptor
    */
   @WorkerThread @NonNull final AssetFileDescriptor openFile
-  (@NonNull Uri uri, @Nullable Bundle options) throws IOException {
+  (@NonNull Uri uri, @Nullable Bundle options) {
     final Set<String> keys = new HashSet<>(uri.getQueryParameterNames());
     final String mode = cutQuery(uri, keys, MODE);
     final String type = cutQuery(uri, keys, TYPE);
@@ -224,12 +227,14 @@ import static java.util.Objects.requireNonNull;
    * @return descriptor result
    */
   @WorkerThread @NonNull private AssetFileDescriptor openAssetFile
-  (@NonNull Uri uri, @NonNull String mode) throws IOException {
-    checkState(); final CancellationSignal cancel;
-    mCancels.add(cancel = new CancellationSignal());
-    try {return requireNonNull(mClient.openAssetFile(uri, mode, cancel));}
-    catch (OperationCanceledException | RemoteException e)
-    {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+  (@NonNull Uri uri, @NonNull String mode) {
+    try {
+      checkState(); final CancellationSignal cancel;
+      mCancels.add(cancel = new CancellationSignal());
+      try {return requireNonNull(mClient.openAssetFile(uri, mode, cancel));}
+      catch (OperationCanceledException | RemoteException e)
+      {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+    } catch (IOException exception) {throw new CompletionException(exception);}
   }
 
   /**
@@ -240,12 +245,14 @@ import static java.util.Objects.requireNonNull;
    * @return response data
    */
   @WorkerThread @NonNull private AssetFileDescriptor openTypedAssetFileDescriptor
-  (@NonNull Uri uri, @NonNull String type, @Nullable Bundle options) throws IOException {
-    checkState(); final CancellationSignal cancel;
-    mCancels.add(cancel = new CancellationSignal());
-    try {return requireNonNull(mClient.openTypedAssetFileDescriptor(uri, type, options, cancel));}
-    catch (OperationCanceledException | RemoteException e)
-    {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+  (@NonNull Uri uri, @NonNull String type, @Nullable Bundle options) {
+    try {
+      checkState(); final CancellationSignal cancel;
+      mCancels.add(cancel = new CancellationSignal());
+      try {return requireNonNull(mClient.openTypedAssetFileDescriptor(uri, type, options, cancel));}
+      catch (OperationCanceledException | RemoteException e)
+      {throw new IOException(e.getMessage());} finally {mCancels.remove(cancel);}
+    } catch (IOException exception) {throw new CompletionException(exception);}
   }
 
   /** Check not-closed state. */
@@ -258,11 +265,11 @@ import static java.util.Objects.requireNonNull;
    * @return response of request
    */
   @WorkerThread @NonNull final ResponseBody read(@NonNull Uri uri)
-    throws IOException {return call(uri, null);}
+    {return call(uri, (AssetFileDescriptor) null);}
 
   /** @param uri uri of resource */
   @WorkerThread final void write(@NonNull Uri uri, @NonNull RequestBody request)
-    throws IOException {OkUtils.write(openFile(uri, null), request);}
+    {OkUtils.write(openFile(uri, null), request);}
 
   /**
    * @param uri uri resource
@@ -477,18 +484,18 @@ import static java.util.Objects.requireNonNull;
    * @param uri uri resource
    *
    * @return data intent
-   *
-   * @throws IOException I/O Failure
    */
-  @NonNull final Intent getIntent(@NonNull Uri uri) throws IOException {
-    try {return new Intent().setDataAndTypeAndNormalize(uri = mClient.canonicalize(uri),
+  @NonNull final Intent getIntent(@NonNull Uri uri) {
+    try {
+      try {return new Intent().setDataAndTypeAndNormalize(uri = mClient.canonicalize(uri),
         mClient.getType(requireNonNull(uri))).addFlags("w".equals(uri.getQueryParameter(MODE)) ?
         Intent.FLAG_GRANT_WRITE_URI_PERMISSION : Intent.FLAG_GRANT_READ_URI_PERMISSION)
         .putExtra(Intent.EXTRA_STREAM, uri).putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    } catch (RemoteException | NullPointerException exception) {
-      throw new IOException(exception.getMessage());
-    }
+      } catch (RemoteException | NullPointerException exception)
+      {throw new IOException(exception.getMessage());}
+    } catch (IOException exception) {throw new CompletionException(exception);}
   }
+
   /** @return new created operations butch builder */
   @NonNull public final BatchOps applyBatch() {return new BatchOps(this);}
 

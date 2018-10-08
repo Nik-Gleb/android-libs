@@ -43,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,6 @@ import static data.OkUtils.fromResponse;
 import static data.Provider.getMimeType;
 import static data.Provider.isCanceled;
 import static java.util.Arrays.copyOf;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 
 /**
  * @author Nikitenko Gleb
@@ -121,7 +121,9 @@ final class AssetsProvider implements Provider {
     /** {@inheritDoc} */
     @Override
     public final BufferedSource source() {return mSource;}
-  }  /**
+  }
+
+  /**
    * @param uri content uri
    *
    * @return assets uri
@@ -141,8 +143,7 @@ final class AssetsProvider implements Provider {
    */
   @NonNull
   private static String full(@NonNull Uri uri) {
-    return uri.getPath()
-      .substring(1);
+    return Objects.requireNonNull(uri.getPath()).substring(1);
   }
 
   /**
@@ -152,7 +153,8 @@ final class AssetsProvider implements Provider {
    */
   @NonNull
   private static String path(@NonNull Uri uri) {
-    final String[] split = uri.getPath().substring(1).split("/");
+    final String[] split = Objects.requireNonNull
+      (uri.getPath()).substring(1).split("/");
     return split.length == 1 ? "" : split[0];
   }
 
@@ -163,7 +165,7 @@ final class AssetsProvider implements Provider {
    */
   @NonNull
   private static String name(@NonNull Uri uri) {
-    return uri.getLastPathSegment();
+    return Objects.requireNonNull(uri.getLastPathSegment());
   }
 
   /** {@inheritDoc} */
@@ -218,9 +220,8 @@ final class AssetsProvider implements Provider {
   }
 
   /** {@inheritDoc} */
-  @Nullable
-  @Override
-  public String[] getStreamTypes
+  @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
+  @Nullable @Override public String[] getStreamTypes
   (@NonNull Uri uri, @NonNull String filter) {
     final String path = path(convert(uri));
     String[] files;
@@ -320,7 +321,7 @@ final class AssetsProvider implements Provider {
     } catch (IOException exception) {
       try {
         final ResponseBody response = new AssetRequest(assets.open(path), type);
-        return fromResponse(response, commonPool());
+        return fromResponse(response);
       } catch (IOException e) {
         if (!FileNotFoundException.class.isAssignableFrom(e.getClass()))
           throw new OperationCanceledException(e.getMessage());

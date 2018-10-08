@@ -29,6 +29,7 @@ import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.os.ParcelFileDescriptor.AutoCloseOutputStream;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -37,20 +38,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.internal.Util;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
 import static android.os.ParcelFileDescriptor.createReliablePipe;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.runAsync;
 import static okhttp3.MediaType.parse;
 
 /**
@@ -63,7 +69,10 @@ import static okhttp3.MediaType.parse;
 final class OkUtils {
 
   /** Log cat tag. */
-  private static final String TAG = "OkUtils";
+  private static final String TAG = "Transfer";
+
+  /** I/O Based Thread Pool Executor. */
+  static final ExecutorService EXECUTOR = newThreadPool();
 
   /** Const keys. */
   @SuppressWarnings("WeakerAccess")
@@ -82,21 +91,22 @@ final class OkUtils {
    * @param descriptor target descriptor
    * @param data source request
    */
-  static void write (@NonNull AssetFileDescriptor descriptor, @NonNull RequestBody data)
-  {flash(descriptor.getParcelFileDescriptor(), data::writeTo, Runnable::run);}
+  static void write
+  (@NonNull AssetFileDescriptor descriptor, @NonNull RequestBody data)
+  {flash(descriptor.getParcelFileDescriptor(), data::writeTo);}
 
   /**
    * @param data input content
-   * @param executor transfer executor
    *
    * @return asset file descriptor
    */
-  @NonNull static AssetFileDescriptor fromRequest
-  (@NonNull RequestBody data, @Nullable Executor executor) throws IOException {
-    final ParcelFileDescriptor[] pipe = createReliablePipe();
-    final Bundle extras = mediaType(data.contentType());
-    try {return new AssetFileDescriptor(pipe[0], 0, data.contentLength(), extras);}
-    finally {flash(pipe[1], data::writeTo, executor);}
+  @NonNull static AssetFileDescriptor fromRequest(@NonNull RequestBody data) {
+    try {
+      final ParcelFileDescriptor[] pipe = createReliablePipe();
+      final Bundle extras = mediaType(data.contentType());
+      try {return new AssetFileDescriptor(pipe[0], 0, data.contentLength(), extras);}
+      finally {flash(pipe[1], data::writeTo);}
+    } catch(IOException exception) {throw new CompletionException(exception);}
   }
 
   /**
@@ -105,25 +115,19 @@ final class OkUtils {
    * @return input content
    */
   @NonNull static RequestBody toRequest(@NonNull AssetFileDescriptor descriptor) {
-    return new RequestBody() {
-
-      /** {@inheritDoc} */
-      @Nullable @Override
-      public final MediaType contentType()
-      {return mediaType(descriptor.getExtras());}
-
-      /** {@inheritDoc} */
-      @Override public final long contentLength()
-      {return descriptor.getLength();}
-
-      /** {@inheritDoc} */
-      @Override
-      public final void
-      writeTo(@NonNull BufferedSink sink) throws IOException {
-        try (final BufferedSource source = source(descriptor.createInputStream()))
-        {sink.writeAll(source);}
-      }
-    };
+    try {
+      final BufferedSource source = OkUtils.source
+        (descriptor.createInputStream());
+      return new RequestBody() {
+        @Nullable @Override
+        public final MediaType contentType()
+        {return mediaType(descriptor.getExtras());}
+        @Override public final long contentLength()
+        {return descriptor.getLength();}
+        @Override public final void writeTo(@NonNull BufferedSink sink)
+          throws IOException {sink.writeAll(source);}
+      };
+    } catch (IOException exception) {throw new CompletionException(exception);}
   }
 
   /**
@@ -131,12 +135,13 @@ final class OkUtils {
    *
    * @return asset file descriptor
    */
-  @NonNull static AssetFileDescriptor fromResponse
-  (@NonNull ResponseBody data, @Nullable Executor executor) throws IOException {
-    final ParcelFileDescriptor[] pipe = createReliablePipe();
-    final Bundle extras = mediaType(data.contentType());
-    try {return new AssetFileDescriptor(pipe[0], 0, data.contentLength(), extras);}
-    finally {flash(pipe[1], data.source(), executor);}
+  @NonNull static AssetFileDescriptor fromResponse(@NonNull ResponseBody data) {
+    try {
+      final ParcelFileDescriptor[] pipe = createReliablePipe();
+      final Bundle extras = mediaType(data.contentType());
+      try {return new AssetFileDescriptor(pipe[0], 0, data.contentLength(), extras);}
+      finally {flash(pipe[1], data.source());}
+    } catch(IOException exception) {throw new CompletionException(exception);}
   }
 
   /**
@@ -144,26 +149,19 @@ final class OkUtils {
    *
    * @return output content
    */
-  @NonNull static ResponseBody toResponse(@NonNull AssetFileDescriptor descriptor) throws IOException {
-    return new ResponseBody() {
-
-      /** Buffered source. */
-      private final BufferedSource mSource =
-          OkUtils.source(descriptor.createInputStream());
-
-      /** {@inheritDoc} */
-      @Nullable @Override
-      public final MediaType contentType()
-      {return mediaType(descriptor.getExtras());}
-
-      /** {@inheritDoc} */
-      @Override public final long contentLength()
-      {return descriptor.getLength();}
-
-      /** {@inheritDoc} */
-      @Override public final BufferedSource source()
-      {return mSource;}
-    };
+  @NonNull static ResponseBody toResponse(@NonNull AssetFileDescriptor descriptor) {
+    try {
+      final BufferedSource source = OkUtils.source
+        (descriptor.createInputStream());
+      return new ResponseBody() {
+        @Nullable @Override public final MediaType contentType()
+        {return mediaType(descriptor.getExtras());}
+        @Override public final long contentLength()
+        {return descriptor.getLength();}
+        @Override public final BufferedSource source()
+        {return source;}
+      };
+    } catch (IOException exception) {throw new CompletionException(exception);}
   }
 
   /**
@@ -184,33 +182,28 @@ final class OkUtils {
    * @param output source output stream
    * @return synced output stream
    */
-  @NonNull private static OutputStream toSync(@NonNull OutputStream output) {
+  @NonNull private static OutputStream
+  toSync(@NonNull OutputStream output) {
     return new OutputStream() {
-      /** {@inheritDoc} */
       @Override public final void write(int data)
-          throws IOException {output.write(data);}
-      /** {@inheritDoc} */
+        throws IOException {output.write(data);}
       @Override public final void write(@NonNull byte[] data)
           throws IOException {output.write(data);}
-      /** {@inheritDoc} */
       @Override public final void write(@NonNull byte[] data, int off, int len)
           throws IOException {output.write(data, off, len);}
-      /** {@inheritDoc} */
       @Override public final void flush()
           throws IOException {output.flush(); sync(output);}
-      /** {@inheritDoc} */
       @Override public final void close()
           throws IOException {flush(); output.close();}
     };
   }
 
-  /**
-   * @param output source output stream
-   *
-   * @throws IOException I/O exception
-   */
-  private static void sync(@NonNull OutputStream output) throws IOException
-  {if (output instanceof FileOutputStream) ((FileOutputStream)output).getFD().sync();}
+  /** @param output source output stream */
+  private static void sync(@NonNull OutputStream output)
+  {if (output instanceof FileOutputStream)
+    try {((FileOutputStream)output).getFD().sync();}
+    catch (IOException ignored) {}
+  }
 
   @NonNull private static Bundle mediaType(@Nullable MediaType type) {
     final Bundle extras; if (type == null) extras = Bundle.EMPTY;
@@ -226,41 +219,32 @@ final class OkUtils {
   /**
    * @param descriptor target file descriptor
    * @param request request instance
-   * @param executor transfer executor
-   *
-   * @return completable result
    */
-  @SuppressWarnings("UnusedReturnValue")
-  @NonNull private static CompletableFuture<Void> flash
-  (@NonNull ParcelFileDescriptor descriptor, @NonNull SinkConsumer request, @Nullable Executor executor) {
-    final Runnable task = () -> {
-      try (final BufferedSink sink = sink(new AutoCloseOutputStream(descriptor))) {
-        try {request.writeTo(sink);} catch (IOException exception) {
-          try {descriptor.closeWithError(exception.getMessage());}
-          catch (IOException e) {Log.w(TAG, e);}
-        }
-      } catch (IOException exception) {throw new CompletionException(exception);}
-    }; return executor == null ? runAsync(task) : runAsync(task, executor);
+  private static void flash(@NonNull ParcelFileDescriptor descriptor,
+    @NonNull SinkConsumer request) {
+    EXECUTOR.execute(() -> {
+      final BufferedSink sink = sink(new AutoCloseOutputStream(descriptor));
+      try {request.writeTo(sink);} catch (IOException exception) {
+        try {descriptor.closeWithError(exception.getMessage());}
+        catch (IOException e) {Log.w(TAG, e);}
+      } finally {Util.closeQuietly(sink);}
+    });
   }
 
   /**
    * @param descriptor target file descriptor
    * @param response response instance
-   * @param executor transfer executor
-   *
-   * @return completable result
    */
   @SuppressWarnings("UnusedReturnValue")
-  @NonNull private static CompletableFuture<Void> flash
-  (@NonNull ParcelFileDescriptor descriptor, @NonNull BufferedSource response, @Nullable Executor executor) {
-    final Runnable task = () -> {
-      try (final BufferedSink sink = sink(new AutoCloseOutputStream(descriptor))) {
-        try {sink.writeAll(response);} catch (IOException exception) {
-          try {descriptor.closeWithError(exception.getMessage());}
-          catch (IOException e) {Log.w(TAG, e);}
-        }
-      } catch (IOException exception) {throw new CompletionException(exception);}
-    }; return executor == null ? runAsync(task) : runAsync(task, executor);
+  private static void flash
+  (@NonNull ParcelFileDescriptor descriptor, @NonNull BufferedSource response) {
+    EXECUTOR.execute(() -> {
+      final BufferedSink sink = sink(new AutoCloseOutputStream(descriptor));
+      try {sink.writeAll(response);} catch (IOException exception) {
+        try {descriptor.closeWithError(exception.getMessage());}
+        catch (IOException e) {Log.w(TAG, e);}
+      } finally {Util.closeQuietly(sink);}
+    });
   }
 
   /** Sink Consumer. */
@@ -269,5 +253,26 @@ final class OkUtils {
     @SuppressWarnings("RedundantThrows") void writeTo(@NonNull BufferedSink sink) throws IOException;
   }
 
+  /** @return new create cached thread pool */
+  @NonNull private static ExecutorService newThreadPool() {
+    final int core = 0, max = Integer.MAX_VALUE;
+    final long time = 60L; final TimeUnit unit = TimeUnit.SECONDS;
+    final BlockingQueue<Runnable> queue = new SynchronousQueue<>();
+    final SecurityManager security = System.getSecurityManager();
+    final ThreadGroup group = security != null ?
+      security.getThreadGroup() :
+      Thread.currentThread().getThreadGroup();
+    final String name = "Thread(I/O)-";
+    final AtomicInteger number = new AtomicInteger(0);
+    final int priority =
+      Process.THREAD_PRIORITY_DEFAULT +
+        Process.THREAD_PRIORITY_LESS_FAVORABLE;
+    final ThreadFactory factory = runnable ->
+      new Thread(group, runnable, name + number.getAndIncrement(), 0) {{
+        setDaemon(false); setPriority(NORM_PRIORITY);
+        //Process.setThreadPriority((int) getId(), priority);
+    }};
+    return new ThreadPoolExecutor(core, max, time, unit, queue, factory);
+  }
 
 }

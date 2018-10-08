@@ -401,6 +401,7 @@ final class DatabaseTable {
       tableName, preferences ? " " : " AUTOINCREMENT "));
   }
 
+  @SuppressWarnings("SameParameterValue")
   @NonNull private String script(@NonNull String pattern)
   {return format(US, pattern, tableName);}
 
