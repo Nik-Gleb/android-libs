@@ -15,6 +15,8 @@ import java.util.function.Predicate;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
 
 import static java.util.Objects.requireNonNull;
 import static okhttp3.MediaType.parse;
@@ -26,6 +28,8 @@ import static okhttp3.MediaType.parse;
  * @since 1.0, 01/10/2018
  */
 @SuppressWarnings("unused")
+@Keep
+@KeepPublicProtectedClassMembers
 @FunctionalInterface
 public interface Packable {
 

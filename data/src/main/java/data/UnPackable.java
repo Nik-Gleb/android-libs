@@ -11,6 +11,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import okhttp3.ResponseBody;
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
 
 /**
  * UnPersistable interface.
@@ -21,6 +23,8 @@ import okhttp3.ResponseBody;
  * @since 1.0, 01/10/2018
  */
 @SuppressWarnings("unused")
+@Keep
+@KeepPublicProtectedClassMembers
 @FunctionalInterface
 public interface UnPackable<T> {
 

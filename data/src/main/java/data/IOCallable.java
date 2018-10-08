@@ -36,6 +36,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RunnableFuture;
 
+import proguard.annotation.Keep;
+import proguard.annotation.KeepPublicProtectedClassMembers;
+
 /**
  * IO Callable with {@link CompletableFuture} support.
  *
@@ -45,6 +48,8 @@ import java.util.concurrent.RunnableFuture;
  * @since 1.0, 01/10/2018
  */
 @SuppressWarnings("unused")
+@Keep
+@KeepPublicProtectedClassMembers
 @FunctionalInterface
 public interface IOCallable<T> extends Callable<T> {
 
