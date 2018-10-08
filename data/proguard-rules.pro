@@ -121,6 +121,8 @@
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory
 
+-dontnote data.ContentProvider
+
 #-keep public class data.DataSource {
 #    public <methods>;
 #}
