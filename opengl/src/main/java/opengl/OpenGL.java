@@ -38,6 +38,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+import java.util.function.IntFunction;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.O;
@@ -213,6 +214,21 @@ public final class OpenGL {
     if (EGL14.eglGetError() != EGL14.EGL_SUCCESS) EGLCore.error(message);
     byteBuffer.rewind(); final Bitmap result = Bitmap.createBitmap(w, h, format.bmpConfig);
     result.copyPixelsFromBuffer(byteBuffer); byteBuffer.clear(); return result;
+  }
+
+
+
+  public static void fillBuffer
+    (@NonNull EGLView view, @NonNull ColorFormat format,
+      @NonNull IntFunction<ByteBuffer> factory) {
+    if (!view.isCurrent()) EGLCore.error("Expected EGL context/surface is not current");
+    final int w = view.width, h = view.height, bpp = format.bytesPerPixel,
+      f = format.glPixelFormat; final String message = "Can't read pixels";
+    final int type = format.glPixelType, x = 0, y = 0;
+    final ByteBuffer byteBuffer = factory.apply(w * h * bpp); view.makeCurrent();
+    GLES20.glReadPixels(x, y, w, h, f, type, byteBuffer);
+    if (EGL14.eglGetError() != EGL14.EGL_SUCCESS) EGLCore.error(message);
+    byteBuffer.rewind();
   }
 
 
