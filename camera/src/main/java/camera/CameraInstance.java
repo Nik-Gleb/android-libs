@@ -42,13 +42,13 @@ import static android.hardware.camera2.CameraMetadata.LENS_FACING_BACK;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_EXTERNAL;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static camera.AndroidCameraTools.availability;
+import static camera.CameraProfile.Rotation.ROTATION_000;
 import static java.util.Arrays.sort;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingLong;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toCollection;
-import static camera.CameraProfile.Rotation.ROTATION_000;
 
 /**
  * @author Nikitenko Gleb
@@ -392,6 +392,19 @@ public abstract class CameraInstance {
     (@NonNull CameraManager manager, @NonNull String id, boolean front) {
       try {
         final CameraCharacteristics characteristics = manager.getCameraCharacteristics(id);
+
+        /*if ("1".equals(id)) {
+          characteristics.getAvailableCaptureRequestKeys().forEach
+            (key -> System.out.println("Builder.request " + key));
+          characteristics.getAvailableCaptureResultKeys().forEach
+            (key -> System.out.println("Builder.result " + key));
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            characteristics.getAvailablePhysicalCameraRequestKeys().forEach
+              (key -> System.out.println("Builder.physic " + key));
+            characteristics.getAvailableSessionKeys().forEach
+              (key -> System.out.println("Builder.session " + key));
+          }
+        }*/
 
         @NonNull final StreamConfigurationMap configs = requireNonNull
           (characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP));

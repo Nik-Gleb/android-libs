@@ -56,12 +56,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.Stack;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -77,6 +83,7 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 import static android.content.ContentUris.parseId;
 import static android.text.TextUtils.isEmpty;
 import static data.DataResource.AUTHORITY;
+import static java.lang.Thread.currentThread;
 import static java.util.Collections.newSetFromMap;
 import static java.util.Objects.requireNonNull;
 
@@ -535,5 +542,155 @@ import static java.util.Objects.requireNonNull;
     /** {@inheritDoc} */
     @Override public final void onChange(boolean selfChange, @Nullable Uri uri)
     {super.onChange(selfChange, uri); mObserver.accept(selfChange, uri);}
+  }
+
+  @NonNull final Stream<Uri> bind(@NonNull Uri uri) {
+    return stream(new SynchronousQueue<>(), consumer ->
+      connect(mResolver, uri, consumer), Long.MAX_VALUE, Uri.EMPTY);
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private static <T> Stream<T> stream(@NonNull BlockingQueue<T> queue,
+    @NonNull Function<Consumer<T>, Runnable[]> connect, long size, @NonNull T eof) {
+    final Runnable[] runnables = connect.apply(queueToConsumer(queue));
+    return StreamSupport.stream(new SizedSpliterator<>(
+      queueToSupplier(queue), size, eof, runnables[0], runnables[1]), false)
+      .onClose(runnables[2]);
+  }
+
+  /**
+   * @param queue any blocked queue
+   * @param <T> type of queue element
+   *
+   * @return supplier as extractor
+   */
+  @NonNull private static <T> Supplier<T>
+  queueToSupplier(@NonNull BlockingQueue<T> queue) {
+    return () -> {
+      try {
+        return queue.take();
+      } catch (InterruptedException exception) {
+        currentThread().interrupt();
+        return null;
+      }
+    };
+  }
+
+  /**
+   * @param queue any blocked queue
+   * @param <T> type of queue element
+   *
+   * @return consumer as receiver
+   */
+  @NonNull private static <T> Consumer<T>
+  queueToConsumer(@NonNull BlockingQueue<T> queue) {
+    return value -> {
+        try {
+          queue.put(value);
+        } catch (InterruptedException exception) {
+          currentThread().interrupt();
+        }
+    };
+  }
+
+  private static final class SizedSpliterator<T> implements Spliterator<T> {
+
+    /** Estimate size. */
+    private final AtomicLong mSize;
+
+    /** Values supplier. */
+    private final Supplier<T> mSupplier;
+
+    /** End of stream value. */
+    @NonNull private final T mEndOfStream;
+
+    /** Functions. */
+    @Nullable Runnable mStarter, mFinisher;
+
+    /**
+     * Constructs a new {@link SizedSpliterator}.
+     *
+     * @param supplier values supplier
+     * @param size count size
+     */
+    SizedSpliterator(@NonNull Supplier<T> supplier, long size, @NonNull T eof,
+      @Nullable Runnable starter, @Nullable Runnable finisher) {
+      mSize = new AtomicLong(size); mSupplier = supplier; mEndOfStream = eof;
+      mStarter = starter; mFinisher = finisher;
+    }
+
+    /** {@inheritDoc} */
+    @Override public final boolean tryAdvance(@NonNull Consumer<? super T> action) {
+      final T result = mSupplier.get();
+      if (result == null || result == mEndOfStream)
+        return finish();
+      else
+        try {return accept();}
+        finally {action.accept(result);}
+    }
+
+    /** @return accept result */
+    private boolean accept() {
+      if (mStarter != null) {
+        mStarter.run();
+        mStarter = null;
+      }
+      mSize.decrementAndGet();
+      return true;
+    }
+
+    /** @return finish result */
+    private boolean finish() {
+      if (mFinisher != null) {
+        mFinisher.run();
+        mFinisher = null;
+      }
+      mSize.set(0);
+      return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nullable public final Spliterator<T> trySplit() {
+      return mSize.get() == 0 ? null : new SizedSpliterator<>(mSupplier,
+        mSize.updateAndGet(v -> v >>> 1), mEndOfStream, mStarter, mFinisher);
+    }
+
+    /** {@inheritDoc} */
+    @Override public final long estimateSize()
+    {return mSize.get();}
+
+    /** {@inheritDoc} */
+    @Override public final int characteristics()
+    {return IMMUTABLE | ORDERED | NONNULL;}
+  }
+
+  @NonNull private static Runnable[] connect
+    (@NonNull ContentResolver resolver, @NonNull Uri uri, @NonNull Consumer<Uri> consumer) {
+    final UriObserver observer = new UriObserver(resolver, uri, consumer, IO);
+    return new Runnable[] {observer.register, observer.unregister, observer.last};
+  }
+
+  /** Content Uri Observer. */
+  private static final class UriObserver extends ContentObserver {
+
+    /** Functions. */
+    final Runnable register, unregister, last;
+
+    /** External consumer. */
+    private final Consumer<Uri> mConsumer;
+
+    public UriObserver(@NonNull ContentResolver resolver, @NonNull Uri uri,
+      @NonNull Consumer<Uri> consumer, @NonNull Executor executor) {
+      super(null);
+      register = () -> resolver.registerContentObserver(uri, false, this);
+      unregister = () -> resolver.unregisterContentObserver(this);
+      last = () -> consumer.accept(Uri.EMPTY);
+      executor.execute(() -> consumer.accept(uri));
+      mConsumer = consumer;
+    }
+
+    /** {@inheritDoc} */
+    @Override public final void onChange(boolean self, @NonNull Uri uri)
+    {if (!self) mConsumer.accept(uri);}
   }
 }

@@ -410,6 +410,14 @@ public final class DataResource {
   {return OkUtils.mediaType(descriptor.getExtras());}
 
   /**
+   * @param source data source
+   *
+   * @return resources stream
+   */
+  @NonNull public final Stream<DataResource> stream(@NonNull DataSource source)
+  {return source.bind(uri).map(DataResource::new);}
+
+  /**
    * Predefined source names.
    *
    * @author Nikitenko Gleb
