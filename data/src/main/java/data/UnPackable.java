@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.util.Optional;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -57,6 +58,9 @@ public interface UnPackable<T> {
             try {return Optional.of(unpack(input));}
             catch (IOException exception) {return Optional.empty();}
           });
+    } catch (CompletionException completion) {
+      if (completion.getCause() instanceof IOException)
+        return Optional.empty(); throw completion;
     }
   }
 }
