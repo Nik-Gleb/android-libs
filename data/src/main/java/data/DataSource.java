@@ -679,6 +679,9 @@ import static java.util.Objects.requireNonNull;
     /** External consumer. */
     private final Consumer<Uri> mConsumer;
 
+    /** Source uri. */
+    private final Uri mUri;
+
     public UriObserver(@NonNull ContentResolver resolver, @NonNull Uri uri,
       @NonNull Consumer<Uri> consumer, @NonNull Executor executor) {
       super(null);
@@ -686,11 +689,11 @@ import static java.util.Objects.requireNonNull;
       unregister = () -> resolver.unregisterContentObserver(this);
       last = () -> consumer.accept(Uri.EMPTY);
       executor.execute(() -> consumer.accept(uri));
-      mConsumer = consumer;
+      mConsumer = consumer; mUri = uri;
     }
 
     /** {@inheritDoc} */
     @Override public final void onChange(boolean self, @NonNull Uri uri)
-    {if (!self) mConsumer.accept(uri);}
+    {if (!self) mConsumer.accept(mUri);}
   }
 }
