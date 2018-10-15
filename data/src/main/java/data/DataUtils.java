@@ -28,8 +28,13 @@ package data;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletionException;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -54,6 +59,39 @@ public final class DataUtils {
    * Also, this prevents even the native class from calling this constructor.
    **/
   private DataUtils() {throw new AssertionError();}
+
+  /**
+   * @param value long value
+   *
+   * @return bytes equivalent
+   */
+  @NonNull public static byte[] bytes(long value) {
+    return new byte[] {
+      (byte) value,
+      (byte) (value >> 8),
+      (byte) (value >> 16),
+      (byte) (value >> 24),
+      (byte) (value >> 32),
+      (byte) (value >> 40),
+      (byte) (value >> 48),
+      (byte) (value >> 56)};
+  }
+
+  /**
+   * @param bytes byte array
+   *
+   * @return long value
+   */
+  public static long toLong(@NonNull byte[] bytes) {
+    return ((long) bytes[7] << 56)
+      | ((long) bytes[6] & 0xff) << 48
+      | ((long) bytes[5] & 0xff) << 40
+      | ((long) bytes[4] & 0xff) << 32
+      | ((long) bytes[3] & 0xff) << 24
+      | ((long) bytes[2] & 0xff) << 16
+      | ((long) bytes[1] & 0xff) << 8
+      | ((long) bytes[0] & 0xff);
+  }
 
   /**
    * @param value primitive value
@@ -113,5 +151,38 @@ public final class DataUtils {
       @Override public void writeTo(@NonNull BufferedSink sink) throws IOException
       {sink.writeAll(response.source());}
     };
+  }
+
+  /**
+   * @param response response body
+   * @return string content
+   */
+  @NonNull public static String toString
+  (@NonNull ResponseBody response) {
+    try {return response.string();}
+    catch (IOException exception)
+    {throw new CompletionException(exception);}
+  }
+
+  /**
+   * @param response response body
+   * @return json object content
+   */
+  @NonNull public static JSONObject toJSONObject
+  (@NonNull ResponseBody response) {
+    try {return new JSONObject(response.string());}
+    catch (JSONException | IOException exception)
+    {throw new CompletionException(exception);}
+  }
+
+  /**
+   * @param response response body
+   * @return json array content
+   */
+  @NonNull public static JSONArray toJSONArray
+  (@NonNull ResponseBody response) {
+    try {return new JSONArray(response.string());}
+    catch (JSONException | IOException exception)
+    {throw new CompletionException(exception);}
   }
 }

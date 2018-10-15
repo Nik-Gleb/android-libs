@@ -149,6 +149,9 @@ public final class DataResource {
   @NonNull public final DataResource path(@NonNull String path)
   {return new DataResource(uri.buildUpon().appendEncodedPath(path).build());}
 
+  @NonNull public final DataResource query(@NonNull String key, @NonNull String value)
+  {return new DataResource(uri.buildUpon().appendQueryParameter(key, value).build());}
+
   @NonNull public final DataResource row(long id)
   {return new DataResource(withAppendedId(uri, id));}
 
@@ -207,7 +210,6 @@ public final class DataResource {
   @WorkerThread public final void write
   (@NonNull DataSource source, @NonNull RequestBody request)
   {source.write(uri.buildUpon().appendQueryParameter(MODE, WRITE).build(), request);}
-
 
   /**
    * @param source data source

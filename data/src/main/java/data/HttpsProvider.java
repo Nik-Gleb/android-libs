@@ -79,7 +79,7 @@ import static java.util.Objects.requireNonNull;
     mClient =
       new OkHttpClient.Builder()
         .cache(null)
-        //.addInterceptor(logging)
+        .addInterceptor(logging)
         .dispatcher(dispatcher)
         .connectionPool(pool)
         .connectTimeout(1L, TimeUnit.SECONDS)
