@@ -46,6 +46,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -56,6 +57,8 @@ import okio.BufferedSource;
 import okio.Okio;
 
 import static android.os.ParcelFileDescriptor.createReliablePipe;
+import static android.os.Process.THREAD_PRIORITY_DEFAULT;
+import static android.os.Process.setThreadPriority;
 import static java.util.Objects.requireNonNull;
 import static okhttp3.MediaType.parse;
 
@@ -264,15 +267,67 @@ final class OkUtils {
       Thread.currentThread().getThreadGroup();
     final String name = "Thread(I/O)-";
     final AtomicInteger number = new AtomicInteger(0);
-    final int priority =
-      Process.THREAD_PRIORITY_DEFAULT +
-        Process.THREAD_PRIORITY_LESS_FAVORABLE;
     final ThreadFactory factory = runnable ->
       new Thread(group, runnable, name + number.getAndIncrement(), 0) {{
-        setDaemon(false); setPriority(NORM_PRIORITY);
-        //Process.setThreadPriority((int) getId(), priority);
+        setDaemon(false);
+        setPriority(NORM_PRIORITY);
+        priority =
+          Process.THREAD_PRIORITY_DEFAULT +
+          Process.THREAD_PRIORITY_LESS_FAVORABLE;
     }};
     return new ThreadPoolExecutor(core, max, time, unit, queue, factory);
   }
 
+  /** Internal advanced thread */
+  @SuppressWarnings("WeakerAccess")
+  public static class Thread extends java.lang.Thread implements Consumer<Runnable> {
+
+    /** Interruption listener. */
+    private volatile Runnable mHook = null;
+
+    /** Process priority */
+    int priority = THREAD_PRIORITY_DEFAULT;
+
+    /** {@inheritDoc} */
+    public Thread() {}
+
+    /** {@inheritDoc} */
+    public Thread(Runnable runnable) {super(runnable);}
+
+    /** {@inheritDoc} */
+    public Thread(ThreadGroup threadGroup, Runnable runnable)
+    {super(threadGroup, runnable);}
+
+    /** {@inheritDoc} */
+    public Thread(String s) {super(s);}
+
+    /** {@inheritDoc} */
+    public Thread(ThreadGroup threadGroup, String s) {super(threadGroup, s);}
+
+    /** {@inheritDoc} */
+    public Thread(Runnable runnable, String s) {super(runnable, s);}
+
+    /** {@inheritDoc} */
+    public Thread(ThreadGroup threadGroup, Runnable runnable, String s)
+    {super(threadGroup, runnable, s);}
+
+    /** {@inheritDoc} */
+    public Thread(ThreadGroup threadGroup, Runnable runnable, String s, long l)
+    {super(threadGroup, runnable, s, l);}
+
+    /** {@inheritDoc} */
+    @Override public final void run()
+    {setThreadPriority(priority); super.run();}
+
+    /** {@inheritDoc} */
+    @Override public final void accept(@Nullable Runnable hook)
+    {mHook = hook;}
+
+    /** {@inheritDoc} */
+    @Override public final void interrupt() {
+      final Runnable hook = mHook;
+      if (hook != null) hook.run();
+      else super.interrupt();
+    }
+  }
 }

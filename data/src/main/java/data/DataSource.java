@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Stack;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -695,5 +696,36 @@ import static java.util.Objects.requireNonNull;
     /** {@inheritDoc} */
     @Override public final void onChange(boolean self, @NonNull Uri uri)
     {if (!self) mConsumer.accept(mUri);}
+  }
+
+  /** @return cancellation signal */
+  @NonNull public static CancellationSignal cancellate() {
+    final CancellationSignal result = new CancellationSignal();
+    final java.lang.Thread thread = OkUtils.Thread.currentThread();
+    if (thread instanceof OkUtils.Thread) ((OkUtils.Thread)thread).accept(result::cancel);
+    return result;
+  }
+
+  /** Decancellate current thread. */
+  public static void decancellate() {
+    final java.lang.Thread thread = OkUtils.Thread.currentThread();
+    if (thread instanceof OkUtils.Thread) ((OkUtils.Thread)thread).accept(null);
+  }
+
+  /** Check cancellation. */
+  public static void check() {
+    java.lang.Thread.yield();
+    if (java.lang.Thread.interrupted())
+      throw new CancellationException();
+  }
+
+  /**
+   * @param signal cancellation signal
+   *
+   * @return cancel listening
+   */
+  @NonNull public static Runnable attach(@NonNull CancellationSignal signal) {
+    signal.setOnCancelListener(currentThread()::interrupt);
+    return () -> signal.setOnCancelListener(null);
   }
 }
