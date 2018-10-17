@@ -29,7 +29,7 @@
 #-dontshrink
 
 #-verbose
--optimizationpasses 5
+#-optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
 -dontusemixedcaseclassnames
