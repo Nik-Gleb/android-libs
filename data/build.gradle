@@ -116,9 +116,9 @@ dependencies {
   implementation 'com.infstory:proguard-annotations:1.0.2'
   implementation 'com.android.support:support-annotations:' + supportVersion
 
-  implementation 'com.squareup.okio:okio:1.14.1'
-  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-  implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+  implementation 'com.squareup.okio:okio:' + okio
+  implementation 'com.squareup.okhttp3:okhttp:' + okhttp3
+  implementation 'com.squareup.okhttp3:logging-interceptor:' + okhttp3
 
   implementation 'javax.inject:javax.inject:1'
 
