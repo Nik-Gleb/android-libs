@@ -5,7 +5,7 @@
 # Only for root-project
 /.idea
 /.gradle
-/.android.jar
+#/.android.jar
 /.proguard.jar
 /.production.jks
 /gradle
