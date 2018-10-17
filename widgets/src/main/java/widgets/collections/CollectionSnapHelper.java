@@ -98,6 +98,7 @@ public final class CollectionSnapHelper
   }
 
   /** {@inheritDoc} */
+  @SuppressWarnings("deprecation")
   @NonNull protected final LinearSmoothScroller
   createSnapScroller(@NonNull LayoutManager layoutManager) {
     if (!(layoutManager instanceof ScrollVectorProvider)) return null;

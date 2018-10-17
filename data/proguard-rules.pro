@@ -126,3 +126,5 @@
 #-keep public class data.DataSource {
 #    public <methods>;
 #}
+
+-dontnote java.lang.invoke.**

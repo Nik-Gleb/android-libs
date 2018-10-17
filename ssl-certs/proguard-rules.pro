@@ -135,3 +135,4 @@
 
 -dontwarn **$$Lambda$*
 -dontwarn java.lang.invoke.LambdaMetafactory
+-dontnote java.lang.invoke.**

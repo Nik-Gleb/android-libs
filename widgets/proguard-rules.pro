@@ -125,3 +125,4 @@
 -keep public class **.R$* {
     <fields>;
 }
+-dontnote java.lang.invoke.**
