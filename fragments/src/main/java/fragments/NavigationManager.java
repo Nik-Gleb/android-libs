@@ -214,7 +214,7 @@ public class NavigationManager implements Closeable {
     } else transaction.replace(fragment.container, fragment, fragment.getName());
     if (fragment.title != 0) transaction.setBreadCrumbShortTitle(fragment.title);
     if (fragment.subtitle != 0) transaction.setBreadCrumbTitle(fragment.subtitle);
-    if (replace) transaction.setPrimaryNavigationFragment(fragment);
+    if (replace && fragment.primary) transaction.setPrimaryNavigationFragment(fragment);
     return transaction;
   }
 

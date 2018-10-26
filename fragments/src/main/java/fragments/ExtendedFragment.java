@@ -66,6 +66,9 @@ public class ExtendedFragment extends ExtendedDialogFragment {
     /** The content layout. */
     @LayoutRes protected int content = 0;
 
+    /** Primary fragment. */
+    protected boolean primary = true;
+
     /** {@inheritDoc} */
     @NonNull
     @Override
