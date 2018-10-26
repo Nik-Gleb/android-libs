@@ -97,7 +97,7 @@ public class ExtendedFragment extends ExtendedDialogFragment {
     @SuppressWarnings("SameReturnValue")
     @Nullable
     protected AlertDialog.Builder createAlertBuilder(@Nullable Bundle savedInstanceState)
-    {return null;}
+    {return null;}//
 
     /** {@inheritDoc} */
     @Override
