@@ -28,6 +28,7 @@ package android.support.v4.app;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import java.util.List;
 
@@ -42,6 +43,9 @@ import proguard.annotation.KeepPublicProtectedClassMembers;
 @Keep
 @KeepPublicProtectedClassMembers
 public class ExtendedDialogFragment extends DialogFragment {
+
+    /** Skip View. */
+    private boolean mSkipView = false;
 
     /** The state saved flag. */
     private boolean mSavedState = false;
@@ -118,4 +122,11 @@ public class ExtendedDialogFragment extends DialogFragment {
             (FragmentActivity) fragmentHostCallback.getActivity();
     }
 
+    /** {@inheritDoc} */
+    @Override public void onActivityCreated(@Nullable Bundle state)
+    {if (mShowsDialog) mSkipView = true; super.onActivityCreated(state);}
+
+    /** {@inheritDoc} */
+    @Nullable @Override public View getView()
+    {try {return mSkipView ? null : super.getView();} finally {mSkipView = false;}}
 }
